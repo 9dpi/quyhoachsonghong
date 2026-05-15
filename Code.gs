@@ -1,6 +1,6 @@
 /**
  * GOOGLE APPS SCRIPT - QUY HOACH SONG HONG
- * Version: 2.4 (Headline & Massive Data Init)
+ * Version: 2.5 (Clean Data Init)
  */
 
 var SOURCES = [
@@ -36,8 +36,8 @@ function doGet() {
 }
 
 /**
- * HÀM KHỞI TẠO 100 BÀI VIẾT (MASSIVE DATA)
- * Chạy hàm này một lần để có dữ liệu khởi tạo chuyên nghiệp.
+ * HÀM KHỞI TẠO 100 BÀI VIẾT (MASSIVE DATA) - CLEAN VERSION
+ * Chạy hàm này một lần để có dữ liệu khởi tạo chuyên nghiệp (Không có đánh số).
  */
 function initMassiveData() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -45,7 +45,7 @@ function initMassiveData() {
   initSheet(sheet);
   
   var locations = [
-    {n: "Khu vực Mê Linh", lat: 21.18, lng: 105.71},
+    {n: "Mê Linh", lat: 21.18, lng: 105.71},
     {n: "Đông Anh ven sông", lat: 21.12, lng: 105.82},
     {n: "Bắc Từ Liêm", lat: 21.08, lng: 105.78},
     {n: "Tây Hồ Tây", lat: 21.06, lng: 105.81},
@@ -63,22 +63,25 @@ function initMassiveData() {
     var randomLat = loc.lat + (Math.random() - 0.5) * 0.05;
     var randomLng = loc.lng + (Math.random() - 0.5) * 0.05;
     
+    // TIÊU ĐỀ SẠCH - KHÔNG CÓ ĐÁNH SỐ
+    var projectTitle = "Dự án " + loc.n + " - Phân khu R" + (i % 5 + 1);
+    
     dataToPush.push([
       i,
-      "Dự án " + loc.n + " - Phân khu R" + (i % 5 + 1) + " (Số " + i + ")",
+      projectTitle,
       randomLat,
       randomLng,
       (Math.floor(Math.random() * 500) + 10) + "ha",
       "Thông tin quy hoạch chi tiết về phân khu đô thị sông Hồng đoạn qua " + loc.n + ". Dự kiến triển khai năm 2026.",
       "https://kinhtedothi.vn/quy-hoach",
-      new Date(Date.now() - i * 3600000), // Mỗi bài cách nhau 1 tiếng
-      i % 10 == 0 ? "Quy hoạch" : "Dự án", // Loại
-      i <= 5 ? "YES" : "NO" // Cột Headline (5 tin đầu là YES)
+      new Date(Date.now() - i * 3600000), 
+      i % 10 == 0 ? "Quy hoạch" : "Dự án", 
+      i <= 5 ? "YES" : "NO" 
     ]);
   }
   
   sheet.getRange(2, 1, dataToPush.length, dataToPush[0].length).setValues(dataToPush);
-  console.log("Đã khởi tạo thành công 100 bài viết!");
+  console.log("Đã khởi tạo thành công 100 bài viết sạch!");
 }
 
 function initSheet(sheet) {

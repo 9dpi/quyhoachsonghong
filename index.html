@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quy Hoạch Sông Hồng | Pro Dashboard 1.8</title>
+    <title>Quy Hoạch Sông Hồng | Pro Dashboard 1.8.1</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,20 +24,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* NEW HEADER STRUCTURE */
         header {
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            z-index: 5000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000;
         }
-
-        .header-left .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+        .header-left .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); }
         
         .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; position: relative; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
         .ticker-content {
@@ -45,21 +36,18 @@
             animation: ticker 30s linear infinite; cursor: pointer;
             font-size: 0.85rem; font-weight: 600; color: #1e40af;
         }
+        .ticker-content:hover { animation-play-state: paused; text-decoration: underline; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         .header-right .main-menu { display: flex; gap: 20px; list-style: none; }
-        .main-menu li a { text-decoration: none; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); transition: 0.2s; }
-        .main-menu li a:hover { color: var(--primary); }
+        .main-menu li a { text-decoration: none; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); }
 
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
-
-        /* Sidebar */
         #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
         #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .project-item { background: #ffffff; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .project-item:hover { border-color: var(--primary); background: #f0f7ff; }
 
-        /* Map & Detail Panel */
         #main-content { flex-grow: 1; position: relative; }
         #map { width: 100%; height: 100%; }
 
@@ -67,12 +55,10 @@
             position: absolute; right: -var(--detail-width); top: 0; bottom: 0;
             width: var(--detail-width); background: white; z-index: 4000;
             box-shadow: -10px 0 30px rgba(0,0,0,0.1); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none; /* TRANG THÁI MẶC ĐỊNH LÀ ẨN */
-            flex-direction: column;
+            display: none; flex-direction: column;
         }
         #detail-panel.open { right: 0; display: flex; }
 
-        /* Loader */
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
     </style>
@@ -85,9 +71,7 @@
     </div>
 
     <header>
-        <div class="header-left">
-            <div class="logo">SONGHONG.MAP</div>
-        </div>
+        <div class="header-left"><div class="logo">SONGHONG.MAP</div></div>
         <div class="header-center">
             <div id="ticker" class="ticker-content">Tin tức: Đang tải thông tin quy hoạch mới nhất...</div>
         </div>
@@ -95,7 +79,6 @@
             <ul class="main-menu">
                 <li><a href="#">Trang chủ</a></li>
                 <li><a href="#">Tra cứu</a></li>
-                <li><a href="#">Bản đồ</a></li>
                 <li><a href="#">Liên hệ</a></li>
             </ul>
         </div>
@@ -133,12 +116,16 @@
                 const res = await fetch(SCRIPT_URL);
                 allData = await res.json();
                 
-                // CHỈ TẢI 10 TIN ĐẦU TIÊN
                 loadProjects(10);
                 
-                // Cập nhật Headline
-                const headlines = allData.filter(i => i.isHeadline === "YES").map(h => h.tenKhu);
-                if(headlines.length > 0) document.getElementById('ticker').innerText = headlines.join("  |  ");
+                // Cập nhật và kích hoạt click cho Headline
+                const ticker = document.getElementById('ticker');
+                const headlines = allData.filter(i => i.isHeadline === "YES");
+                if(headlines.length > 0) {
+                    ticker.innerText = headlines.map(h => h.tenKhu).join("  |  ");
+                    // Khi click vào Headline -> Mở tin nổi bật đầu tiên
+                    ticker.onclick = () => openDetail(headlines[0]);
+                }
 
                 document.getElementById('loader').style.display = 'none';
                 if(allData.length > 10) document.getElementById('loadMoreBtn').style.display = 'block';
@@ -172,7 +159,15 @@
 
         function openDetail(item) {
             document.getElementById('detail-title').innerText = item.tenKhu;
-            document.getElementById('detail-body').innerHTML = `<p>${item.moTa}</p><br><small>Nguồn: ${item.nguonTin || 'Chính thống'}</small>`;
+            document.getElementById('detail-body').innerHTML = `
+                <div style="font-size:0.85rem; color:#64748b; margin-bottom:15px">
+                    <span><b>Quy mô:</b> ${item.dienTich}</span> | 
+                    <span><b>Loại:</b> ${item.loai}</span>
+                </div>
+                <p>${item.moTa}</p>
+                <br><hr style="border:0; border-top:1px solid #f1f5f9; margin:15px 0">
+                <small><b>Nguồn:</b> <a href="${item.nguonTin || '#'}" target="_blank">${item.nguonTin ? new URL(item.nguonTin).hostname : 'Chính thống'}</a></small>
+            `;
             const panel = document.getElementById('detail-panel');
             panel.style.display = 'flex';
             setTimeout(() => panel.classList.add('open'), 10);
