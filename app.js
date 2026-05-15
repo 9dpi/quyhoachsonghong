@@ -166,14 +166,60 @@ function renderNews(data) {
 
 function renderProgress(data) {
     const list = document.getElementById('progressList');
-    if (!data) return;
-    list.innerHTML = data.map(i => `
-        <div class="progress-item">
-            <div class="progress-header" style="font-family:'Inter'">${i.date} - ${i.region}</div>
-            <div class="progress-card"><p style="font-size:0.75rem; line-height:1.6; font-family:'Inter'">${i.content}</p></div>
-        </div>
-    `).join('');
+    if (!data || data.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:0.8rem; font-family:\'Inter\'">Dữ liệu Tiến độ đang được cập nhật...</div>';
+        return;
+    }
+
+    // Nhóm dữ liệu theo dự án
+    const grouped = {};
+    data.forEach(item => {
+        const p = item.project || "Khác";
+        if (!grouped[p]) grouped[p] = [];
+        grouped[p].push(item);
+    });
+
+    const projects = Object.keys(grouped);
+    
+    // Tạo Sub-tabs
+    let html = `<div class="sub-tabs">`;
+    projects.forEach((p, idx) => {
+        html += `<button class="sub-btn ${idx === 0 ? 'active' : ''}" onclick="switchProjectTab('${p}', this)">${p}</button>`;
+    });
+    html += `</div>`;
+
+    // Tạo Timeline Containers
+    html += `<div class="timeline-container">`;
+    projects.forEach((p, idx) => {
+        const items = grouped[p].sort((a, b) => new Date(b.date) - new Date(a.date));
+        html += `<div id="timeline-${p}" class="project-timeline" style="display: ${idx === 0 ? 'block' : 'none'}">`;
+        items.forEach(i => {
+            html += `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <span class="timeline-date">${i.date}</span>
+                    <div class="timeline-content">
+                        <div class="timeline-title">${i.milestone || "Cập nhật mới"}</div>
+                        <p class="timeline-desc">${i.details || i.content || ""}</p>
+                        ${i.nguonTin ? `<a href="${i.nguonTin}" target="_blank" class="timeline-source">XEM NGUỒN TIN <i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+    });
+    html += `</div>`;
+    
+    list.innerHTML = html;
 }
+
+window.switchProjectTab = (projectName, btn) => {
+    document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.project-timeline').forEach(t => t.style.display = 'none');
+    const target = document.getElementById('timeline-' + projectName);
+    if (target) target.style.display = 'block';
+};
 
 function renderFAQ(data) {
     const list = document.getElementById('faqList');

@@ -177,6 +177,7 @@ function mapKey(h) {
   var maps = {
     "Tên Khu": "tenKhu", "Vĩ Độ": "viDo", "Kinh Độ": "kinhDo", "Mô Tả": "moTa", "Nguồn Tin": "nguonTin", "Loại": "loai",
     "Ngày": "date", "Khu vực": "region", "Nội dung": "content",
+    "Dự án": "project", "Mốc tiến độ": "milestone", "Chi tiết": "details", "Ghi chú": "details",
     "Câu hỏi": "q", "Trả lời": "a"
   };
   return maps[h] || h;
