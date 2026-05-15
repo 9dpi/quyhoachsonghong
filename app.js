@@ -10,6 +10,7 @@ const EXTRA_URL = BASE_URL + 'extra_data.json';
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec"; 
 
 let allNews = [];
+let displayedNewsCount = 10;
 let planningData = [];
 let projectsData = [];
 let landPriceData = [];
@@ -47,8 +48,11 @@ async function init() {
             faqData = extraData.faq || [];
         }
         
-        allNews = newsData.slice(0, 10);
-        renderNews(allNews);
+        allNews = newsData;
+        renderNews(allNews.slice(0, displayedNewsCount));
+        
+        // Thiết lập sự kiện cuộn để load thêm tin (Lazy Load)
+        setupLazyLoad();
         renderProgress(progressData);
         renderFAQ(faqData);
         
@@ -337,18 +341,38 @@ window.runGlobalCalc = () => {
     // Chức năng đã bị loại bỏ theo yêu cầu
 };
 
-function renderNews(data) {
+function renderNews(data, append = false) {
     const list = document.getElementById('projectList');
-    list.innerHTML = '';
+    if (!append) list.innerHTML = '';
+    
     data.forEach((item, index) => {
+        const actualIndex = append ? (displayedNewsCount - data.length + index) : index;
         const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-        marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:void(0)" onclick="openNewsDetail(${index})">Xem chi tiết</a>`);
+        marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:void(0)" onclick="openNewsDetail(${actualIndex})">Xem chi tiết</a>`);
+        
         const div = document.createElement('div');
         div.className = 'project-item';
         const tagClass = item.loai === "Tái định cư" ? "tag-tdc" : "tag-qh";
-        div.innerHTML = `<span class="tag ${tagClass}">${item.loai}</span><h4 style="font-family:'Inter'">${item.tenKhu}</h4><p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">${item.moTa.substring(0, 50)}...</p>`;
+        div.innerHTML = `
+            <span class="tag ${tagClass}">${item.loai}</span>
+            <h4 style="font-family:'Inter'">${item.tenKhu}</h4>
+            <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">${item.moTa.substring(0, 50)}...</p>
+        `;
         div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
         list.appendChild(div);
+    });
+}
+
+function setupLazyLoad() {
+    const list = document.getElementById('projectList');
+    list.addEventListener('scroll', () => {
+        if (list.scrollTop + list.clientHeight >= list.scrollHeight - 20) {
+            if (displayedNewsCount < allNews.length) {
+                const nextBatch = allNews.slice(displayedNewsCount, displayedNewsCount + 10);
+                displayedNewsCount += nextBatch.length;
+                renderNews(nextBatch, true);
+            }
+        }
     });
 }
 
