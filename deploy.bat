@@ -31,6 +31,9 @@ git merge origin/main --allow-unrelated-histories -m "Sync from remote"
 
 :: 4. Chuẩn bị bản cập nhật mới
 echo [*] Dang chuan bi ban cap nhat...
+:: Xóa Code.gs khỏi cache của Git (nếu lỡ bị track)
+git rm --cached Code.gs >nul 2>&1
+:: Thêm tất cả ngoại trừ các file trong .gitignore
 git add .
 
 set /p msg="Nhap ghi chu cap nhat (Enter de bo qua): "
