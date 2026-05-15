@@ -270,8 +270,7 @@ function renderPlanningResult(match, addr, coords) {
     `;
     
     const panel = document.getElementById('detail-panel');
-    panel.style.display = 'flex';
-    setTimeout(() => panel.classList.add('open'), 10);
+    panel.classList.add('open');
     map.flyTo(coords, 17);
     closeModal();
 }
@@ -287,8 +286,7 @@ function renderPlanningWarning(addr, coords) {
         </div>
     `;
     const panel = document.getElementById('detail-panel');
-    panel.style.display = 'flex';
-    setTimeout(() => panel.classList.add('open'), 10);
+    panel.classList.add('open');
     map.flyTo(coords, 16);
     closeModal();
 }
@@ -469,8 +467,7 @@ window.openNewsDetail = (idx) => {
         </div>
     `;
     
-    document.getElementById('detail-panel').style.display = 'flex';
-    setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
+    document.getElementById('detail-panel').classList.add('open');
 };
 
 window.updateNewsComp = (price) => {
@@ -487,7 +484,7 @@ function showModal(title, text, icon) {
 }
 
 function closeModal() { document.getElementById('custom-modal').classList.remove('active'); }
-function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400); }
+function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); }
 
 function loadPlanningGIS() {
     // URL dẫn tới file GeoJSON chứa ranh giới các dự án (Vành đai 4, cầu Tứ Liên...)
