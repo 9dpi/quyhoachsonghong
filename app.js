@@ -47,7 +47,7 @@ async function init() {
             faqData = extraData.faq || [];
         }
         
-        allNews = newsData;
+        allNews = newsData.slice(0, 10);
         renderNews(allNews);
         renderProgress(progressData);
         renderFAQ(faqData);
