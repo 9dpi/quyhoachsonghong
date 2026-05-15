@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DULIEUQUYHOACH.COM | Phân tích Quy hoạch Nhà ở</title>
+    <title>DULIEUQUYHOACH.COM | Bản đồ Quy hoạch Toàn quốc</title>
     
+    <!-- Font Inter: Hiển thị tiếng Việt cực tốt, hiện đại -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -18,55 +20,58 @@
             --sidebar-width: 340px;
             --detail-width: 450px;
             --bg-light: #f8fafc;
-            --sidebar-bg: #ffffff;
             --text-main: #0f172a;
             --text-sub: #64748b;
-            --font-main: 'Be Vietnam Pro', sans-serif;
+            --font-main: 'Inter', sans-serif; /* Đổi sang Inter */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
 
         header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
-        .logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
-        .logo-text { font-size: 1.2rem; font-weight: 800; color: var(--primary); text-decoration: none; margin-left: 10px; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+        .logo-text { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         
-        .header-center { flex-grow: 1; max-width: 40%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; border: 1px solid #e2e8f0; }
-        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.82rem; font-weight: 700; color: #1e40af; }
+        .header-center { flex-grow: 1; max-width: 45%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; border: 1px solid #e2e8f0; }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.82rem; font-weight: 600; color: #1e40af; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
         #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 15px; }
-        .primary-search-card { background: linear-gradient(135deg, #1e40af, #2563eb); padding: 18px; border-radius: 16px; margin-bottom: 20px; color: white; }
+        
+        .primary-search-card { background: linear-gradient(135deg, #1e40af, #2563eb); padding: 18px; border-radius: 16px; margin-bottom: 20px; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); }
         .search-input-group { display: flex; background: white; border-radius: 10px; padding: 4px; gap: 4px; }
         .search-input-group input { flex-grow: 1; border: none; outline: none; padding: 8px 12px; font-size: 0.85rem; font-family: var(--font-main); color: #000; width: 100%; }
         .search-input-group button { background: var(--secondary); color: white; border: none; border-radius: 8px; width: 40px; height: 36px; cursor: pointer; }
 
         .sidebar-tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #f1f5f9; padding: 4px; border-radius: 10px; }
-        .tab-btn { flex: 1; border: none; padding: 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; color: var(--text-sub); background: transparent; }
-        .tab-btn.active { background: white; color: var(--primary); }
+        .tab-btn { flex: 1; border: none; padding: 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; color: var(--text-sub); background: transparent; transition: 0.2s; }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         #projectList, #progressList, #faqList { flex-grow: 1; overflow-y: auto; display: none; flex-direction: column; gap: 10px; }
         #projectList.active, #progressList.active, #faqList.active { display: flex; }
 
         .project-item { background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.3s; }
-        .project-item:hover { border-color: var(--primary); transform: translateX(4px); }
+        .project-item:hover { border-color: var(--primary); transform: translateX(4px); background: #f8fafc; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .tag-tdc { background: #fee2e2; color: #ef4444; }
+        .tag-qh { background: #dcfce7; color: #16a34a; }
 
         #main-content { flex-grow: 1; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
 
-        #detail-panel { position: absolute; right: -var(--detail-width); top: 0; bottom: 0; width: var(--detail-width); background: white; z-index: 4000; box-shadow: -15px 0 40px rgba(0,0,0,0.08); transition: 0.5s; display: none; flex-direction: column; }
+        #detail-panel { position: absolute; right: -var(--detail-width); top: 0; bottom: 0; width: var(--detail-width); background: white; z-index: 4000; box-shadow: -15px 0 40px rgba(0,0,0,0.08); transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); display: none; flex-direction: column; }
         #detail-panel.open { right: 0; display: flex; }
 
         footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 12px 24px; font-size: 0.72rem; color: #94a3b8; text-align: center; display: flex; justify-content: space-between; align-items: center; }
+        .footer-links { display: flex; gap: 15px; }
+        .footer-links a { color: #64748b; text-decoration: none; cursor: pointer; font-weight: 500; }
+        .footer-links a:hover { color: var(--primary); }
 
-        /* CALCULATOR STYLE */
-        .calc-card { background: #f0f9ff; border: 1px solid #bae6fd; padding: 20px; border-radius: 16px; margin-top: 25px; box-shadow: 0 4px 12px rgba(37,99,235,0.05); }
-        .calc-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 10px; margin-top: 8px; font-family: var(--font-main); }
-        .calc-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-
+        /* MODAL */
         #custom-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 35px; border-radius: 28px; text-align: center; }
+        .modal-content { background: white; width: 90%; max-width: 450px; padding: 35px; border-radius: 28px; text-align: center; }
         #custom-modal.active { display: flex; }
     </style>
 </head>
@@ -74,10 +79,10 @@
 
     <div id="custom-modal">
         <div class="modal-content">
-            <div id="modalIcon" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-satellite"></i></div>
-            <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;" id="modalTitle">Đang phân tích</div>
-            <div style="font-size: 0.88rem; color: #64748b; line-height: 1.7; margin-bottom: 25px;" id="modalText">Vui lòng chờ giây lát...</div>
-            <button style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:10px; cursor:pointer" onclick="closeModal()">Đã hiểu</button>
+            <div id="modalIcon" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-circle-info"></i></div>
+            <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;" id="modalTitle">Thông báo</div>
+            <div style="font-size: 0.88rem; color: #64748b; line-height: 1.7; text-align: left; margin-bottom: 25px;" id="modalText">Đang tải dữ liệu...</div>
+            <button style="background:var(--primary); color:white; border:none; padding:12px 30px; border-radius:12px; cursor:pointer; font-weight:700;" onclick="closeModal()">Đã hiểu</button>
         </div>
     </div>
 
@@ -86,8 +91,13 @@
             <div class="logo-icon"><i class="fa-solid fa-compass"></i></div>
             <a href="#" class="logo-text">DULIEUQUYHOACH.COM</a>
         </div>
-        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang cập nhật dữ liệu quy hoạch sông Hồng...</div></div>
-        <div class="header-right"><ul style="display:flex; gap:15px; list-style:none; font-size:1.1rem; color:var(--text-sub)"><li><i class="fab fa-facebook-f"></i></li><li><i class="fab fa-tiktok"></i></li></ul></div>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Cập nhật quy hoạch Toàn quốc - Trọng tâm Hà Nội, TP.HCM, Đà Nẵng...</div></div>
+        <div class="header-right">
+            <ul style="display:flex; gap:15px; list-style:none;">
+                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
+            </ul>
+        </div>
     </header>
 
     <div class="app-container">
@@ -95,26 +105,31 @@
             <div class="primary-search-card">
                 <h2 style="font-size:0.82rem; margin-bottom:12px; font-weight:800"><i class="fa-solid fa-house-circle-exclamation"></i> NHÀ TÔI CÓ BỊ QUY HOẠCH?</h2>
                 <div class="search-input-group">
-                    <input type="text" id="addrInput" placeholder="Nhập địa chỉ nhà bạn..." onkeypress="if(event.key==='Enter') checkMyHome()">
+                    <input type="text" id="addrInput" placeholder="Nhập địa chỉ của bạn (Toàn quốc)..." onkeypress="if(event.key==='Enter') checkMyHome()">
                     <button onclick="checkMyHome()"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
-
             <div class="sidebar-tabs">
                 <button class="tab-btn active" onclick="switchTab('project', this)">BẢN TIN</button>
                 <button class="tab-btn" onclick="switchTab('progress', this)">TIẾN ĐỘ</button>
                 <button class="tab-btn" onclick="switchTab('faq', this)">HỎI ĐÁP</button>
             </div>
-
             <div id="projectList" class="active"></div>
             <div id="progressList">
-                <div style="background:#eff6ff; padding:12px; border-radius:10px; margin-bottom:10px;">
-                    <div style="font-size:0.6rem; font-weight:900; color:var(--primary); margin-bottom:5px">15/05/2026 - MÊ LINH</div>
-                    <div style="font-size:0.75rem; font-weight:600">Đang triển khai kiểm kê.</div>
+                <div style="background:#f8fafc; border-left:4px solid var(--primary); padding:12px; border-radius:4px; margin-bottom:10px;">
+                    <div style="font-size:0.65rem; font-weight:800; color:var(--primary); margin-bottom:5px">15/05/2026 - ĐÔNG ANH</div>
+                    <p style="font-size:0.75rem;">Công bố ranh giới quy hoạch chi tiết 1/500 khu đô thị thông minh.</p>
+                </div>
+                <div style="background:#f8fafc; border-left:4px solid var(--primary); padding:12px; border-radius:4px; margin-bottom:10px;">
+                    <div style="font-size:0.65rem; font-weight:800; color:var(--primary); margin-bottom:5px">14/05/2026 - HOÀI ĐỨC</div>
+                    <p style="font-size:0.75rem;">Tiến hành chi trả bồi thường đợt 3 cho dự án đường Vành đai 4.</p>
                 </div>
             </div>
             <div id="faqList">
-                <p style="font-size:0.7rem; color:var(--text-sub)">Dữ liệu đang được cập nhật...</p>
+                <div style="background:#f1f5f9; padding:12px; border-radius:10px; margin-bottom:10px;">
+                    <p style="font-size:0.8rem; font-weight:700;">Hỏi: Thủ tục nhận đất tái định cư?</p>
+                    <p style="font-size:0.72rem; color:var(--text-sub); margin-top:5px;">Đáp: Người dân cần chuẩn bị sổ đỏ gốc, hộ khẩu và CMND để làm thủ tục bốc thăm tại UBND Quận.</p>
+                </div>
             </div>
         </aside>
 
@@ -122,17 +137,21 @@
             <div id="map"></div>
             <div id="detail-panel">
                 <div style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
-                    <h2 id="detail-title" style="font-size:1.2rem; font-weight:800">Chi tiết</h2>
+                    <h2 id="detail-title" style="font-size:1.1rem; font-weight:800">Chi tiết</h2>
                     <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.5rem; color:#94a3b8" onclick="closeDetail()"></i>
                 </div>
-                <div id="detail-body" style="padding:25px; overflow-y:auto; line-height:1.7; font-size:0.92rem; color:#334155"></div>
+                <div id="detail-body" style="padding:25px; overflow-y:auto;"></div>
             </div>
         </main>
     </div>
 
     <footer>
-        <div>© 2026 DULIEUQUYHOACH.COM</div>
-        <div class="footer-links"><a href="#">Giới thiệu</a><a href="#">Điều khoản</a><a href="#">Liên hệ</a></div>
+        <div>© 2026 DULIEUQUYHOACH.COM - Hệ thống Tra cứu Quy hoạch Toàn quốc</div>
+        <div class="footer-links">
+            <a onclick="showInfo('about')">Giới thiệu</a>
+            <a onclick="showInfo('terms')">Điều khoản</a>
+            <a href="https://www.linkedin.com/in/cuongvq/" target="_blank">Liên hệ</a>
+        </div>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -160,46 +179,36 @@
         async function checkMyHome() {
             const addr = document.getElementById('addrInput').value;
             if(!addr) return;
-            showModal("Đang phân tích", "Đang định vị địa chỉ: <b>" + addr + "</b>", "fa-location-dot");
+            showModal("Đang định vị", "Đang phân tích dữ liệu quy hoạch cho: <b>" + addr + "</b>", "fa-satellite-dish");
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr + ", Hanoi")}`);
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
                 const data = await res.json();
                 if(data.length > 0) {
                     const lat = data[0].lat; const lon = data[0].lon;
                     map.flyTo([lat, lon], 17);
-                    const homeMarker = L.marker([lat, lon], {icon: L.divIcon({className: 'home-icon', html: '<i class="fa-solid fa-house-user" style="color:#ef4444; font-size:2.2rem"></i>', iconSize: [30, 30]})}).addTo(map);
-                    
-                    const popupHTML = `<div style="text-align:center; padding:5px;"><h4 style="color:#ef4444; margin-bottom:8px;">NHÀ CỦA BẠN</h4><button onclick="openHomeAnalysis('${addr}')" style="background:#2563eb; color:white; border:none; padding:6px 12px; border-radius:5px; font-size:0.75rem; cursor:pointer; font-weight:700">XEM PHÂN TÍCH & TÍNH TIỀN</button></div>`;
-                    homeMarker.bindPopup(popupHTML).openPopup();
-
-                    showModal("Kết quả", "Đã tìm thấy địa chỉ. Bấm vào icon trên bản đồ để xem chi tiết bồi thường.", "fa-circle-check");
+                    const homeMarker = L.marker([lat, lon], {icon: L.divIcon({className: 'home-icon', html: '<i class="fa-solid fa-house-circle-check" style="color:#ef4444; font-size:2.2rem"></i>', iconSize: [30, 30]})}).addTo(map);
+                    homeMarker.bindPopup(`<div style="text-align:center; padding:10px;"><h4 style="color:#ef4444; margin-bottom:8px;">VỊ TRÍ CỦA BẠN</h4><button onclick="openHomeAnalysis('${addr}')" style="background:#2563eb; color:white; border:none; padding:8px 15px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">TÍNH TIỀN BỒI THƯỜNG</button></div>`).openPopup();
                 }
             } catch (e) { }
         }
 
-        // PHÂN TÍCH NHÀ RIÊNG + CÔNG CỤ TÍNH TIỀN
         window.openHomeAnalysis = function(addr) {
             const now = new Date().toLocaleString('vi-VN');
-            document.getElementById('detail-title').innerText = "PHÂN TÍCH VỊ TRÍ";
+            document.getElementById('detail-title').innerText = "PHÂN TÍCH QUY HOẠCH";
             document.getElementById('detail-body').innerHTML = `
-                <div style="background:#fff7ed; padding:15px; border-radius:12px; border:1px solid #ffedd5; margin-bottom:20px;">
-                    <h4 style="color:#c2410c; margin-bottom:8px;"><i class="fa-solid fa-file-contract"></i> KẾT QUẢ ĐỐI SOÁT</h4>
-                    <p style="font-size:0.85rem; line-height:1.6;">Vị trí nhà bạn nằm sát ranh giới quy hoạch <b>Trục đô thị Sông Hồng</b>.</p>
+                <div style="background:#f0f9ff; padding:15px; border-radius:12px; border:1px solid #bae6fd; margin-bottom:20px;">
+                    <p style="font-size:0.85rem; line-height:1.6;">Kết quả đối soát cho địa chỉ: <b>${addr}</b></p>
                 </div>
-
-                <div class="calc-card">
-                    <h4 style="color:var(--primary); margin-bottom:12px; font-size:0.9rem;"><i class="fa-solid fa-coins"></i> TÍNH BỒI THƯỜNG DỰ KIẾN</h4>
-                    <div style="font-size:0.65rem; color:var(--text-sub); margin-bottom:10px;">
-                        Đơn giá cập nhật: <b>${now}</b><br>
-                        Nguồn: <b>Quyết định số 30/2024/QĐ-UBND TP. Hà Nội</b>
-                    </div>
+                <div style="background:#fff7ed; padding:20px; border-radius:16px; border:1px solid #ffedd5;">
+                    <h4 style="color:var(--primary); margin-bottom:15px; font-weight:800;">💰 TÍNH TIỀN BỒI THƯỜNG DỰ KIẾN</h4>
+                    <div style="background:#fffbeb; border:1px solid #fef3c7; padding:12px; border-radius:8px; margin-bottom:15px; font-weight:800; color:#92400e; text-align:center;">ĐƠN GIÁ: 55.000.000 VNĐ / m2</div>
+                    <div style="font-size:0.65rem; color:var(--text-sub); margin-bottom:15px;">Cập nhật: <b>${now}</b><br>Nguồn: Bảng giá đất TP mới nhất</div>
                     <label style="font-size:0.75rem; font-weight:700;">Diện tích thửa đất (m2):</label>
-                    <input type="number" id="home_calc_area" class="calc-input" placeholder="Ví dụ: 80">
-                    <button onclick="runHomeCalc()" class="calc-btn">XEM KẾT QUẢ ƯỚC TÍNH</button>
-                    <div id="home_calc_res" style="display:none; margin-top:15px; text-align:center; border-top:1px dashed #cbd5e1; padding-top:10px;">
-                        <p style="font-size:0.75rem; color:var(--text-sub);">Tổng tiền ước tính nhận được:</p>
-                        <h3 id="home_calc_value" style="color:var(--primary); font-size:1.5rem; margin:5px 0;">0 VNĐ</h3>
-                        <p style="font-size:0.6rem; color:#ef4444;">* Lưu ý: Kết quả dựa trên đơn giá đất ở giả định 50tr/m2 và hệ số K=2.0.</p>
+                    <input type="number" id="home_area" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; margin-top:8px; font-family:var(--font-main);" placeholder="Ví dụ: 60">
+                    <button onclick="calcHome()" style="width:100%; background:var(--primary); color:white; border:none; padding:14px; border-radius:10px; font-weight:800; cursor:pointer; margin-top:15px; letter-spacing:1px;">TÍNH TOÁN KẾT QUẢ</button>
+                    <div id="home_res" style="display:none; margin-top:20px; text-align:center; border-top:1px dashed #cbd5e1; padding-top:15px;">
+                        <h3 id="home_val" style="color:var(--primary); font-size:1.6rem; font-weight:900;">0 VNĐ</h3>
+                        <p style="font-size:0.6rem; color:#ef4444; margin-top:10px;">* Đã áp dụng hệ số điều chỉnh K=2.0</p>
                     </div>
                 </div>
             `;
@@ -207,12 +216,11 @@
             setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
         };
 
-        window.runHomeCalc = () => {
-            const area = document.getElementById('home_calc_area').value;
-            if(!area) return alert("Vui lòng nhập diện tích!");
-            const total = area * 50 * 2; // Giả định: 50tr/m2 * K=2.0
-            document.getElementById('home_calc_value').innerText = new Intl.NumberFormat('vi-VN').format(total * 1000000) + " VNĐ";
-            document.getElementById('home_calc_res').style.display = 'block';
+        window.calcHome = () => {
+            const area = document.getElementById('home_area').value;
+            const total = area * 55 * 2;
+            document.getElementById('home_val').innerText = new Intl.NumberFormat('vi-VN').format(total * 1000000) + " VNĐ";
+            document.getElementById('home_res').style.display = 'block';
         };
 
         function renderData(data) {
@@ -225,30 +233,36 @@
                 marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:openDetailByIndex(${index})">Xem chi tiết</a>`);
                 const div = document.createElement('div');
                 div.className = 'project-item';
-                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 50)}...</p>`;
+                const tagClass = item.loai === "Tái định cư" ? "tag-tdc" : "tag-qh";
+                div.innerHTML = `<span class="tag ${tagClass}">${item.loai}</span><h4>${item.tenKhu}</h4><p style="font-size:0.72rem; color:var(--text-sub); line-height:1.4;">${item.moTa.substring(0, 55)}...</p>`;
                 div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
                 list.appendChild(div);
             });
         }
 
-        function showModal(title, text, icon) {
+        function showInfo(type) {
+            let title = "", text = "";
+            if(type === 'about') {
+                title = "Về DULIEUQUYHOACH.COM";
+                text = "Hệ thống tra cứu quy hoạch Toàn quốc, hỗ trợ người dân nắm bắt thông tin bồi thường và dự án hạ tầng trọng điểm.";
+            } else if(type === 'terms') {
+                title = "Điều khoản";
+                text = "Dữ liệu mang tính tham khảo. Người dân cần đối soát với văn bản pháp lý chính thức tại UBND Quận/Huyện.";
+            }
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalText').innerHTML = text;
-            document.getElementById('modalIcon').innerHTML = `<i class="fa-solid ${icon}"></i>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
         function closeModal() { document.getElementById('custom-modal').classList.remove('active'); }
-
+        function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400); }
         window.openDetailByIndex = (idx) => {
             const item = allData[idx];
             document.getElementById('detail-title').innerText = item.tenKhu;
-            document.getElementById('detail-body').innerHTML = `<div style="white-space: pre-wrap; line-height:1.7; font-size:0.9rem">${item.moTa}</div>`;
+            document.getElementById('detail-body').innerHTML = `<div style="white-space: pre-wrap; line-height:1.8;">${item.moTa}</div><br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">${item.nguonTin}</a></small>`;
             document.getElementById('detail-panel').style.display = 'flex';
             setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
-        }
-
-        function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400); }
+        };
 
         init();
     </script>
