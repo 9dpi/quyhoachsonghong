@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản đồ Quy hoạch Sông Hồng - Hà Nội</title>
+    <meta name="description" content="Bản đồ tương tác các dự án quy hoạch và giải phóng mặt bằng ven sông Hồng, Hà Nội. Tra cứu thông tin quy hoạch minh bạch.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --text-light: #f8fafc;
+            --accent: #38bdf8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--glass);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #map {
+            flex-grow: 1;
+            width: 100%;
+            z-index: 1;
+        }
+
+        /* Custom Leaflet Styling */
+        .leaflet-container {
+            background: #1e293b !important;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: var(--card-bg);
+            color: var(--text-light);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .custom-popup .leaflet-popup-tip {
+            background: var(--card-bg);
+        }
+
+        .popup-content h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-content p {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            opacity: 0.9;
+        }
+
+        .popup-link {
+            display: inline-block;
+            margin-top: 0.75rem;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .popup-link:hover {
+            color: #60a5fa;
+            transform: translateX(4px);
+        }
+
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <h1>QUYHOACHSONGHONG.VN</h1>
+        </div>
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span>Dữ liệu cập nhật tự động bởi AI Agent</span>
+        </div>
+    </header>
+
+    <div id="loading">
+        <span class="loader"></span>
+        <p>Đang tải dữ liệu quy hoạch...</p>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script>
+        // Configuration
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec';
+        
+        // Initialize Map
+        const map = L.map('map').setView([21.0285, 105.8542], 12); // Center of Hanoi
+
+        // Dark Mode Map Tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Fetch Data from Google Apps Script
+        async function loadPlanningData() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        if (item.viDo && item.kinhDo) {
+                            const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
+                            
+                            let popupHtml = `<div class="popup-content">`;
+                            popupHtml += `<h3>${item.tenKhu || 'Dự án chưa đặt tên'}</h3>`;
+                            
+                            // Dynamically add fields from JSON
+                            Object.keys(item).forEach(key => {
+                                if (!['viDo', 'kinhDo', 'tenKhu', 'nguonTin'].includes(key) && item[key]) {
+                                    popupHtml += `<p><strong>${key}:</strong> ${item[key]}</p>`;
+                                }
+                            });
+
+                            if (item.nguonTin) {
+                                popupHtml += `<a href="${item.nguonTin}" target="_blank" class="popup-link">Xem nguồn tin gốc →</a>`;
+                            }
+                            
+                            popupHtml += `</div>`;
+                            
+                            marker.bindPopup(popupHtml, {
+                                className: 'custom-popup'
+                            });
+                        }
+                    });
+
+                    // Optional: Fit map to markers
+                    const group = new L.featureGroup(data.filter(i => i.viDo && i.kinhDo).map(i => L.marker([i.viDo, i.kinhDo])));
+                    if (group.getLayers().length > 0) {
+                        map.fitBounds(group.getBounds().pad(0.1));
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = '<p style="color: #ef4444;">Không thể tải dữ liệu. Vui lòng thử lại sau.</p>';
+            }
+        }
+
+        loadPlanningData();
+    </script>
+</body>
+</html>

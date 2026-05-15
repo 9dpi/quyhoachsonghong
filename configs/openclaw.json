@@ -1,0 +1,20 @@
+{
+  "cron": {
+    "jobs": [
+      {
+        "name": "quy-hoach-song-hong-sang",
+        "schedule": "0 9 * * *",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "task": "Thu thập tin tức quy hoạch sông Hồng trong 12h qua, trích xuất thông tin (tên dự án, diện tích, vị trí, tình trạng). Cập nhật vào Google Sheets. Đóng gói dữ liệu mới thành định dạng GeoJSON để bổ sung OSM.",
+        "model": "anthropic/claude-sonnet-4"
+      },
+      {
+        "name": "quy-hoach-song-hong-chieu",
+        "schedule": "0 16 * * *",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "task": "Rà soát các văn bản pháp lý, báo cáo tiến độ dự án sông Hồng. Cập nhật trạng thái và thông tin bồi thường vào Google Sheets. Kiểm tra và hợp nhất dữ liệu chờ bổ sung lên OSM.",
+        "model": "anthropic/claude-sonnet-4"
+      }
+    ]
+  }
+}
