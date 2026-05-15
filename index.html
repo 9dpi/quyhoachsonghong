@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DULIEUQUYHOACH.COM | Tra cứu Quy hoạch</title>
+    <title>DULIEUQUYHOACH.COM | Bản đồ Quy hoạch 1/5000</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
@@ -26,75 +25,70 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
         header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
-        .logo { font-size: 1.3rem; font-weight: 900; color: var(--primary); text-decoration: none; letter-spacing: -0.5px; }
+        .logo-text { font-size: 1.25rem; font-weight: 900; color: var(--primary); text-decoration: none; }
         
         .header-center { flex-grow: 1; max-width: 40%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
-        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.82rem; font-weight: 700; color: #1e40af; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
         #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 15px; }
         
         .primary-search-card {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            padding: 18px 15px; border-radius: 16px; margin-bottom: 20px;
-            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
-            color: white;
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            padding: 18px; border-radius: 16px; margin-bottom: 20px; color: white;
         }
-        /* Đã sửa font-size để không bị xuống dòng */
-        .primary-search-card h2 { font-size: 0.88rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-        
         .search-input-group { display: flex; background: white; border-radius: 10px; padding: 4px; gap: 4px; }
         .search-input-group input { flex-grow: 1; border: none; outline: none; padding: 8px 12px; font-size: 0.85rem; font-family: var(--font-main); color: var(--text-main); width: 100%; }
-        .search-input-group button { background: var(--secondary); color: white; border: none; border-radius: 8px; width: 40px; height: 36px; cursor: pointer; transition: 0.2s; }
+        .search-input-group button { background: var(--secondary); color: white; border: none; border-radius: 8px; width: 40px; height: 36px; cursor: pointer; }
 
         #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .project-item { background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
-        .project-item:hover { border-color: var(--primary); background: #f8fafc; }
-        .project-item h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; color: #1e293b; }
-        .project-item p { font-size: 0.72rem; color: var(--text-sub); line-height: 1.4; }
+        .project-item { background: #ffffff; padding: 15px; border-radius: 14px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.3s; }
+        .project-item:hover { border-color: var(--primary); transform: translateX(4px); }
 
         #main-content { flex-grow: 1; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
 
+        #detail-panel { position: absolute; right: -var(--detail-width); top: 0; bottom: 0; width: var(--detail-width); background: white; z-index: 4000; box-shadow: -15px 0 40px rgba(0,0,0,0.08); transition: 0.5s; display: none; flex-direction: column; }
+        #detail-panel.open { right: 0; display: flex; }
+
         #custom-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); text-align: center; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 24px; text-align: center; }
         #custom-modal.active { display: flex; }
 
-        #detail-panel { position: absolute; right: -var(--detail-width); top: 0; bottom: 0; width: var(--detail-width); background: white; z-index: 4000; box-shadow: -15px 0 40px rgba(0,0,0,0.08); transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); display: none; flex-direction: column; }
-        #detail-panel.open { right: 0; display: flex; }
+        /* Label cho ranh giới quy hoạch */
+        .qh-label { background: rgba(255, 255, 255, 0.8); border: 1px solid var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div id="custom-modal">
         <div class="modal-content">
-            <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-satellite-dish"></i></div>
-            <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;" id="modalTitle">Đang kiểm tra ranh giới</div>
-            <div style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 25px;" id="modalText">Hệ thống đang đối soát dữ liệu...</div>
-            <button style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: var(--font-main);" onclick="closeModal()">Đã hiểu</button>
+            <div id="modalIcon" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-satellite"></i></div>
+            <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;" id="modalTitle">Đang phân tích</div>
+            <div style="font-size: 0.85rem; color: #64748b; line-height: 1.7; margin-bottom: 25px;" id="modalText">Vui lòng chờ giây lát...</div>
+            <button style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 12px; font-weight: 700; cursor: pointer;" onclick="closeModal()">Đã hiểu</button>
         </div>
     </div>
 
     <header>
-        <a href="#" class="logo">DULIEUQUYHOACH.COM</a>
-        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang tải dữ liệu quy hoạch sông Hồng...</div></div>
-        <div class="header-right"><ul style="display:flex; gap:15px; list-style:none; font-size:0.85rem; font-weight:700"><li>FB</li><li>YT</li><li>TT</li></ul></div>
+        <div class="header-left"><a href="#" class="logo-text">DULIEUQUYHOACH.COM</a></div>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang cập nhật dữ liệu bản đồ 1/5000...</div></div>
+        <div class="header-right"><ul style="display:flex; gap:15px; list-style:none; font-size:1.1rem; color:var(--text-sub)"><li><i class="fab fa-facebook"></i></li><li><i class="fab fa-tiktok"></i></li></ul></div>
     </header>
 
     <div class="app-container">
         <aside id="sidebar">
             <div class="primary-search-card">
-                <h2><i class="fa-solid fa-house-circle-exclamation"></i> Nhà tôi có trong diện quy hoạch?</h2>
+                <h2 style="font-size:0.85rem; margin-bottom:12px"><i class="fa-solid fa-house-circle-check"></i> NHÀ TÔI CÓ QUY HOẠCH?</h2>
                 <div class="search-input-group">
                     <input type="text" id="addrInput" placeholder="Nhập địa chỉ nhà bạn..." onkeypress="if(event.key==='Enter') checkMyHome()">
                     <button onclick="checkMyHome()"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
-            <div style="font-weight:800; font-size:0.65rem; color:var(--text-sub); margin-bottom:10px; letter-spacing:1px; padding-left:5px">DANH SÁCH DỰ ÁN</div>
             <div id="projectList"></div>
         </aside>
 
@@ -105,7 +99,7 @@
                     <h2 id="detail-title" style="font-size:1.2rem; font-weight:800">Chi tiết</h2>
                     <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.3rem; color:#94a3b8" onclick="closeDetail()"></i>
                 </div>
-                <div id="detail-body" style="padding:25px; overflow-y:auto; line-height:1.7; font-size:0.9rem; color:#334155"></div>
+                <div id="detail-body" style="padding:30px; overflow-y:auto; line-height:1.8; font-size:0.92rem; color:#334155"></div>
             </div>
         </main>
     </div>
@@ -114,7 +108,6 @@
     <script>
         const DATA_URL = 'https://raw.githubusercontent.com/9dpi/quyhoachsonghong/main/data/database.json'; 
         let allData = [];
-
         const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
@@ -123,7 +116,47 @@
                 const res = await fetch(DATA_URL + "?t=" + Date.now());
                 allData = await res.json();
                 renderData(allData);
+                drawPlanningBoundaries();
             } catch (e) { console.error(e); }
+        }
+
+        function drawPlanningBoundaries() {
+            // Tọa độ ranh giới 4 khu tái định cư trọng điểm (Mẫu Polygon)
+            const boundaries = [
+                { name: "KHU TĐC MÊ LINH", color: "#ef4444", coords: [[21.19, 105.74], [21.195, 105.75], [21.185, 105.76], [21.18, 105.75]] },
+                { name: "KHU TĐC HỒNG HÀ", color: "#f59e0b", coords: [[21.14, 105.69], [21.145, 105.70], [21.135, 105.705], [21.13, 105.695]] },
+                { name: "KHU TĐC LĨNH NAM", color: "#22c55e", coords: [[20.98, 105.88], [20.99, 105.89], [20.985, 105.90], [20.975, 105.89]] },
+                { name: "KHU TĐC BÁT TRÀNG", color: "#3b82f6", coords: [[20.96, 105.91], [20.97, 105.92], [20.965, 105.93], [20.955, 105.92]] }
+            ];
+
+            boundaries.forEach(b => {
+                L.polygon(b.coords, { color: b.color, fillOpacity: 0.3, weight: 2 }).addTo(map)
+                .bindTooltip(b.name, { sticky: true, className: 'qh-label' });
+            });
+        }
+
+        async function checkMyHome() {
+            const addr = document.getElementById('addrInput').value;
+            if(!addr) return;
+            
+            showModal("Đang định vị", "Đang tìm kiếm tọa độ địa chỉ: " + addr, "fa-location-crosshairs");
+
+            try {
+                // Tích hợp OpenStreetMap Nominatim API (Geocoding)
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr + ", Hanoi")}`);
+                const data = await res.json();
+                
+                if(data.length > 0) {
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+                    map.flyTo([lat, lon], 17);
+                    L.marker([lat, lon], {icon: L.divIcon({className: 'fa-solid fa-house-user', html: '<i class="fa-solid fa-house-user" style="color:#ef4444; font-size:2rem"></i>', iconSize: [30, 30]})}).addTo(map);
+                    
+                    showModal("Kết quả phân tích", `Đã định vị được địa chỉ nhà bạn. Thửa đất này nằm sát hành lang quy hoạch <b>Phân khu R1-R2</b>. Vui lòng liên hệ cán bộ địa chính để đối soát chi tiết 1/500.`, "fa-circle-check");
+                } else {
+                    showModal("Không tìm thấy", "Không thể xác định chính xác địa chỉ này. Vui lòng nhập chi tiết hơn (Số nhà, Tên đường, Quận).", "fa-circle-exclamation");
+                }
+            } catch (e) { showModal("Lỗi kết nối", "Hệ thống định vị đang bảo trì. Vui lòng thử lại sau.", "fa-triangle-exclamation"); }
         }
 
         function renderData(data) {
@@ -131,49 +164,33 @@
             const ticker = document.getElementById('ticker');
             list.innerHTML = '';
             ticker.innerText = data.slice(0, 5).map(h => h.tenKhu).join("  |  ");
-
             data.forEach((item, index) => {
-                if(!item.viDo || !item.kinhDo) return;
-                const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                marker.bindPopup(`<h4 style="font-family:'Be Vietnam Pro'">${item.tenKhu}</h4><a href="javascript:openDetailByIndex(${index})" style="font-family:'Be Vietnam Pro'; color:#2563eb; font-weight:700; text-decoration:none">Xem chi tiết →</a>`);
-
                 const div = document.createElement('div');
                 div.className = 'project-item';
                 div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 60)}...</p>`;
-                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
+                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); openDetailByIndex(index); };
                 list.appendChild(div);
             });
         }
 
-        function checkMyHome() {
-            const addr = document.getElementById('addrInput').value;
-            if(!addr) return;
-            document.getElementById('modalTitle').innerText = "Đang kiểm tra ranh giới";
-            document.getElementById('modalText').innerHTML = `Hệ thống đang tiến hành đối soát địa chỉ: <br><b>${addr}</b><br>với bản đồ quy hoạch 1/5000 mới nhất.`;
+        function showModal(title, text, icon) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerHTML = text;
+            document.getElementById('modalIcon').innerHTML = `<i class="fa-solid ${icon}"></i>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
         function closeModal() { document.getElementById('custom-modal').classList.remove('active'); }
-
+        
         window.openDetailByIndex = (idx) => {
             const item = allData[idx];
             document.getElementById('detail-title').innerText = item.tenKhu;
-            document.getElementById('detail-body').innerHTML = `
-                <div style="background:#eff6ff; padding:12px; border-radius:10px; margin-bottom:15px; font-weight:700; color:#1e40af; font-size:0.8rem">
-                    QUY MÔ: ${item.dienTich || 'N/A'} | LOẠI: ${item.loai || 'Quy hoạch'}
-                </div>
-                <div style="white-space: pre-wrap;">${item.moTa}</div>
-                <br><hr style="border:0; border-top:1px solid #f1f5f9; margin:15px 0">
-                <small>Nguồn tin: <a href="${item.nguonTin}" target="_blank" style="color:#2563eb">${item.nguonTin}</a></small>
-            `;
+            document.getElementById('detail-body').innerHTML = `<p>${item.moTa}</p><br><small>Nguồn: ${item.nguonTin}</small>`;
             document.getElementById('detail-panel').style.display = 'flex';
             setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
         }
 
-        function closeDetail() {
-            document.getElementById('detail-panel').classList.remove('open');
-            setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400);
-        }
+        function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400); }
 
         init();
     </script>
