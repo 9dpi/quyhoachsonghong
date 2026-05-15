@@ -1,14 +1,62 @@
 [
   {
     "id": 1,
-    "tenKhu": "Khu đô thị sinh thái Chèm - Bắc Từ Liêm",
-    "viDo": 21.078,
-    "kinhDo": 105.789,
-    "dienTich": "200ha",
-    "moTa": "Dự án quy hoạch phân khu sông Hồng đoạn qua phường Thụy Phương, Liên Mạc, Chèm. Đây là khu vực được định hướng phát triển công viên sinh thái kết hợp các khu dân cư hiện hữu chỉnh trang. Nội dung chi tiết bao gồm việc giải phóng mặt bằng các hộ dân nằm trong hành lang thoát lũ và xây dựng hệ thống công viên cây xanh ven sông mang tính biểu tượng của Thủ đô.",
-    "nguonTin": "https://tuoitre.vn",
-    "ngayCapNhat": "2026-05-15T10:00:00Z",
+    "tenKhu": "Phân khu đô thị sông Hồng R1 - Mê Linh",
+    "viDo": 21.185,
+    "kinhDo": 105.712,
+    "dienTich": "1500ha",
+    "moTa": "Khu vực cửa ngõ phía Bắc, tập trung phát triển các khu du lịch sinh thái rừng ngập mặn và nông nghiệp công nghệ cao kết hợp bảo tồn làng nghề truyền thống.",
+    "nguonTin": "https://baochinhphu.vn",
+    "ngayCapNhat": "2026-05-15T08:00:00Z",
     "loai": "Quy hoạch",
     "isHeadline": "YES"
+  },
+  {
+    "id": 2,
+    "tenKhu": "Dự án Công viên Văn hóa Bãi giữa Sông Hồng",
+    "viDo": 21.045,
+    "kinhDo": 105.858,
+    "dienTich": "300ha",
+    "moTa": "Định hướng trở thành công viên đa chức năng cấp thành phố, bao gồm các khu vui chơi giải trí, quảng trường lễ hội và các tuyến đường dạo bộ ven sông.",
+    "nguonTin": "https://tuoitre.vn",
+    "ngayCapNhat": "2026-05-15T09:00:00Z",
+    "loai": "Dự án",
+    "isHeadline": "YES"
+  },
+  {
+    "id": 3,
+    "tenKhu": "Khu đô thị thông minh Đông Anh ven sông",
+    "viDo": 21.125,
+    "kinhDo": 105.820,
+    "dienTich": "800ha",
+    "moTa": "Phát triển trung tâm tài chính, triển lãm quốc tế kết hợp hệ thống giao thông công cộng hiện đại (TOD) và các tòa nhà chọc trời mang tính biểu tượng.",
+    "nguonTin": "https://vietnamnet.vn",
+    "ngayCapNhat": "2026-05-15T10:30:00Z",
+    "loai": "Dự án",
+    "isHeadline": "NO"
+  },
+  {
+    "id": 4,
+    "tenKhu": "Cảng du lịch quốc tế Chương Dương Độ",
+    "viDo": 21.032,
+    "kinhDo": 105.862,
+    "dienTich": "15ha",
+    "moTa": "Nâng cấp bến tàu khách hiện hữu thành cảng du lịch hiện đại, kết nối các tuyến tham quan sông Hồng và phát triển kinh tế đêm.",
+    "nguonTin": "https://hanoimoi.com.vn",
+    "ngayCapNhat": "2026-05-15T11:00:00Z",
+    "loai": "Quy hoạch",
+    "isHeadline": "NO"
+  },
+  {
+    "id": 5,
+    "tenKhu": "Phân khu đô thị sông Hồng R4 - Hoàng Mai",
+    "viDo": 20.985,
+    "kinhDo": 105.895,
+    "dienTich": "1200ha",
+    "moTa": "Tập trung cải tạo các khu dân cư hiện hữu, xây dựng hệ thống đê kè kiên cố và phát triển hạ tầng kỹ thuật đồng bộ.",
+    "nguonTin": "https://kinhtedothi.vn",
+    "ngayCapNhat": "2026-05-15T12:00:00Z",
+    "loai": "Quy hoạch",
+    "isHeadline": "NO"
   }
 ]

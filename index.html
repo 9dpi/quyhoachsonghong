@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DULIEUQUYHOACH.COM | Live Data</title>
+    <title>DULIEUQUYHOACH.COM | Hệ thống Tra cứu</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,6 +16,7 @@
             --detail-width: 450px;
             --bg-light: #f8fafc;
             --sidebar-bg: #ffffff;
+            --border: rgba(0, 0, 0, 0.05);
             --text-main: #0f172a;
             --text-sub: #64748b;
         }
@@ -25,7 +26,7 @@
 
         header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
         .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-        .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
+        .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; min-height: 35px; display: flex; align-items: center; }
         .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 30s linear infinite; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
@@ -36,7 +37,7 @@
         .project-item:hover { border-color: var(--primary); background: #f0f7ff; }
 
         #main-content { flex-grow: 1; position: relative; }
-        #map { width: 100%; height: 100%; }
+        #map { width: 100%; height: 100%; z-index: 1; }
 
         #detail-panel {
             position: absolute; right: -var(--detail-width); top: 0; bottom: 0;
@@ -48,6 +49,8 @@
         
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        
+        footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 8px 24px; font-size: 0.75rem; color: #94a3b8; text-align: center; }
     </style>
 </head>
 <body>
@@ -59,8 +62,12 @@
 
     <header>
         <div class="logo">DULIEUQUYHOACH.COM</div>
-        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang kết nối kho dữ liệu quy hoạch...</div></div>
-        <div class="header-right"><ul style="display:flex; gap:20px; list-style:none; font-size:0.9rem; font-weight:600; color:var(--text-sub)"><li>Trang chủ</li><li>Bản đồ</li></ul></div>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang kết nối dữ liệu trực tuyến...</div></div>
+        <div class="header-right">
+            <ul style="display:flex; gap:15px; list-style:none; font-size:0.85rem; font-weight:700; color:var(--text-sub)">
+                <li>TRANG CHỦ</li><li>LIÊN HỆ</li>
+            </ul>
+        </div>
     </header>
 
     <div class="app-container">
@@ -77,34 +84,44 @@
         </main>
     </div>
 
+    <footer><b>Miễn trừ trách nhiệm:</b> Dữ liệu tổng hợp mang tính chất tham khảo.</footer>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // SỬ DỤNG LINK RAW GITHUB ĐỂ ĐẢM BẢO KẾT NỐI KHÔNG BỊ GIÁN ĐOẠN
         const DATA_URL = 'https://raw.githubusercontent.com/9dpi/quyhoachsonghong/main/data/database.json'; 
         let allData = [];
 
         const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
         async function init() {
+            // Tự động ẩn loader sau 5 giây nếu không tải được dữ liệu
+            setTimeout(hideLoader, 5000);
+
             try {
-                // Thêm tham số timestamp để tránh trình duyệt cache file cũ
                 const res = await fetch(DATA_URL + "?t=" + Date.now());
-                if (!res.ok) throw new Error("File not found");
+                if (!res.ok) throw new Error("Database not ready");
                 allData = await res.json();
-                renderData(allData);
-                document.getElementById('loader').style.display = 'none';
+                
+                if (Array.isArray(allData) && allData.length > 0) {
+                    renderData(allData);
+                } else {
+                    document.getElementById('ticker').innerText = "Hệ thống đang cập nhật dữ liệu mới...";
+                }
+                hideLoader();
             } catch (e) { 
                 console.error("Lỗi tải JSON:", e);
-                // Nếu lỗi link GitHub, thử tải file local dự phòng
+                // Cố gắng tải từ file local nếu GitHub lỗi
                 try {
                     const fallbackRes = await fetch('./data/database.json');
                     allData = await fallbackRes.json();
                     renderData(allData);
-                    document.getElementById('loader').style.display = 'none';
-                } catch (err) {
-                    document.getElementById('ticker').innerText = "Lỗi kết nối database. Vui lòng kiểm tra link GitHub!";
-                }
+                } catch (err) {}
+                hideLoader();
             }
         }
 
@@ -114,20 +131,16 @@
             list.innerHTML = '';
             
             const headlines = data.filter(i => i.isHeadline === "YES");
-            if(headlines.length > 0) {
-                ticker.innerText = headlines.map(h => h.tenKhu).join("  |  ");
-                ticker.onclick = () => openDetail(headlines[0]);
-            } else {
-                ticker.innerText = data.slice(0, 5).map(h => h.tenKhu).join("  |  ");
-            }
+            ticker.innerText = (headlines.length > 0 ? headlines : data.slice(0, 5)).map(h => h.tenKhu).join("  |  ");
 
             data.forEach(item => {
+                if(!item.viDo || !item.kinhDo) return;
                 const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
                 marker.bindPopup(`<b>${item.tenKhu}</b>`).on('click', () => openDetail(item));
 
                 const div = document.createElement('div');
                 div.className = 'project-item';
-                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 100)}...</p>`;
+                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 80)}...</p>`;
                 div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); openDetail(item); };
                 list.appendChild(div);
             });
@@ -136,9 +149,9 @@
         function openDetail(item) {
             document.getElementById('detail-title').innerText = item.tenKhu;
             document.getElementById('detail-body').innerHTML = `
-                <p style="font-weight:600; color:var(--primary); margin-bottom:10px">${item.loai || 'Quy hoạch'} | ${item.dienTich || 'N/A'}</p>
+                <p style="font-weight:600; color:var(--primary); margin-bottom:10px">${item.loai || 'Tin tức'} | ${item.dienTich || 'N/A'}</p>
                 <div style="white-space: pre-wrap;">${item.moTa}</div>
-                <br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">Xem bài viết gốc</a></small>
+                <br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">Xem nguồn tin gốc</a></small>
             `;
             const panel = document.getElementById('detail-panel');
             panel.style.display = 'flex';

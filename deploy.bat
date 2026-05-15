@@ -2,39 +2,52 @@
 setlocal enabledelayedexpansion
 
 echo ======================================================
-echo   DEPLOY QUY HOACH SONG HONG TO GITHUB
+echo   GITHUB DEPLOYMENT ENGINE v2.2
 echo ======================================================
 
-:: Check if .git directory exists
-if not exist ".git" (
-    echo [*] Initializing Git...
-    git init
+:: 1. Kiểm tra Git
+git --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [!] LOI: Git chua duoc cai dat.
+    pause
+    exit /b
 )
 
-:: Add all files
-echo [*] Adding files...
-git add .
-
-:: Commit changes
-set /p commit_msg="Enter commit message (default: Update data): "
-if "!commit_msg!"=="" set commit_msg=Update data
-git commit -m "!commit_msg!"
-
-:: Set branch to main
-git branch -M main
-
-:: Check if remote 'origin' exists
-git remote get-url origin >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [*] Adding remote origin...
+:: 2. Khởi tạo và cấu hình (nếu cần)
+if not exist ".git" (
+    echo [*] Khoi tao kho Git moi...
+    git init
     git remote add origin https://github.com/9dpi/quyhoachsonghong.git
 )
 
-:: Push to GitHub
-echo [*] Pushing to GitHub...
-git push -u origin main
+:: Đảm bảo đã có email/name để commit không lỗi
+git config user.email "admin@dulieuquyhoach.com"
+git config user.name "9dpi-Admin"
+
+:: 3. Đồng bộ dữ liệu cũ từ GitHub về trước
+echo [*] Dang dong bo du lieu tu GitHub...
+git fetch origin main
+git merge origin/main --allow-unrelated-histories -m "Sync from remote"
+
+:: 4. Chuẩn bị bản cập nhật mới
+echo [*] Dang chuan bi ban cap nhat...
+git add .
+
+set /p msg="Nhap ghi chu cap nhat (Enter de bo qua): "
+if "%msg%"=="" set msg="Update Dashboard and Data"
+
+git commit -m "%msg%"
+
+:: 5. Đẩy lên GitHub
+echo [*] Dang day len GitHub...
+git push origin main
+
+if %errorlevel% neq 0 (
+    echo [!] Push bi tu choi. Dang thu giai phap ep buoc...
+    git push origin main --force
+)
 
 echo ======================================================
-echo   DONE! Your app should be live soon.
+echo   XONG! Website se live sau vai phut.
 echo ======================================================
 pause
