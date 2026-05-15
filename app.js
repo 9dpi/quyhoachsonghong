@@ -310,7 +310,7 @@ function renderFAQ(data) {
     list.innerHTML = data.map(f => `
         <div class="faq-item" onclick="this.classList.toggle('open')">
             <div class="faq-q" style="font-family:'Inter'">${f.q || "Câu hỏi đang cập nhật"}</div>
-            <div class="faq-a" style="font-size:0.75rem; line-height:1.6; font-family:'Inter'">${f.a || "Câu trả lời đang cập nhật"}</div>
+            <div class="faq-a">${f.a || "Câu trả lời đang cập nhật"}</div>
         </div>
     `).join('');
 }

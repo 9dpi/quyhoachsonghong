@@ -268,3 +268,236 @@ Nhập 4 dự án (Mê Linh, Lĩnh Nam, Hồng Hà, Bát Tràng)
 Nhập bảng giá đất cơ bản cho 4 khu vực
 
 Đối chiếu tiến độ hiện có vào sheet TienDoTheoDuAn
+
+--
+Format câu trả lời tra cứu cho khu vực / tuyến đường
+Khi người dùng hỏi dạng "Khu vực / đường / phường X có bị quy hoạch không?" (thay vì một địa chỉ cụ thể), câu trả lời cần được định dạng khác đi, mang tính "tổng quan lãnh thổ" hơn là "cá nhân hóa".
+
+Dưới đây là format chuẩn cho câu trả lời dạng khu vực, với ví dụ cụ thể cho "đường Hồng Hà" (thuộc phường Hồng Hà, quận Tây Hồ, là một trong 4 khu tái định cư trọng điểm).
+
+1. Cấu trúc JSON trả về từ API
+json
+{
+  "status": "success",
+  "query_type": "area",  // phân biệt với "address"
+  "query_input": "đường Hồng Hà",
+  "normalized_query": "Đường Hồng Hà, Phường Hồng Hà, Quận Tây Hồ",
+  
+  "summary": {
+    "is_affected": true,
+    "level": "full",  // full: toàn bộ / partial: một phần / buffer: giáp ranh / none: không
+    "confidence": "high"  // high: đã xác nhận / medium: có thể / low: chưa rõ
+  },
+  
+  "area_info": {
+    "type": "road",
+    "name": "Đường Hồng Hà",
+    "ward": "Phường Hồng Hà",
+    "district": "Quận Tây Hồ",
+    "total_length_km": 1.8,
+    "total_households": 320
+  },
+  
+  "projects": [
+    {
+      "project_id": "TD_HH_01",
+      "project_name": "Khu tái định cư Hồng Hà",
+      "project_type": "Tái định cư",
+      "status": "Đã phê duyệt",
+      "area_ha": 17,
+      "investor": "Liên danh Đại Quang Minh - THACO - Hòa Phát",
+      "key_milestones": [
+        {
+          "date": "2026-05-10",
+          "event": "Họp dân phổ biến phương án"
+        },
+        {
+          "date": "2026-06-01",
+          "event": "Dự kiến niêm yết phương án bồi thường"
+        }
+      ]
+    }
+  ],
+  
+  "impact_zones": [
+    {
+      "zone_name": "Toàn bộ đường Hồng Hà",
+      "impact_level": "full",
+      "description": "Toàn bộ các hộ dân mặt đường Hồng Hà nằm trong diện giải tỏa phục vụ khu tái định cư"
+    },
+    {
+      "zone_name": "Các ngách, ngõ hẻm",
+      "impact_level": "partial",
+      "description": "Các ngõ phía nam đường (giáp đê) bị ảnh hưởng một phần, cần kiểm tra từng số nhà"
+    }
+  ],
+  
+  "compensation": {
+    "has_info": true,
+    "base_price_per_m2": 18000000,
+    "coefficient_k": 1.2,
+    "estimated_price_per_m2": 21600000,
+    "legal_basis": "Quyết định số 30/2024/QĐ-UBND + Thông báo của UBND quận Tây Hồ",
+    "note": "Áp dụng cho đất ở mặt đường. Đất trong ngõ có thể có hệ số thấp hơn."
+  },
+  
+  "action_suggestion": "Nếu nhà bạn nằm trên đường Hồng Hà, rất có thể thuộc diện giải tỏa. Hãy nhập số nhà cụ thể để tra cứu chính xác.",
+  
+  "sources": [
+    {
+      "title": "Hà Nội: Phê duyệt 4 khu tái định cư ven sông Hồng",
+      "url": "https://tuoitre.vn/...",
+      "date": "2026-05-11"
+    }
+  ],
+  
+  "last_updated": "2026-05-20"
+}
+2. Giao diện hiển thị cho người dùng (HTML)
+Từ JSON trên, front-end sẽ render ra giao diện như sau:
+
+html
+<div class="result-card area-result">
+  
+  <!-- Header: Kết luận nổi bật -->
+  <div class="result-header warning">
+    ⚠️ TOÀN BỘ ĐƯỜNG HỒNG HÀ NẰM TRONG DIỆN QUY HOẠCH
+  </div>
+  
+  <!-- Thông tin khu vực -->
+  <div class="area-info">
+    <h3>📍 Đường Hồng Hà, Phường Hồng Hà, Quận Tây Hồ</h3>
+    <p>📏 Chiều dài: 1.8 km | 🏘️ Khoảng 320 hộ dân</p>
+  </div>
+  
+  <!-- Dự án liên quan -->
+  <div class="project-info">
+    <h4>📋 DỰ ÁN LIÊN QUAN</h4>
+    <div class="project-card">
+      <strong>Khu tái định cư Hồng Hà (17 ha)</strong>
+      <p>Chủ đầu tư: Liên danh Đại Quang Minh - THACO - Hòa Phát</p>
+      <div class="milestone-preview">
+        <span class="date">📅 10/05/2026:</span> Họp dân phổ biến phương án<br>
+        <span class="date">📅 01/06/2026:</span> Dự kiến niêm yết phương án bồi thường
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bảng phân vùng ảnh hưởng -->
+  <div class="impact-zones">
+    <h4>🗺️ PHÂN VÙNG ẢNH HƯỞNG</h4>
+    <table>
+      <tr>
+        <th>Khu vực</th>
+        <th>Mức độ</th>
+        <th>Ghi chú</th>
+      </tr>
+      <tr>
+        <td>Toàn bộ mặt đường Hồng Hà</td>
+        <td><span class="badge full">Giải tỏa toàn bộ</span></td>
+        <td>100% số nhà</td>
+      </tr>
+      <tr>
+        <td>Các ngách, ngõ hẻm phía nam</td>
+        <td><span class="badge partial">Giải tỏa một phần</span></td>
+        <td>Cần tra cứu số nhà cụ thể</td>
+      </tr>
+    </table>
+  </div>
+  
+  <!-- Thông tin đền bù -->
+  <div class="compensation-info">
+    <h4>💰 THÔNG TIN ĐỀN BÙ (THAM KHẢO)</h4>
+    <p>💰 Đơn giá đất: <strong>18.000.000 đ/m²</strong></p>
+    <p>📈 Hệ số K: <strong>1.2</strong></p>
+    <p>💵 Ước tính: <strong>21.600.000 đ/m²</strong></p>
+    <p class="note">⚠️ Áp dụng cho đất ở mặt đường. Đất trong ngõ có thể có hệ số thấp hơn.</p>
+    <p class="legal">📜 Căn cứ: Quyết định 30/2024/QĐ-UBND + Thông báo UBND quận Tây Hồ</p>
+  </div>
+  
+  <!-- Call to Action -->
+  <div class="cta">
+    <p>🔍 <strong>Muốn biết chính xác nhà mình có bị ảnh hưởng không?</strong></p>
+    <input type="text" id="specific-address" placeholder="Nhập số nhà cụ thể trên đường Hồng Hà">
+    <button onclick="searchSpecificAddress()">TRA CỨU SỐ NHÀ</button>
+  </div>
+  
+  <!-- Nguồn tin -->
+  <div class="sources">
+    <details>
+      <summary>📎 Nguồn thông tin</summary>
+      <ul>
+        <li><a href="...">Hà Nội: Phê duyệt 4 khu tái định cư ven sông Hồng (Tuổi Trẻ, 11/05/2026)</a></li>
+      </ul>
+    </details>
+  </div>
+  
+  <div class="last-updated">🕒 Cập nhật: 20/05/2026</div>
+</div>
+3. Bảng phân cấp mức độ ảnh hưởng (Badge)
+Mức độ	Badge	Màu sắc	Ý nghĩa
+full	Giải tỏa toàn bộ	🔴 Đỏ	100% diện tích bị thu hồi
+partial	Giải tỏa một phần	🟠 Cam	Một số hộ/lô đất bị ảnh hưởng
+buffer	Khu vực giáp ranh	🟡 Vàng	Có thể ảnh hưởng, cần theo dõi
+none	Không bị ảnh hưởng	🟢 Xanh	An toàn
+pending	Chưa có thông tin	⚪ Xám	Đang cập nhật
+4. Logic xử lý trong Apps Script cho query dạng area
+javascript
+function handleAreaQuery(query) {
+  // Bước 1: Chuẩn hóa và xác định loại query (đường/phường/quận)
+  const normalized = normalizeAreaQuery(query);
+  // normalized = { type: "road", name: "Hồng Hà", ward: "Hồng Hà", district: "Tây Hồ" }
+  
+  // Bước 2: Tra trong database
+  // - Sheet DanhSachQuyHoach: tìm tất cả địa chỉ thuộc phường Hồng Hà
+  // - Sheet ThongTinDuAn: lấy dự án liên quan (TD_HH_01)
+  // - Sheet TienDoTheoDuAn: lấy các mốc tiến độ của dự án đó
+  
+  // Bước 3: Xác định mức độ ảnh hưởng tổng thể
+  // Nếu >80% địa chỉ trong phường có status='affected' → full
+  // Nếu 20-80% → partial
+  // Nếu <20% nhưng có dự án → buffer
+  
+  // Bước 4: Xây dựng phân vùng ảnh hưởng chi tiết (nếu có dữ liệu)
+  // Ví dụ: từ thông báo của UBND: "giải tỏa toàn bộ mặt đường, ngõ sâu không ảnh hưởng"
+  
+  // Bước 5: Trả về JSON theo format trên
+}
+5. Ví dụ các kết quả trả về cho các trường hợp khác
+TH1: Không có thông tin (pending)
+json
+{
+  "status": "success",
+  "query_type": "area",
+  "query_input": "đường Nguyễn Trãi, Thanh Xuân",
+  "summary": {
+    "is_affected": null,
+    "level": "pending",
+    "confidence": "low"
+  },
+  "message": "Đường Nguyễn Trãi chưa có trong cơ sở dữ liệu quy hoạch của chúng tôi.",
+  "action_suggestion": "Hãy gửi yêu cầu tra cứu để chúng tôi ưu tiên cập nhật.",
+  "report_url": "/yeu-cau?address=đường Nguyễn Trãi, Thanh Xuân"
+}
+TH2: Giáp ranh (buffer)
+json
+{
+  "summary": {
+    "is_affected": false,
+    "level": "buffer",
+    "confidence": "medium"
+  },
+  "message": "Đường Lạc Long Quân không nằm trong diện giải tỏa trực tiếp, nhưng nằm sát ranh giới dự án (cách 200m). Các dự án lân cận có thể ảnh hưởng đến giá trị bất động sản.",
+  "buffer_zones": [
+    {
+      "direction": "Phía đông đường (giáp sông Hồng)",
+      "distance_to_project_m": 200,
+      "note": "Các ngõ hẻm phía đông có thể bị ảnh hưởng gián tiếp"
+    }
+  ]
+}
+✅ Tóm tắt
+Query type	Format trả về	Đặc điểm
+Địa chỉ cụ thể (165 phố Huế)	Chi tiết cá nhân: có/không, dự án, đền bù	Chính xác đến từng hộ
+Khu vực / Đường (đường Hồng Hà)	Tổng quan lãnh thổ: phân vùng, % ảnh hưởng, + CTA để tra số nhà	Mang tính "cảnh báo vùng"
+Chưa có dữ liệu	Form gửi yêu cầu, hứa hẹn cập nhật	Biến người dùng thành cộng tác viên
