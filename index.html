@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DULIEUQUYHOACH.COM | Hệ thống Tra cứu</title>
     
+    <!-- SEO Meta Tags -->
+    <title>DULIEUQUYHOACH.COM | Tra cứu Quy hoạch Sông Hồng Chính xác nhất</title>
+    <meta name="description" content="Hệ thống tra cứu thông tin quy hoạch phân khu đô thị Sông Hồng, dữ liệu 1/5000, cập nhật tin tức quy hoạch mới nhất từ nguồn chính thống. Tra cứu ranh giới, dự án, khu tái định cư.">
+    <meta name="keywords" content="quy hoạch sông hồng, tra cứu quy hoạch hanoi, bản đồ quy hoạch sông hồng, khu tái định cư mê linh, quy hoạch 11400ha">
+    <link rel="canonical" href="https://dulieuquyhoach.com" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Tra cứu Quy hoạch Sông Hồng - DULIEUQUYHOACH.COM">
+    <meta property="og:description" content="Xem chi tiết các dự án và phân khu quy hoạch ven sông Hồng ngay trên bản đồ tương tác.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/9dpi/quyhoachsonghong/main/assets/thumb.jpg">
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,7 +27,6 @@
             --detail-width: 450px;
             --bg-light: #f8fafc;
             --sidebar-bg: #ffffff;
-            --border: rgba(0, 0, 0, 0.05);
             --text-main: #0f172a;
             --text-sub: #64748b;
         }
@@ -25,19 +35,37 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
         header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
-        .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-        .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; min-height: 35px; display: flex; align-items: center; }
-        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 30s linear infinite; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
+        .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        
+        .header-center { flex-grow: 1; max-width: 40%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
+        .header-right .social-menu { display: flex; gap: 15px; list-style: none; align-items: center; }
+        .social-menu li a { color: var(--text-sub); font-size: 1.2rem; transition: 0.2s; }
+        .social-menu li a:hover { color: var(--primary); transform: scale(1.1); }
+
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
+        
         #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .search-box { position: relative; margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; transition: 0.2s; font-size: 0.9rem; }
+        .search-box input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        .search-box i { position: absolute; left: 15px; top: 15px; color: var(--text-sub); }
+
         #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .project-item { background: #ffffff; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .project-item:hover { border-color: var(--primary); background: #f0f7ff; }
 
         #main-content { flex-grow: 1; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
+
+        /* Floating Search Panel "Nhà tôi ở đâu?" */
+        .floating-search {
+            position: absolute; top: 20px; left: 20px; z-index: 2000;
+            background: white; padding: 10px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 300px;
+        }
 
         #detail-panel {
             position: absolute; right: -var(--detail-width); top: 0; bottom: 0;
@@ -51,30 +79,46 @@
         .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         
         footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 8px 24px; font-size: 0.75rem; color: #94a3b8; text-align: center; }
-
-        /* Style cho nội dung Popup để dễ click */
-        .popup-click-area { cursor: pointer; padding: 5px; }
-        .popup-click-area h4 { color: var(--primary); margin-bottom: 5px; font-size: 1rem; }
-        .popup-click-area p { font-size: 0.85rem; margin-bottom: 5px; color: #64748b; }
-        .popup-click-area b { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="margin-top:15px; font-weight: 600; color:var(--text-sub)">Cập nhật thông tin quy hoạch...</p>
+        <p style="margin-top:15px; font-weight: 600; color:var(--text-sub)">Đang tối ưu dữ liệu quy hoạch...</p>
     </div>
 
     <header>
-        <div class="logo">DULIEUQUYHOACH.COM</div>
-        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang kết nối dữ liệu trực tuyến...</div></div>
-        <div class="header-right"><ul style="display:flex; gap:15px; list-style:none; font-size:0.85rem; font-weight:700; color:var(--text-sub)"><li>TRANG CHỦ</li><li>LIÊN HỆ</li></ul></div>
+        <a href="/" class="logo">DULIEUQUYHOACH.COM</a>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang cập nhật dữ liệu quy hoạch sông Hồng mới nhất...</div></div>
+        <div class="header-right">
+            <ul class="social-menu">
+                <li><a href="#" title="Facebook"><i class="fab fa-facebook"></i></a></li>
+                <li><a href="#" title="Tiktok"><i class="fab fa-tiktok"></i></a></li>
+                <li><a href="#" title="Youtube"><i class="fab fa-youtube"></i></a></li>
+                <li style="margin-left:10px; padding-left:15px; border-left:1px solid #e2e8f0; font-size:0.85rem; font-weight:700">TRA CỨU</li>
+            </ul>
+        </div>
     </header>
 
     <div class="app-container">
-        <aside id="sidebar"><div id="projectList"></div></aside>
+        <aside id="sidebar">
+            <h1 style="font-size:1.1rem; margin-bottom:15px">Bản đồ Quy hoạch Sông Hồng</h1>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Tìm dự án, khu tái định cư...">
+            </div>
+            <div id="projectList"></div>
+        </aside>
+
         <main id="main-content">
+            <div class="floating-search">
+                <p style="font-size:0.75rem; font-weight:700; color:var(--text-sub); margin-bottom:5px">NHÀ TÔI Ở ĐÂU?</p>
+                <div style="display:flex; gap:5px">
+                    <input type="text" id="addrSearch" placeholder="Nhập địa chỉ nhà bạn..." style="flex-grow:1; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px; font-size:0.85rem">
+                    <button onclick="searchAddress()" style="background:var(--primary); color:white; border:none; border-radius:6px; padding:0 12px; cursor:pointer"><i class="fa-solid fa-location-crosshairs"></i></button>
+                </div>
+            </div>
             <div id="map"></div>
             <div id="detail-panel">
                 <div style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
@@ -86,7 +130,7 @@
         </main>
     </div>
 
-    <footer><b>Miễn trừ trách nhiệm:</b> Dữ liệu tổng hợp mang tính chất tham khảo.</footer>
+    <footer><b>Miễn trừ trách nhiệm:</b> Dữ liệu mang tính chất tham khảo. Người dùng cần đối soát với văn bản chính thức.</footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -102,10 +146,7 @@
                 allData = await res.json();
                 renderData(allData);
                 document.getElementById('loader').style.display = 'none';
-            } catch (e) { 
-                console.error("Lỗi tải dữ liệu:", e);
-                document.getElementById('loader').style.display = 'none';
-            }
+            } catch (e) { document.getElementById('loader').style.display = 'none'; }
         }
 
         function renderData(data) {
@@ -113,24 +154,12 @@
             const ticker = document.getElementById('ticker');
             list.innerHTML = '';
             
-            const headlines = data.filter(i => i.isHeadline === "YES");
-            ticker.innerText = (headlines.length > 0 ? headlines : data.slice(0, 5)).map(h => h.tenKhu).join("  |  ");
-            ticker.onclick = () => openDetail(headlines[0] || data[0]);
+            ticker.innerText = data.slice(0, 5).map(h => h.tenKhu).join("  |  ");
 
             data.forEach((item, index) => {
                 if(!item.viDo || !item.kinhDo) return;
-                
                 const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                
-                // Sử dụng HTML String cho Popup để tránh lỗi DOM
-                const popupHTML = `
-                    <div class="popup-click-area" onclick="openDetailByIndex(${index})">
-                        <h4>${item.tenKhu}</h4>
-                        <p>${item.moTa.substring(0, 80)}...</p>
-                        <b>Bấm để xem chi tiết →</b>
-                    </div>
-                `;
-                marker.bindPopup(popupHTML);
+                marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:openDetailByIndex(${index})">Xem chi tiết</a>`);
 
                 const div = document.createElement('div');
                 div.className = 'project-item';
@@ -140,28 +169,28 @@
             });
         }
 
-        // Hàm hỗ trợ mở detail qua index để ổn định hơn
-        window.openDetailByIndex = function(index) {
-            openDetail(allData[index]);
+        function searchAddress() {
+            const addr = document.getElementById('addrSearch').value;
+            alert("Đang kiểm tra ranh giới quy hoạch cho địa chỉ: " + addr + "\nTính năng đang được tích hợp dữ liệu 1/5000...");
         }
 
-        function openDetail(item) {
-            if(!item) return;
+        window.openDetailByIndex = (idx) => {
+            const item = allData[idx];
             document.getElementById('detail-title').innerText = item.tenKhu;
-            document.getElementById('detail-body').innerHTML = `
-                <p style="font-weight:600; color:var(--primary); margin-bottom:10px">${item.loai || 'Quy hoạch'} | ${item.dienTich || 'N/A'}</p>
-                <div style="white-space: pre-wrap;">${item.moTa}</div>
-                <br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">Xem nguồn tin gốc</a></small>
-            `;
-            const panel = document.getElementById('detail-panel');
-            panel.style.display = 'flex';
-            setTimeout(() => panel.classList.add('open'), 10);
+            document.getElementById('detail-body').innerHTML = `<p>${item.moTa}</p><br><small>Nguồn: ${item.nguonTin}</small>`;
+            document.getElementById('detail-panel').style.display = 'flex';
+            setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
         }
 
         function closeDetail() {
-            const panel = document.getElementById('detail-panel');
-            panel.classList.remove('open');
-            setTimeout(() => panel.style.display = 'none', 400);
+            document.getElementById('detail-panel').classList.remove('open');
+            setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400);
+        }
+
+        document.getElementById('searchInput').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = allData.filter(i => i.tenKhu.toLowerCase().includes(val));
+            renderData(filtered);
         }
 
         init();
