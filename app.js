@@ -16,7 +16,7 @@ let landPriceData = [];
 let progressData = [];
 let homeMarker = null;
 
-const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
+const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
 async function init() {
