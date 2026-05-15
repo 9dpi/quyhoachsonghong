@@ -3,269 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bản đồ Quy hoạch Sông Hồng - Hà Nội</title>
-    <meta name="description" content="Bản đồ tương tác các dự án quy hoạch và giải phóng mặt bằng ven sông Hồng, Hà Nội. Tra cứu thông tin quy hoạch minh bạch.">
+    <title>Quy Hoạch Sông Hồng | Hệ thống Tra cứu</title>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         :root {
             --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-dark: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.8);
-            --text-light: #f8fafc;
-            --accent: #38bdf8;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --sidebar-width: 360px;
+            --bg-light: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --glass: rgba(255, 255, 255, 0.9);
+            --border: rgba(0, 0, 0, 0.05);
+            --text-main: #0f172a;
+            --text-sub: #64748b;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            height: 100vh;
-            overflow: hidden;
+        /* Sidebar Light Style */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            z-index: 2000;
             display: flex;
             flex-direction: column;
+            padding: 24px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.02);
         }
 
-        header {
-            padding: 1.5rem 2rem;
-            background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .logo h1 { 
+            font-family: 'Outfit'; font-size: 1.6rem; font-weight: 800;
+            color: var(--primary); margin-bottom: 30px; 
+            letter-spacing: -1px;
         }
 
-        h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #60a5fa, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .stat-card { 
+            background: #f1f5f9; padding: 15px; border-radius: 16px; 
+            border: 1px solid transparent; transition: 0.3s;
+        }
+        .stat-card:hover { background: #e2e8f0; border-color: var(--primary); }
+        .stat-card span { font-size: 0.7rem; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
+        .stat-card div { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 700; margin-top: 5px; color: var(--text-main); }
+
+        .list-header { 
+            font-size: 0.8rem; font-weight: 700; color: var(--text-sub); 
+            text-transform: uppercase; margin-bottom: 15px; display: flex; justify-content: space-between; 
+            letter-spacing: 1px;
         }
 
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--glass);
-            padding: 0.5rem 1rem;
-            border-radius: 99px;
-            font-size: 0.8rem;
-            border: 1px solid var(--glass-border);
+        #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .project-item { 
+            background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #f1f5f9;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .project-item:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-color: var(--primary); 
+        }
+        .project-item h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+        .project-item p { font-size: 0.75rem; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+
+        /* Main Content & Map */
+        #main-content { flex-grow: 1; position: relative; background: #e2e8f0; }
+        #map { width: 100%; height: 100%; }
+
+        .search-overlay {
+            position: absolute; top: 20px; left: 20px; z-index: 1000;
+            width: 420px; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.08));
+        }
+        .search-box {
+            background: #ffffff; padding: 14px 22px; border-radius: 16px;
+            border: 1px solid #ffffff; display: flex; align-items: center; gap: 14px;
+        }
+        .search-box input { 
+            background: transparent; border: none; color: var(--text-main); 
+            width: 100%; outline: none; font-size: 0.95rem; font-weight: 500;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #22c55e;
-            animation: pulse 2s infinite;
+        /* Popup Light Style */
+        .leaflet-popup-content-wrapper { 
+            background: #ffffff !important; color: var(--text-main) !important; 
+            border-radius: 16px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
+            padding: 0 !important;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
+        .leaflet-popup-content { margin: 0 !important; width: 300px !important; }
+        .popup-header { 
+            background: var(--primary); padding: 18px; border-radius: 16px 16px 0 0; color: white;
         }
-
-        #map {
-            flex-grow: 1;
-            width: 100%;
-            z-index: 1;
+        .popup-header h3 { font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; }
+        .popup-body { padding: 20px; font-size: 0.9rem; line-height: 1.6; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        
+        #loader { 
+            position: fixed; inset: 0; background: #ffffff; z-index: 9999; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
         }
-
-        /* Custom Leaflet Styling */
-        .leaflet-container {
-            background: #1e293b !important;
+        .spinner { 
+            width: 50px; height: 50px; border: 4px solid #f1f5f9; 
+            border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; 
         }
-
-        .custom-popup .leaflet-popup-content-wrapper {
-            background: var(--card-bg);
-            color: var(--text-light);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 0.5rem;
-        }
-
-        .custom-popup .leaflet-popup-tip {
-            background: var(--card-bg);
-        }
-
-        .popup-content h3 {
-            font-family: 'Outfit', sans-serif;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-        }
-
-        .popup-content p {
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-            opacity: 0.9;
-        }
-
-        .popup-link {
-            display: inline-block;
-            margin-top: 0.75rem;
-            color: #38bdf8;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .popup-link:hover {
-            color: #60a5fa;
-            transform: translateX(4px);
-        }
-
-        #loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            text-align: center;
-        }
-
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: var(--primary);
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 0.75rem;
-                text-align: center;
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <h1>QUYHOACHSONGHONG.VN</h1>
-        </div>
-        <div class="status-badge">
-            <div class="status-dot"></div>
-            <span>Dữ liệu cập nhật tự động bởi AI Agent</span>
-        </div>
-    </header>
-
-    <div id="loading">
-        <span class="loader"></span>
-        <p>Đang tải dữ liệu quy hoạch...</p>
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; font-weight: 600; color: var(--text-sub);">Đang tải dữ liệu quy hoạch...</p>
     </div>
 
-    <div id="map"></div>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    
-    <script>
-        // Configuration
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec';
+    <aside id="sidebar">
+        <div class="logo"><h1>SONGHONG.MAP</h1></div>
         
-        // Initialize Map
-        const map = L.map('map').setView([21.0285, 105.8542], 12); // Center of Hanoi
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>DỰ ÁN ĐANG THEO DÕI</span>
+                <div id="countProjects">0</div>
+            </div>
+            <div class="stat-card">
+                <span>QUY MÔ TỔNG CỘNG</span>
+                <div id="totalArea">0 ha</div>
+            </div>
+        </div>
 
-        // Dark Mode Map Tiles
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 20
+        <div class="list-header">
+            <span>Danh sách dự án</span>
+            <i class="fa-solid fa-arrow-down-short-wide"></i>
+        </div>
+
+        <div id="projectList">
+            <!-- Items injected by JS -->
+        </div>
+    </aside>
+
+    <main id="main-content">
+        <div class="search-overlay">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass" style="color: var(--primary)"></i>
+                <input type="text" id="searchInput" placeholder="Tra cứu quy hoạch, địa điểm...">
+            </div>
+        </div>
+        <div id="map"></div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec';
+        let markers = [];
+
+        // Light Theme Map Tiles (Voyager)
+        const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(map);
 
-        // Fetch Data from Google Apps Script
-        async function loadPlanningData() {
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        async function init() {
             try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
+                const res = await fetch(SCRIPT_URL);
+                const data = await res.json();
                 
-                document.getElementById('loading').style.display = 'none';
-                
-                if (data && data.length > 0) {
-                    data.forEach(item => {
-                        if (item.viDo && item.kinhDo) {
-                            const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                            
-                            let popupHtml = `<div class="popup-content">`;
-                            popupHtml += `<h3>${item.tenKhu || 'Dự án chưa đặt tên'}</h3>`;
-                            
-                            // Dynamically add fields from JSON
-                            Object.keys(item).forEach(key => {
-                                if (!['viDo', 'kinhDo', 'tenKhu', 'nguonTin'].includes(key) && item[key]) {
-                                    popupHtml += `<p><strong>${key}:</strong> ${item[key]}</p>`;
-                                }
-                            });
+                // Update Stats
+                document.getElementById('countProjects').innerText = data.length;
+                let area = 0;
+                data.forEach(item => {
+                    if(item.dienTich) area += parseFloat(item.dienTich) || 0;
+                });
+                document.getElementById('totalArea').innerText = area + " ha";
 
-                            if (item.nguonTin) {
-                                popupHtml += `<a href="${item.nguonTin}" target="_blank" class="popup-link">Xem nguồn tin gốc →</a>`;
-                            }
-                            
-                            popupHtml += `</div>`;
-                            
-                            marker.bindPopup(popupHtml, {
-                                className: 'custom-popup'
-                            });
-                        }
-                    });
+                const list = document.getElementById('projectList');
+                list.innerHTML = '';
 
-                    // Optional: Fit map to markers
-                    const group = new L.featureGroup(data.filter(i => i.viDo && i.kinhDo).map(i => L.marker([i.viDo, i.kinhDo])));
-                    if (group.getLayers().length > 0) {
-                        map.fitBounds(group.getBounds().pad(0.1));
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('loading').innerHTML = '<p style="color: #ef4444;">Không thể tải dữ liệu. Vui lòng thử lại sau.</p>';
-            }
+                data.forEach(item => {
+                    if(!item.viDo || !item.kinhDo) return;
+
+                    const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
+                    
+                    const popupHtml = `
+                        <div class="popup-header"><h3>${item.tenKhu}</h3></div>
+                        <div class="popup-body">
+                            <p><b>Quy mô:</b> ${item.dienTich || 'N/A'}</p>
+                            <p><b>Loại:</b> ${item.loai || 'Quy hoạch'}</p>
+                            <hr style="margin:12px 0; border:0; border-top:1px solid #eee">
+                            <p style="color:#64748b">${item.moTa || 'Đang cập nhật chi tiết...'}</p>
+                        </div>
+                    `;
+                    marker.bindPopup(popupHtml);
+                    markers.push({ name: item.tenKhu.toLowerCase(), marker: marker });
+
+                    const div = document.createElement('div');
+                    div.className = 'project-item';
+                    div.innerHTML = `
+                        <h4>${item.tenKhu}</h4>
+                        <p><i class="fa-solid fa-tag" style="color:var(--primary)"></i> ${item.loai || 'Quy hoạch'}</p>
+                        <p style="margin-top:6px; font-size:0.7rem"><i class="fa-regular fa-calendar"></i> Cập nhật: ${new Date(item.ngayCapNhat).toLocaleDateString('vi-VN')}</p>
+                    `;
+                    div.onclick = () => {
+                        map.flyTo([item.viDo, item.kinhDo], 15);
+                        marker.openPopup();
+                    };
+                    list.appendChild(div);
+                });
+
+                document.getElementById('loader').style.display = 'none';
+
+            } catch (e) { console.error(e); }
         }
 
-        loadPlanningData();
+        document.getElementById('searchInput').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const match = markers.find(m => m.name.includes(val));
+            if(match && val.length > 2) {
+                map.flyTo(match.marker.getLatLng(), 15);
+                match.marker.openPopup();
+            }
+        };
+
+        init();
     </script>
 </body>
 </html>

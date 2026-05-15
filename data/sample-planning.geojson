@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "name": "QuyHoachSongHong_Backup",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1715764000000",
+        "tenKhu": "Khu tái định cư Mê Linh",
+        "dienTich": "15ha",
+        "loai": "Tái định cư",
+        "nguon": "Tuổi Trẻ",
+        "ngayCapNhat": "2026-05-15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.7167, 21.1833]
+      }
+    }
+  ]
+}
