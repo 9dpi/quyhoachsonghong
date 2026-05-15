@@ -17,7 +17,30 @@ var SHEET_NAME = "4_Khu_Tai_Dinh_Cu";
 var RSS_SOURCES = [
   "https://tuoitre.vn/rss/ha-noi.rss",
   "https://vietnamnet.vn/rss/bat-dong-san.rss",
-  "https://baochinhphu.vn/rss/quy-hoach.rss"
+  "https://vnexpress.net/rss/thoi-su.rss",
+  "https://laodong.vn/rss/thoi-su.rss",
+  "https://vietnam.vn/category/viet-nam-hom-nay/rss"
+];
+
+const QUY_HOACH_KEYWORDS = [
+  // Nhóm Vành đai
+  "Vành đai 1", "Vành đai 2", "Vành đai 2.5", "Vành đai 3", "Vành đai 3.5",
+  "Vành đai 4", "Vành đai 4.5", "Vành đai 5", "Ring Road",
+  
+  // Nhóm cầu sông Hồng
+  "cầu Tứ Liên", "cầu Trần Hưng Đạo", "cầu Ngọc Hồi", "cầu Mễ Sở", "cầu Hồng Hà",
+  "hầm sông Hồng", "cầu Chương Dương", "cầu vượt sông Hồng",
+  
+  // Nhóm Quốc lộ
+  "Quốc lộ 1A", "Quốc lộ 6", "Quốc lộ 21B", "Quốc lộ 32",
+  "Đại lộ Thăng Long", "đường Tây Thăng Long", "Hà Đông Xuân Mai",
+  
+  // Nhóm dự án đặc biệt
+  "sân bay thứ hai", "bến xe liên tỉnh", "di dời bến xe",
+  "APEC 2027", "thoát nước Hà Nội", "chống ngập",
+  
+  // Các tag đã có
+  "Sông Hồng", "Quy hoạch", "giải phóng mặt bằng", "tái định cư", "GPMB"
 ];
 
 /**
@@ -57,8 +80,8 @@ function runBuiltInScraper() {
         var link = item.getChild('link').getText();
         var description = item.getChild('description').getText();
         
-        // Lọc tin liên quan đến Sông Hồng hoặc Quy hoạch
-        if (title.toLowerCase().includes("sông hồng") || title.toLowerCase().includes("quy hoạch")) {
+        // Sử dụng logic lọc tin mở rộng
+        if (isRelatedToQuyHoach(title, description)) {
           allNewData.push({
             "id": Date.now() + Math.floor(Math.random()*1000),
             "tenKhu": title,
@@ -100,13 +123,20 @@ function saveToSheet(newItems) {
   
   var existingTitles = sheet.getRange(2, 2, sheet.getLastRow() > 1 ? sheet.getLastRow() - 1 : 1).getValues().flat();
   
+  var addedCount = 0;
   newItems.forEach(function(item) {
     if (!existingTitles.includes(item.tenKhu)) {
       sheet.appendRow([
         item.id, item.tenKhu, item.viDo, item.kinhDo, item.dienTich, item.moTa, item.nguonTin, item.ngayCapNhat, item.loai
       ]);
+      addedCount++;
     }
   });
+  if (addedCount > 0) {
+    console.log("Đã thêm mới " + addedCount + " tin tức vào Google Sheet.");
+  } else {
+    console.log("Không có tin tức mới (Trùng lặp hoặc không tìm thấy).");
+  }
 }
 
 /**
@@ -153,6 +183,10 @@ function mapKey(h) {
 }
 
 function syncMultipleToGithub(newItems) {
+  if (!GITHUB_CONFIG.token || GITHUB_CONFIG.token === "YOUR_GITHUB_TOKEN") {
+    console.log("Bỏ qua đồng bộ GitHub vì chưa cấu hình Token.");
+    return;
+  }
   var fileData = getFileFromGithub();
   var db = [];
   var sha = "";
@@ -204,4 +238,14 @@ function updateFileToGithub(content, sha) {
     "payload": JSON.stringify(payload)
   };
   UrlFetchApp.fetch(url, options);
+}
+
+/**
+ * KIỂM TRA TIN TỨC CÓ LIÊN QUAN ĐẾN QUY HOẠCH KHÔNG
+ */
+function isRelatedToQuyHoach(title, description) {
+  const text = (title + " " + description).toLowerCase();
+  return QUY_HOACH_KEYWORDS.some(keyword => 
+    text.includes(keyword.toLowerCase())
+  );
 }
