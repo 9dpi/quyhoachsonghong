@@ -124,10 +124,15 @@ function doGet() {
 }
 
 function getSheetData(ss, name) {
-  var sheet = ss.getSheetByName(name);
+  // Tìm sheet không phân biệt hoa thường và trim khoảng trắng
+  var sheets = ss.getSheets();
+  var sheet = sheets.find(s => s.getName().trim().toLowerCase() === name.trim().toLowerCase());
+  
   if (!sheet) return [];
   var data = sheet.getDataRange().getValues();
-  var headers = data.shift();
+  if (data.length < 2) return []; // Chỉ có header hoặc trống
+  
+  var headers = data.shift().map(h => h.toString().trim());
   return data.map(function(row) {
     var obj = {};
     headers.forEach(function(h, i) {
@@ -140,7 +145,7 @@ function getSheetData(ss, name) {
 
 function mapKey(h) {
   var maps = {
-    "Tên Khu": "tenKhu", "Vĩ Độ": "viDo", "Kinh Độ": "kinhDo", "Mô Tả": "moTa", "Nguồn Tin": "nguonTin",
+    "Tên Khu": "tenKhu", "Vĩ Độ": "viDo", "Kinh Độ": "kinhDo", "Mô Tả": "moTa", "Nguồn Tin": "nguonTin", "Loại": "loai",
     "Ngày": "date", "Khu vực": "region", "Nội dung": "content",
     "Câu hỏi": "q", "Trả lời": "a"
   };

@@ -52,17 +52,19 @@ async function init() {
 function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    
     ['projectList', 'progressList', 'faqList'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
-            el.style.display = 'none';
+            // Gỡ bỏ style inline nếu đã lỡ bị set
+            el.style.display = ''; 
         }
     });
+    
     const target = document.getElementById(tab + 'List');
     if (target) {
         target.classList.add('active');
-        target.style.display = 'flex';
     }
 }
 
