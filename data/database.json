@@ -1,50 +1,12 @@
 [
-  {
-    "id": "tdc_melinh",
-    "tenKhu": "Khu Tái định cư Mê Linh (Quy hoạch 1/500)",
-    "viDo": 21.1856,
-    "kinhDo": 105.7482,
-    "dienTich": "45.6 ha",
-    "loai": "Tái định cư",
-    "moTa": "Khu tái định cư phục vụ giải phóng mặt bằng dự án đường Vành đai 4 vùng Thủ đô. Quy hoạch bao gồm hệ thống hạ tầng kỹ thuật đồng bộ, trường học, trạm y tế và công viên cây xanh. Đây là khu vực trọng điểm kết nối trục đô thị Mê Linh và Sông Hồng.",
-    "nguonTin": "https://hanoi.gov.vn",
-    "ngayCapNhat": "2026-05-15T15:00:00Z",
-    "isHeadline": "YES"
-  },
-  {
-    "id": "tdc_hongha",
-    "tenKhu": "Khu Tái định cư Hồng Hà (Đan Phượng)",
-    "viDo": 21.1425,
-    "kinhDo": 105.6958,
-    "dienTich": "12.8 ha",
-    "loai": "Tái định cư",
-    "moTa": "Nằm sát chân cầu Hồng Hà quy hoạch. Khu vực này được bố trí đất ở cho các hộ dân thuộc diện di dời ven sông Hồng. Hạ tầng đã được phê duyệt đầu tư theo tiêu chuẩn đô thị loại II.",
-    "nguonTin": "https://hanoi.gov.vn",
-    "ngayCapNhat": "2026-05-15T15:00:00Z",
-    "isHeadline": "YES"
-  },
-  {
-    "id": "tdc_linhnam",
-    "tenKhu": "Khu Tái định cư Lĩnh Nam (Hoàng Mai)",
-    "viDo": 20.9852,
-    "kinhDo": 105.8894,
-    "dienTich": "25.4 ha",
-    "loai": "Tái định cư",
-    "moTa": "Thuộc phân khu đô thị sông Hồng R4. Dự kiến xây dựng các tòa nhà cao tầng kết hợp nhà ở thấp tầng nhằm tối ưu hóa quỹ đất và phục vụ người dân tái định cư tại chỗ khi triển khai dự án kè sông Hồng.",
-    "nguonTin": "https://hoangmai.hanoi.gov.vn",
-    "ngayCapNhat": "2026-05-15T15:00:00Z",
-    "isHeadline": "NO"
-  },
-  {
-    "id": "tdc_battrang",
-    "tenKhu": "Khu Tái định cư Bát Tràng (Gia Lâm)",
-    "viDo": 20.9658,
-    "kinhDo": 105.9125,
-    "dienTich": "18.2 ha",
-    "loai": "Tái định cư",
-    "moTa": "Quy hoạch kết hợp bảo tồn làng nghề truyền thống Bát Tràng và ổn định dân cư ven đê. Khu vực được định hướng phát triển du lịch sinh thái ven sông kết hợp trải nghiệm văn hóa.",
-    "nguonTin": "https://gialam.hanoi.gov.vn",
-    "ngayCapNhat": "2026-05-15T15:00:00Z",
-    "isHeadline": "NO"
-  }
+  { "id": 1, "tenKhu": "Phân khu R1 - Mê Linh", "viDo": 21.185, "kinhDo": 105.712, "dienTich": "1500ha", "moTa": "Khu vực cửa ngõ phía Bắc, tập trung phát triển các khu du lịch sinh thái và nông nghiệp công nghệ cao.", "nguonTin": "https://baochinhphu.vn", "ngayCapNhat": "2026-05-15", "loai": "Quy hoạch", "isHeadline": "YES" },
+  { "id": 2, "tenKhu": "Tái định cư Mê Linh", "viDo": 21.186, "kinhDo": 105.748, "dienTich": "45ha", "moTa": "Khu vực phục vụ di dời dân cư phục vụ dự án Vành đai 4.", "nguonTin": "https://hanoi.gov.vn", "ngayCapNhat": "2026-05-15", "loai": "Tái định cư", "isHeadline": "NO" },
+  { "id": 3, "tenKhu": "Phân khu R2 - Đông Anh", "viDo": 21.125, "kinhDo": 105.820, "dienTich": "1200ha", "moTa": "Trung tâm tài chính, triển lãm quốc tế kết hợp hệ thống giao thông thông minh.", "nguonTin": "https://vietnamnet.vn", "ngayCapNhat": "2026-05-15", "loai": "Quy hoạch", "isHeadline": "YES" },
+  { "id": 4, "tenKhu": "Tái định cư Hồng Hà", "viDo": 21.142, "kinhDo": 105.695, "dienTich": "12ha", "moTa": "Khu dân cư ổn định phục vụ dự án cầu Hồng Hà.", "nguonTin": "https://tuoitre.vn", "ngayCapNhat": "2026-05-15", "loai": "Tái định cư", "isHeadline": "NO" },
+  { "id": 5, "tenKhu": "Công viên Bãi Giữa", "viDo": 21.045, "kinhDo": 105.858, "dienTich": "300ha", "moTa": "Định hướng trở thành công viên văn hóa, thể thao cấp thành phố.", "nguonTin": "https://laodong.vn", "ngayCapNhat": "2026-05-15", "loai": "Dự án", "isHeadline": "YES" },
+  { "id": 6, "tenKhu": "Cầu Tứ Liên", "viDo": 21.062, "kinhDo": 105.865, "dienTich": "N/A", "moTa": "Dự án cầu mang tính biểu tượng kết nối trung tâm với Đông Anh.", "nguonTin": "https://vneconomy.vn", "ngayCapNhat": "2026-05-15", "loai": "Dự án", "isHeadline": "NO" },
+  { "id": 7, "tenKhu": "Tái định cư Lĩnh Nam", "viDo": 20.985, "kinhDo": 105.889, "dienTich": "25ha", "moTa": "Cải tạo khu dân cư hiện hữu kết hợp hạ tầng đồng bộ.", "nguonTin": "https://baoxaydung.com.vn", "ngayCapNhat": "2026-05-15", "loai": "Tái định cư", "isHeadline": "NO" },
+  { "id": 8, "tenKhu": "Tái định cư Bát Tràng", "viDo": 20.965, "kinhDo": 105.912, "dienTich": "18ha", "moTa": "Phát triển làng nghề kết hợp du lịch sinh thái sông Hồng.", "nguonTin": "https://hanoimoi.com.vn", "ngayCapNhat": "2026-05-15", "loai": "Tái định cư", "isHeadline": "NO" },
+  { "id": 9, "tenKhu": "Cầu Trần Hưng Đạo", "viDo": 21.015, "kinhDo": 105.875, "dienTich": "N/A", "moTa": "Điểm nhấn kiến trúc kết nối quận Hoàn Kiếm và Long Biên.", "nguonTin": "https://cafef.vn", "ngayCapNhat": "2026-05-15", "loai": "Dự án", "isHeadline": "NO" },
+  { "id": 10, "tenKhu": "Cầu Mễ Sở", "viDo": 20.925, "kinhDo": 105.945, "dienTich": "N/A", "moTa": "Phần quan trọng của tuyến Vành đai 4 kết nối Hà Nội và Hưng Yên.", "nguonTin": "https://vtc.vn", "ngayCapNhat": "2026-05-15", "loai": "Dự án", "isHeadline": "NO" }
 ]
