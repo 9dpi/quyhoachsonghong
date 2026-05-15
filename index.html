@@ -125,6 +125,33 @@
         .footer-links a { color: #64748b; text-decoration: none; cursor: pointer; font-weight: 500; }
 
         #custom-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+
+        /* AREA RESULT STYLES */
+        .area-result { font-family: var(--font-main); }
+        .result-header { padding: 15px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; text-align: center; margin-bottom: 15px; text-transform: uppercase; }
+        .result-header.warning { background: #be123c; color: white; box-shadow: 0 4px 12px rgba(190, 18, 60, 0.2); }
+        .result-header.partial { background: #f59e0b; color: white; }
+        .result-header.safe { background: #10b981; color: white; }
+        
+        .area-info h3 { font-size: 1rem; color: #1e293b; margin-bottom: 5px; }
+        .area-info p { font-size: 0.75rem; color: #64748b; margin-bottom: 20px; }
+        
+        .section-title { font-size: 0.75rem; font-weight: 800; color: #1e40af; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        
+        .impact-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #f8fafc; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .impact-table th, .impact-table td { padding: 12px; text-align: left; font-size: 0.72rem; border-bottom: 1px solid #e2e8f0; }
+        .impact-table th { background: #f1f5f9; font-weight: 700; color: #475569; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; white-space: nowrap; }
+        .badge.full { background: #fee2e2; color: #ef4444; }
+        .badge.partial { background: #ffedd5; color: #f59e0b; }
+        .badge.buffer { background: #fef9c3; color: #ca8a04; }
+        .badge.none { background: #dcfce7; color: #16a34a; }
+        
+        .cta-box { background: #eff6ff; border: 1px dashed #3b82f6; padding: 20px; border-radius: 16px; margin-top: 20px; text-align: center; }
+        .cta-box p { font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 12px; }
+        .cta-box input { width: 100%; padding: 10px; border: 1px solid #bfdbfe; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; }
+        .cta-box button { width: 100%; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; }
         .modal-content { background: white; width: 90%; max-width: 450px; padding: 35px; border-radius: 28px; text-align: center; }
         #custom-modal.active { display: flex; }
 

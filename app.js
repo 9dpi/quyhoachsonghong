@@ -90,7 +90,17 @@ async function checkMyHome() {
     const normAddr = normalizeAddress(rawAddr);
     showModal("Đang phân tích", "Đang đối soát quy hoạch cho: <b>" + rawAddr + "</b>", "fa-satellite-dish");
     
-    // Tìm kiếm trong danh sách trắng (White-list)
+    // Phân loại: Tra cứu địa chỉ cụ thể hay Tra cứu khu vực/đường
+    const isAreaQuery = /^(duong|pho|phuong|xa|quan|huyen)\s/.test(normAddr) || !/\d/.test(normAddr);
+    
+    if (isAreaQuery) {
+        handleAreaLookup(normAddr, rawAddr);
+    } else {
+        handleAddressLookup(normAddr, rawAddr);
+    }
+}
+
+async function handleAddressLookup(normAddr, rawAddr) {
     const match = planningData.find(item => 
         normalizeAddress(item.stdAddress).includes(normAddr) || 
         normAddr.includes(normalizeAddress(item.stdAddress))
@@ -106,19 +116,116 @@ async function checkMyHome() {
         if (match) {
             renderPlanningResult(match, rawAddr, [lat, lon]);
         } else {
-            // Cảnh báo theo phường/xã (Level 2)
             const warningAreas = ["mê linh", "lĩnh nam", "hồng hà", "phú thượng", "bát tràng", "bồ đề", "ngọc thụy", "phố huế"];
             const isWarning = warningAreas.some(area => normAddr.includes(area));
-            
             if (isWarning) {
                 renderPlanningWarning(rawAddr, [lat, lon]);
             } else {
-                showModal("Thông tin", "Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này. Hệ thống sẽ cập nhật thêm.", "fa-circle-info");
+                showModal("Thông tin", "Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này.", "fa-circle-info");
                 map.flyTo([lat, lon], 15);
             }
         }
-    } catch (e) { console.error(e); showModal("Lỗi", "Vui lòng thử lại sau.", "fa-triangle-exclamation"); }
+    } catch (e) { console.error(e); }
 }
+
+async function handleAreaLookup(normAddr, rawAddr) {
+    // Tìm tất cả các điểm thuộc khu vực này trong DanhSachQuyHoach
+    const affectedPoints = planningData.filter(item => 
+        normalizeAddress(item.stdAddress).includes(normAddr) || 
+        normalizeAddress(item.region).includes(normAddr)
+    );
+
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(rawAddr + ", Hanoi")}`);
+    const data = await res.json();
+    const coords = data && data.length > 0 ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : [21.0285, 105.8542];
+
+    if (affectedPoints.length > 0) {
+        renderAreaResult(affectedPoints, rawAddr, coords);
+    } else {
+        // Cảnh báo dựa trên danh sách khu vực trọng điểm
+        const hotspot = ["hồng hà", "mê linh", "lĩnh nam", "bát tràng", "phố huế"].find(h => normAddr.includes(h));
+        if (hotspot) {
+            renderPlanningWarning(rawAddr, coords);
+        } else {
+            showModal("Thông tin", "Khu vực này hiện chưa có thông tin quy hoạch trong hệ thống.", "fa-circle-info");
+            map.flyTo(coords, 14);
+        }
+    }
+}
+
+function renderAreaResult(points, rawQuery, coords) {
+    const projectNames = [...new Set(points.map(p => p.project))];
+    const mainProject = projectNames[0];
+    const project = projectsData.find(p => p.projectName === mainProject) || {};
+    const timeline = progressData.filter(p => p.project === mainProject).slice(0, 2);
+    
+    // Tính mức độ ảnh hưởng (MVP logic)
+    const affectedCount = points.filter(p => p.status === "Có" || p.status === "Affected").length;
+    const ratio = affectedCount / points.length;
+    let level = "buffer", label = "GIÁP RANH / ẢNH HƯỞNG NHỎ", colorClass = "partial";
+    
+    if (ratio > 0.8) { level = "full"; label = "TOÀN BỘ NẰM TRONG QUY HOẠCH"; colorClass = "warning"; }
+    else if (ratio > 0.2) { level = "partial"; label = "MỘT PHẦN NẰM TRONG QUY HOẠCH"; colorClass = "partial"; }
+
+    document.getElementById('detail-title').innerText = "KẾT QUẢ TRA CỨU KHU VỰC";
+    document.getElementById('detail-body').innerHTML = `
+        <div class="area-result">
+            <div class="result-header ${colorClass}">
+                ⚠️ ${label}
+            </div>
+
+            <div class="area-info">
+                <h3>📍 ${rawQuery.toUpperCase()}</h3>
+                <p>📊 Dựa trên đối soát ${points.length} điểm dữ liệu trong khu vực này.</p>
+            </div>
+
+            <div class="section-title">📋 DỰ ÁN LIÊN QUAN</div>
+            <div style="background:#f1f5f9; padding:15px; border-radius:12px; margin-bottom:20px;">
+                <strong style="font-size:0.8rem; color:#1e293b;">${mainProject}</strong>
+                <p style="font-size:0.7rem; color:#64748b; margin-top:4px;">Chủ đầu tư: ${project.investor || "Đang cập nhật"}</p>
+                <div style="margin-top:10px; border-top:1px dashed #cbd5e1; padding-top:10px;">
+                    ${timeline.map(t => `<p style="font-size:0.65rem; color:#475569;">📅 <b>${t.date}:</b> ${t.milestone}</p>`).join('')}
+                </div>
+            </div>
+
+            <div class="section-title">🗺️ PHÂN VÙNG ẢNH HƯỞNG</div>
+            <table class="impact-table">
+                <thead>
+                    <tr><th>Khu vực</th><th>Mức độ</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tuyến đường chính</td>
+                        <td><span class="badge ${level}">${level === 'full' ? 'Giải tỏa toàn bộ' : 'Ảnh hưởng một phần'}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ngõ hẻm / Giáp ranh</td>
+                        <td><span class="badge buffer">Theo dõi thêm</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="cta-box">
+                <p>🔍 Muốn biết chính xác nhà mình?</p>
+                <input type="text" id="cta-specific-addr" placeholder="Nhập số nhà cụ thể trên ${rawQuery}">
+                <button onclick="searchFromCTA('${rawQuery}')">TRA CỨU SỐ NHÀ</button>
+            </div>
+        </div>
+    `;
+    
+    const panel = document.getElementById('detail-panel');
+    panel.style.display = 'flex';
+    setTimeout(() => panel.classList.add('open'), 10);
+    map.flyTo(coords, 15);
+    closeModal();
+}
+
+window.searchFromCTA = (baseArea) => {
+    const num = document.getElementById('cta-specific-addr').value;
+    if(!num) return;
+    document.getElementById('addrInput').value = num + " " + baseArea;
+    checkMyHome();
+};
 
 function renderPlanningResult(match, addr, coords) {
     const project = projectsData.find(p => p.projectName === match.project) || {};
