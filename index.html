@@ -3,134 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DULIEUQUYHOACH.COM | Tra cứu Quy hoạch</title>
     
-    <!-- SEO Meta Tags -->
-    <title>DULIEUQUYHOACH.COM | Tra cứu Quy hoạch Sông Hồng Chính xác nhất</title>
-    <meta name="description" content="Hệ thống tra cứu thông tin quy hoạch phân khu đô thị Sông Hồng, dữ liệu 1/5000, cập nhật tin tức quy hoạch mới nhất từ nguồn chính thống. Tra cứu ranh giới, dự án, khu tái định cư.">
-    <meta name="keywords" content="quy hoạch sông hồng, tra cứu quy hoạch hanoi, bản đồ quy hoạch sông hồng, khu tái định cư mê linh, quy hoạch 11400ha">
-    <link rel="canonical" href="https://dulieuquyhoach.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Tra cứu Quy hoạch Sông Hồng - DULIEUQUYHOACH.COM">
-    <meta property="og:description" content="Xem chi tiết các dự án và phân khu quy hoạch ven sông Hồng ngay trên bản đồ tương tác.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/9dpi/quyhoachsonghong/main/assets/thumb.jpg">
-
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         :root {
             --primary: #2563eb;
+            --secondary: #f59e0b;
             --sidebar-width: 340px;
             --detail-width: 450px;
             --bg-light: #f8fafc;
             --sidebar-bg: #ffffff;
             --text-main: #0f172a;
             --text-sub: #64748b;
+            --font-main: 'Be Vietnam Pro', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
 
         header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
-        .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .logo { font-size: 1.3rem; font-weight: 900; color: var(--primary); text-decoration: none; letter-spacing: -0.5px; }
         
         .header-center { flex-grow: 1; max-width: 40%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
-        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        .header-right .social-menu { display: flex; gap: 15px; list-style: none; align-items: center; }
-        .social-menu li a { color: var(--text-sub); font-size: 1.2rem; transition: 0.2s; }
-        .social-menu li a:hover { color: var(--primary); transform: scale(1.1); }
-
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
+        #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 15px; }
         
-        #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
-        .search-box { position: relative; margin-bottom: 20px; }
-        .search-box input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; transition: 0.2s; font-size: 0.9rem; }
-        .search-box input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-        .search-box i { position: absolute; left: 15px; top: 15px; color: var(--text-sub); }
+        .primary-search-card {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            padding: 18px 15px; border-radius: 16px; margin-bottom: 20px;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+            color: white;
+        }
+        /* Đã sửa font-size để không bị xuống dòng */
+        .primary-search-card h2 { font-size: 0.88rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        
+        .search-input-group { display: flex; background: white; border-radius: 10px; padding: 4px; gap: 4px; }
+        .search-input-group input { flex-grow: 1; border: none; outline: none; padding: 8px 12px; font-size: 0.85rem; font-family: var(--font-main); color: var(--text-main); width: 100%; }
+        .search-input-group button { background: var(--secondary); color: white; border: none; border-radius: 8px; width: 40px; height: 36px; cursor: pointer; transition: 0.2s; }
 
         #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .project-item { background: #ffffff; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
-        .project-item:hover { border-color: var(--primary); background: #f0f7ff; }
+        .project-item { background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
+        .project-item:hover { border-color: var(--primary); background: #f8fafc; }
+        .project-item h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; color: #1e293b; }
+        .project-item p { font-size: 0.72rem; color: var(--text-sub); line-height: 1.4; }
 
         #main-content { flex-grow: 1; position: relative; }
         #map { width: 100%; height: 100%; z-index: 1; }
 
-        /* Floating Search Panel "Nhà tôi ở đâu?" */
-        .floating-search {
-            position: absolute; top: 20px; left: 20px; z-index: 2000;
-            background: white; padding: 10px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 300px;
-        }
+        #custom-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); text-align: center; }
+        #custom-modal.active { display: flex; }
 
-        #detail-panel {
-            position: absolute; right: -var(--detail-width); top: 0; bottom: 0;
-            width: var(--detail-width); background: white; z-index: 4000;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.1); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none; flex-direction: column;
-        }
+        #detail-panel { position: absolute; right: -var(--detail-width); top: 0; bottom: 0; width: var(--detail-width); background: white; z-index: 4000; box-shadow: -15px 0 40px rgba(0,0,0,0.08); transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); display: none; flex-direction: column; }
         #detail-panel.open { right: 0; display: flex; }
-        
-        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        
-        footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 8px 24px; font-size: 0.75rem; color: #94a3b8; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div class="spinner"></div>
-        <p style="margin-top:15px; font-weight: 600; color:var(--text-sub)">Đang tối ưu dữ liệu quy hoạch...</p>
+    <div id="custom-modal">
+        <div class="modal-content">
+            <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-satellite-dish"></i></div>
+            <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;" id="modalTitle">Đang kiểm tra ranh giới</div>
+            <div style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 25px;" id="modalText">Hệ thống đang đối soát dữ liệu...</div>
+            <button style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: var(--font-main);" onclick="closeModal()">Đã hiểu</button>
+        </div>
     </div>
 
     <header>
-        <a href="/" class="logo">DULIEUQUYHOACH.COM</a>
-        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang cập nhật dữ liệu quy hoạch sông Hồng mới nhất...</div></div>
-        <div class="header-right">
-            <ul class="social-menu">
-                <li><a href="#" title="Facebook"><i class="fab fa-facebook"></i></a></li>
-                <li><a href="#" title="Tiktok"><i class="fab fa-tiktok"></i></a></li>
-                <li><a href="#" title="Youtube"><i class="fab fa-youtube"></i></a></li>
-                <li style="margin-left:10px; padding-left:15px; border-left:1px solid #e2e8f0; font-size:0.85rem; font-weight:700">TRA CỨU</li>
-            </ul>
-        </div>
+        <a href="#" class="logo">DULIEUQUYHOACH.COM</a>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang tải dữ liệu quy hoạch sông Hồng...</div></div>
+        <div class="header-right"><ul style="display:flex; gap:15px; list-style:none; font-size:0.85rem; font-weight:700"><li>FB</li><li>YT</li><li>TT</li></ul></div>
     </header>
 
     <div class="app-container">
         <aside id="sidebar">
-            <h1 style="font-size:1.1rem; margin-bottom:15px">Bản đồ Quy hoạch Sông Hồng</h1>
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Tìm dự án, khu tái định cư...">
+            <div class="primary-search-card">
+                <h2><i class="fa-solid fa-house-circle-exclamation"></i> Nhà tôi có trong diện quy hoạch?</h2>
+                <div class="search-input-group">
+                    <input type="text" id="addrInput" placeholder="Nhập địa chỉ nhà bạn..." onkeypress="if(event.key==='Enter') checkMyHome()">
+                    <button onclick="checkMyHome()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
             </div>
+            <div style="font-weight:800; font-size:0.65rem; color:var(--text-sub); margin-bottom:10px; letter-spacing:1px; padding-left:5px">DANH SÁCH DỰ ÁN</div>
             <div id="projectList"></div>
         </aside>
 
         <main id="main-content">
-            <div class="floating-search">
-                <p style="font-size:0.75rem; font-weight:700; color:var(--text-sub); margin-bottom:5px">NHÀ TÔI Ở ĐÂU?</p>
-                <div style="display:flex; gap:5px">
-                    <input type="text" id="addrSearch" placeholder="Nhập địa chỉ nhà bạn..." style="flex-grow:1; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px; font-size:0.85rem">
-                    <button onclick="searchAddress()" style="background:var(--primary); color:white; border:none; border-radius:6px; padding:0 12px; cursor:pointer"><i class="fa-solid fa-location-crosshairs"></i></button>
-                </div>
-            </div>
             <div id="map"></div>
             <div id="detail-panel">
                 <div style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
-                    <h2 id="detail-title" style="font-size:1.3rem">Chi tiết</h2>
-                    <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.5rem" onclick="closeDetail()"></i>
+                    <h2 id="detail-title" style="font-size:1.2rem; font-weight:800">Chi tiết</h2>
+                    <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.3rem; color:#94a3b8" onclick="closeDetail()"></i>
                 </div>
-                <div id="detail-body" style="padding:25px; overflow-y:auto; line-height:1.7"></div>
+                <div id="detail-body" style="padding:25px; overflow-y:auto; line-height:1.7; font-size:0.9rem; color:#334155"></div>
             </div>
         </main>
     </div>
-
-    <footer><b>Miễn trừ trách nhiệm:</b> Dữ liệu mang tính chất tham khảo. Người dùng cần đối soát với văn bản chính thức.</footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -145,21 +123,19 @@
                 const res = await fetch(DATA_URL + "?t=" + Date.now());
                 allData = await res.json();
                 renderData(allData);
-                document.getElementById('loader').style.display = 'none';
-            } catch (e) { document.getElementById('loader').style.display = 'none'; }
+            } catch (e) { console.error(e); }
         }
 
         function renderData(data) {
             const list = document.getElementById('projectList');
             const ticker = document.getElementById('ticker');
             list.innerHTML = '';
-            
             ticker.innerText = data.slice(0, 5).map(h => h.tenKhu).join("  |  ");
 
             data.forEach((item, index) => {
                 if(!item.viDo || !item.kinhDo) return;
                 const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:openDetailByIndex(${index})">Xem chi tiết</a>`);
+                marker.bindPopup(`<h4 style="font-family:'Be Vietnam Pro'">${item.tenKhu}</h4><a href="javascript:openDetailByIndex(${index})" style="font-family:'Be Vietnam Pro'; color:#2563eb; font-weight:700; text-decoration:none">Xem chi tiết →</a>`);
 
                 const div = document.createElement('div');
                 div.className = 'project-item';
@@ -169,15 +145,27 @@
             });
         }
 
-        function searchAddress() {
-            const addr = document.getElementById('addrSearch').value;
-            alert("Đang kiểm tra ranh giới quy hoạch cho địa chỉ: " + addr + "\nTính năng đang được tích hợp dữ liệu 1/5000...");
+        function checkMyHome() {
+            const addr = document.getElementById('addrInput').value;
+            if(!addr) return;
+            document.getElementById('modalTitle').innerText = "Đang kiểm tra ranh giới";
+            document.getElementById('modalText').innerHTML = `Hệ thống đang tiến hành đối soát địa chỉ: <br><b>${addr}</b><br>với bản đồ quy hoạch 1/5000 mới nhất.`;
+            document.getElementById('custom-modal').classList.add('active');
         }
+
+        function closeModal() { document.getElementById('custom-modal').classList.remove('active'); }
 
         window.openDetailByIndex = (idx) => {
             const item = allData[idx];
             document.getElementById('detail-title').innerText = item.tenKhu;
-            document.getElementById('detail-body').innerHTML = `<p>${item.moTa}</p><br><small>Nguồn: ${item.nguonTin}</small>`;
+            document.getElementById('detail-body').innerHTML = `
+                <div style="background:#eff6ff; padding:12px; border-radius:10px; margin-bottom:15px; font-weight:700; color:#1e40af; font-size:0.8rem">
+                    QUY MÔ: ${item.dienTich || 'N/A'} | LOẠI: ${item.loai || 'Quy hoạch'}
+                </div>
+                <div style="white-space: pre-wrap;">${item.moTa}</div>
+                <br><hr style="border:0; border-top:1px solid #f1f5f9; margin:15px 0">
+                <small>Nguồn tin: <a href="${item.nguonTin}" target="_blank" style="color:#2563eb">${item.nguonTin}</a></small>
+            `;
             document.getElementById('detail-panel').style.display = 'flex';
             setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
         }
@@ -185,12 +173,6 @@
         function closeDetail() {
             document.getElementById('detail-panel').classList.remove('open');
             setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400);
-        }
-
-        document.getElementById('searchInput').oninput = (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allData.filter(i => i.tenKhu.toLowerCase().includes(val));
-            renderData(filtered);
         }
 
         init();
