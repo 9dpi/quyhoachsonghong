@@ -51,6 +51,12 @@
         .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         
         footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 8px 24px; font-size: 0.75rem; color: #94a3b8; text-align: center; }
+
+        /* Style cho nội dung Popup để dễ click */
+        .popup-click-area { cursor: pointer; padding: 5px; }
+        .popup-click-area h4 { color: var(--primary); margin-bottom: 5px; font-size: 1rem; }
+        .popup-click-area p { font-size: 0.85rem; margin-bottom: 5px; color: #64748b; }
+        .popup-click-area b { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -63,11 +69,7 @@
     <header>
         <div class="logo">DULIEUQUYHOACH.COM</div>
         <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang kết nối dữ liệu trực tuyến...</div></div>
-        <div class="header-right">
-            <ul style="display:flex; gap:15px; list-style:none; font-size:0.85rem; font-weight:700; color:var(--text-sub)">
-                <li>TRANG CHỦ</li><li>LIÊN HỆ</li>
-            </ul>
-        </div>
+        <div class="header-right"><ul style="display:flex; gap:15px; list-style:none; font-size:0.85rem; font-weight:700; color:var(--text-sub)"><li>TRANG CHỦ</li><li>LIÊN HỆ</li></ul></div>
     </header>
 
     <div class="app-container">
@@ -94,34 +96,15 @@
         const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
-        function hideLoader() {
-            document.getElementById('loader').style.display = 'none';
-        }
-
         async function init() {
-            // Tự động ẩn loader sau 5 giây nếu không tải được dữ liệu
-            setTimeout(hideLoader, 5000);
-
             try {
                 const res = await fetch(DATA_URL + "?t=" + Date.now());
-                if (!res.ok) throw new Error("Database not ready");
                 allData = await res.json();
-                
-                if (Array.isArray(allData) && allData.length > 0) {
-                    renderData(allData);
-                } else {
-                    document.getElementById('ticker').innerText = "Hệ thống đang cập nhật dữ liệu mới...";
-                }
-                hideLoader();
+                renderData(allData);
+                document.getElementById('loader').style.display = 'none';
             } catch (e) { 
-                console.error("Lỗi tải JSON:", e);
-                // Cố gắng tải từ file local nếu GitHub lỗi
-                try {
-                    const fallbackRes = await fetch('./data/database.json');
-                    allData = await fallbackRes.json();
-                    renderData(allData);
-                } catch (err) {}
-                hideLoader();
+                console.error("Lỗi tải dữ liệu:", e);
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
@@ -132,24 +115,41 @@
             
             const headlines = data.filter(i => i.isHeadline === "YES");
             ticker.innerText = (headlines.length > 0 ? headlines : data.slice(0, 5)).map(h => h.tenKhu).join("  |  ");
+            ticker.onclick = () => openDetail(headlines[0] || data[0]);
 
-            data.forEach(item => {
+            data.forEach((item, index) => {
                 if(!item.viDo || !item.kinhDo) return;
+                
                 const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                marker.bindPopup(`<b>${item.tenKhu}</b>`).on('click', () => openDetail(item));
+                
+                // Sử dụng HTML String cho Popup để tránh lỗi DOM
+                const popupHTML = `
+                    <div class="popup-click-area" onclick="openDetailByIndex(${index})">
+                        <h4>${item.tenKhu}</h4>
+                        <p>${item.moTa.substring(0, 80)}...</p>
+                        <b>Bấm để xem chi tiết →</b>
+                    </div>
+                `;
+                marker.bindPopup(popupHTML);
 
                 const div = document.createElement('div');
                 div.className = 'project-item';
-                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 80)}...</p>`;
-                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); openDetail(item); };
+                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 60)}...</p>`;
+                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
                 list.appendChild(div);
             });
         }
 
+        // Hàm hỗ trợ mở detail qua index để ổn định hơn
+        window.openDetailByIndex = function(index) {
+            openDetail(allData[index]);
+        }
+
         function openDetail(item) {
+            if(!item) return;
             document.getElementById('detail-title').innerText = item.tenKhu;
             document.getElementById('detail-body').innerHTML = `
-                <p style="font-weight:600; color:var(--primary); margin-bottom:10px">${item.loai || 'Tin tức'} | ${item.dienTich || 'N/A'}</p>
+                <p style="font-weight:600; color:var(--primary); margin-bottom:10px">${item.loai || 'Quy hoạch'} | ${item.dienTich || 'N/A'}</p>
                 <div style="white-space: pre-wrap;">${item.moTa}</div>
                 <br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">Xem nguồn tin gốc</a></small>
             `;
