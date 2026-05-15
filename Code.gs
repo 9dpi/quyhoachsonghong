@@ -148,7 +148,10 @@ function doGet() {
   return ContentService.createTextOutput(JSON.stringify({
     news: getSheetData(ss, "4_Khu_Tai_Dinh_Cu"),
     progress: getSheetData(ss, "Progress"),
-    faq: getSheetData(ss, "FAQ")
+    faq: getSheetData(ss, "FAQ"),
+    planning: getSheetData(ss, "DanhSachQuyHoach"),
+    projects: getSheetData(ss, "ThongTinDuAn"),
+    landPrice: getSheetData(ss, "BangGiaDat")
   }))
   .setMimeType(ContentService.MimeType.JSON);
 }
@@ -178,7 +181,10 @@ function mapKey(h) {
     "Tên Khu": "tenKhu", "Vĩ Độ": "viDo", "Kinh Độ": "kinhDo", "Mô Tả": "moTa", "Nguồn Tin": "nguonTin", "Loại": "loai",
     "Ngày": "date", "Khu vực": "region", "Nội dung": "content",
     "Dự án": "project", "Mốc tiến độ": "milestone", "Chi tiết": "details", "Ghi chú": "details",
-    "Câu hỏi": "q", "Trả lời": "a"
+    "Câu hỏi": "q", "Trả lời": "a",
+    "Địa chỉ chuẩn": "stdAddress", "Địa chỉ gốc": "rawAddress", "Trạng thái": "status", "Hệ số K": "kFactor", "Giá đất (VNĐ/m2)": "landPrice",
+    "Tên dự án": "projectName", "Chủ đầu tư": "investor", "Quy mô diện tích": "scale", "Thời gian dự kiến": "timeline",
+    "Loại đường": "streetType", "Đơn giá (VNĐ/m2)": "unitPrice", "Hệ số K mặc định": "defaultK"
   };
   return maps[h] || h;
 }
@@ -286,6 +292,51 @@ function importFAQFromGithub() {
   } catch (e) {
     console.log("Lỗi import FAQ: " + e.toString());
   }
+}
+
+/**
+ * KHỞI TẠO HỆ THỐNG BẢNG TÍNH (Chạy 1 lần duy nhất)
+ * Tự động tạo các Sheet còn thiếu và thiết lập tiêu đề cột.
+ */
+function initializeSystemSheets() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  
+  var configs = [
+    { 
+      name: "DanhSachQuyHoach", 
+      headers: ["Địa chỉ chuẩn", "Dự án", "Trạng thái", "Hệ số K", "Giá đất (VNĐ/m2)", "Khu vực", "Nguồn tin"] 
+    },
+    { 
+      name: "ThongTinDuAn", 
+      headers: ["Tên dự án", "Chủ đầu tư", "Quy mô diện tích", "Thời gian dự kiến", "Mô tả"] 
+    },
+    { 
+      name: "BangGiaDat", 
+      headers: ["Khu vực", "Loại đường", "Đơn giá (VNĐ/m2)", "Hệ số K mặc định"] 
+    },
+    { 
+      name: "Progress", 
+      headers: ["Dự án", "Ngày", "Mốc tiến độ", "Chi tiết", "Nguồn tin"] 
+    },
+    { 
+      name: "FAQ", 
+      headers: ["Câu hỏi", "Trả lời"] 
+    }
+  ];
+  
+  configs.forEach(function(config) {
+    var sheet = ss.getSheetByName(config.name);
+    if (!sheet) {
+      sheet = ss.insertSheet(config.name);
+      sheet.appendRow(config.headers);
+      sheet.getRange(1, 1, 1, config.headers.length).setFontWeight("bold").setBackground("#f1f5f9");
+      console.log("Đã tạo sheet: " + config.name);
+    } else {
+      console.log("Sheet " + config.name + " đã tồn tại.");
+    }
+  });
+  
+  console.log("Hoàn tất khởi tạo hệ thống bảng tính.");
 }
 
 /**

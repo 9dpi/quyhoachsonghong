@@ -10,6 +10,10 @@ const EXTRA_URL = BASE_URL + 'extra_data.json';
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec"; 
 
 let allNews = [];
+let planningData = [];
+let projectsData = [];
+let landPriceData = [];
+let progressData = [];
 let homeMarker = null;
 
 const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
@@ -28,6 +32,9 @@ async function init() {
             newsData = fullData.news || [];
             progressData = fullData.progress || [];
             faqData = fullData.faq || [];
+            planningData = fullData.planning || [];
+            projectsData = fullData.projects || [];
+            landPriceData = fullData.landPrice || [];
         } else {
             // Fallback lấy từ file JSON local (GitHub Pages)
             const [newsRes, extraRes] = await Promise.all([
@@ -68,46 +75,119 @@ function switchTab(tab, btn) {
     }
 }
 
+function normalizeAddress(str) {
+    if (!str) return "";
+    return str.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Bỏ dấu
+        .replace(/p\./g, "phuong ").replace(/q\./g, "quan ")
+        .replace(/\s+/g, " ").trim();
+}
+
 async function checkMyHome() {
-    const addr = document.getElementById('addrInput').value;
-    if(!addr) return;
+    const rawAddr = document.getElementById('addrInput').value;
+    if(!rawAddr) return;
     
-    showModal("Đang phân tích", "Đang định vị địa chỉ: <b>" + addr + "</b>", "fa-satellite-dish");
+    const normAddr = normalizeAddress(rawAddr);
+    showModal("Đang phân tích", "Đang đối soát quy hoạch cho: <b>" + rawAddr + "</b>", "fa-satellite-dish");
     
+    // Tìm kiếm trong danh sách trắng (White-list)
+    const match = planningData.find(item => 
+        normalizeAddress(item.stdAddress).includes(normAddr) || 
+        normAddr.includes(normalizeAddress(item.stdAddress))
+    );
+
     try {
         if (homeMarker) map.removeLayer(homeMarker);
-
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr + ", Hanoi")}`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(rawAddr + ", Hanoi")}`);
         const data = await res.json();
-        
-        if (data && data.length > 0) {
-            const lat = parseFloat(data[0].lat);
-            const lon = parseFloat(data[0].lon);
-            map.flyTo([lat, lon], 17);
-            
-            homeMarker = L.marker([lat, lon], {
-                icon: L.divIcon({
-                    className: 'home-icon',
-                    html: '<i class="fa-solid fa-house-circle-check" style="color:#ef4444; font-size:2.5rem; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.3))"></i>',
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 40]
-                })
-            }).addTo(map);
+        const lat = data && data.length > 0 ? parseFloat(data[0].lat) : 21.0285;
+        const lon = data && data.length > 0 ? parseFloat(data[0].lon) : 105.8542;
 
-            const popupHTML = `
-                <div style="text-align:center; padding:5px; font-family:'Inter'">
-                    <h4 style="color:#ef4444; margin-bottom:8px;">VỊ TRÍ CỦA BẠN</h4>
-                    <p style="font-size:0.75rem; margin-bottom:10px;">${addr}</p>
-                    <button onclick="window.openHomeAnalysis('${addr.replace(/'/g, "\\'")}')" class="analysis-btn">XEM PHÂN TÍCH QUY HOẠCH</button>
-                </div>
-            `;
-            homeMarker.bindPopup(popupHTML).openPopup();
-            showModal("Thành công", "Đã định vị thành công nhà bạn.", "fa-circle-check");
+        if (match) {
+            renderPlanningResult(match, rawAddr, [lat, lon]);
         } else {
-            showModal("Không thấy", "Vui lòng nhập địa chỉ chi tiết hơn.", "fa-circle-exclamation");
+            // Cảnh báo theo phường/xã (Level 2)
+            const warningAreas = ["mê linh", "lĩnh nam", "hồng hà", "phú thượng", "bát tràng", "bồ đề", "ngọc thụy", "phố huế"];
+            const isWarning = warningAreas.some(area => normAddr.includes(area));
+            
+            if (isWarning) {
+                renderPlanningWarning(rawAddr, [lat, lon]);
+            } else {
+                showModal("Thông tin", "Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này. Hệ thống sẽ cập nhật thêm.", "fa-circle-info");
+                map.flyTo([lat, lon], 15);
+            }
         }
-    } catch (e) { showModal("Lỗi", "Vui lòng thử lại sau.", "fa-triangle-exclamation"); }
+    } catch (e) { console.error(e); showModal("Lỗi", "Vui lòng thử lại sau.", "fa-triangle-exclamation"); }
 }
+
+function renderPlanningResult(match, addr, coords) {
+    const project = projectsData.find(p => p.projectName === match.project) || {};
+    const timeline = progressData.filter(p => p.project === match.project).slice(0, 2);
+    const price = match.landPrice || 0;
+    const k = match.kFactor || 1.0;
+    const totalUnitPrice = price * k;
+
+    document.getElementById('detail-title').innerText = "KẾT QUẢ TRA CỨU";
+    document.getElementById('detail-body').innerHTML = `
+        <div style="background:#fff1f2; border:1px solid #fecaca; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:#be123c; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
+            <p style="font-size:0.85rem; font-weight:700;">${addr}</p>
+            <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#be123c; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">⚠️ NẰM TRONG DIỆN GIẢI TỎA</div>
+        </div>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <h4 style="font-size:0.8rem; margin-bottom:10px; color:#1e40af;">🏗️ THÔNG TIN DỰ ÁN</h4>
+            <p style="font-size:0.75rem;"><b>Dự án:</b> ${match.project}</p>
+            <p style="font-size:0.75rem;"><b>Chủ đầu tư:</b> ${project.investor || "Đang cập nhật"}</p>
+            <p style="font-size:0.75rem;"><b>Quy mô:</b> ${project.scale || "Đang cập nhật"}</p>
+        </div>
+
+        <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <h4 style="font-size:0.8rem; margin-bottom:10px; color:#0369a1;">📊 TIẾN ĐỘ MỚI NHẤT</h4>
+            ${timeline.length > 0 ? timeline.map(t => `<p style="font-size:0.7rem; margin-bottom:4px;">• <b>${t.date}:</b> ${t.milestone}</p>`).join('') : '<p style="font-size:0.7rem;">Đang cập nhật...</p>'}
+        </div>
+
+        <div style="background:#fffbeb; border:1px solid #fef3c7; padding:15px; border-radius:12px;">
+            <h4 style="font-size:0.8rem; margin-bottom:10px; color:#92400e;">💰 ƯỚC TÍNH BỒI THƯỜNG</h4>
+            <p style="font-size:0.75rem;">Đơn giá: <b>${new Intl.NumberFormat('vi-VN').format(price)} đ/m²</b></p>
+            <p style="font-size:0.75rem;">Hệ số K: <b>${k}</b></p>
+            <p style="font-size:0.9rem; color:#b45309; font-weight:800; margin:10px 0;">→ TỔNG: ${new Intl.NumberFormat('vi-VN').format(totalUnitPrice)} đ/m²</p>
+            <label style="font-size:0.7rem;">Nhập diện tích (m²):</label>
+            <input type="number" id="calc_area" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; margin-top:5px;" oninput="updateTotalComp(${totalUnitPrice})">
+            <h3 id="total_comp_val" style="margin-top:10px; color:#be123c; font-weight:900;">0 VNĐ</h3>
+        </div>
+        <p style="font-size:0.6rem; color:#94a3b8; margin-top:15px; text-align:center;">* Thông tin mang tính chất tham khảo dựa trên QĐ 30/2024/QĐ-UBND</p>
+    `;
+    
+    const panel = document.getElementById('detail-panel');
+    panel.style.display = 'flex';
+    setTimeout(() => panel.classList.add('open'), 10);
+    map.flyTo(coords, 17);
+    closeModal();
+}
+
+function renderPlanningWarning(addr, coords) {
+    document.getElementById('detail-title').innerText = "CẢNH BÁO QUY HOẠCH";
+    document.getElementById('detail-body').innerHTML = `
+        <div style="background:#fff7ed; border:1px solid #ffedd5; padding:20px; border-radius:16px; text-align:center;">
+            <div style="font-size:3rem; margin-bottom:15px;">⚠️</div>
+            <h4 style="color:#9a3412; margin-bottom:10px;">KHU VỰC CÓ THỂ ẢNH HƯỞNG</h4>
+            <p style="font-size:0.8rem; line-height:1.6; color:#7c2d12;">Địa chỉ <b>${addr}</b> nằm trong khu vực/phường xã đang triển khai dự án quy hoạch ven sông Hồng.</p>
+            <p style="font-size:0.75rem; margin-top:15px; font-weight:600; color:#c2410c;">Vui lòng liên hệ UBND Phường để đối soát ranh giới chính xác.</p>
+        </div>
+    `;
+    const panel = document.getElementById('detail-panel');
+    panel.style.display = 'flex';
+    setTimeout(() => panel.classList.add('open'), 10);
+    map.flyTo(coords, 16);
+    closeModal();
+}
+
+window.updateTotalComp = (unitPrice) => {
+    const area = document.getElementById('calc_area').value;
+    const total = area * unitPrice;
+    document.getElementById('total_comp_val').innerText = new Intl.NumberFormat('vi-VN').format(total) + " VNĐ";
+};
 
 window.openHomeAnalysis = function(addr) {
     const now = new Date().toLocaleString('vi-VN');

@@ -33,7 +33,7 @@
         .fa, .fas, .far, .fab, .fa-solid, .fa-brands { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; }
         body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
 
-        header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
+        header { flex-shrink: 0; background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
         .logo-text { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; }
@@ -68,7 +68,7 @@
         }
         .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        #projectList, #progressList, #faqList { flex-grow: 1; overflow-y: auto; display: none; flex-direction: column; gap: 10px; padding-right: 5px; }
+        #projectList, #progressList, #faqList { flex: 1 1 0; min-height: 0; overflow-y: auto; display: none; flex-direction: column; gap: 10px; padding-right: 5px; }
         #projectList.active, #progressList.active, #faqList.active { display: flex; }
 
         .progress-item { position: relative; padding-left: 15px; border-left: 2px solid #e2e8f0; margin-bottom: 5px; }
