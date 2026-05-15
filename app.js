@@ -427,10 +427,56 @@ function renderFAQ(data) {
 
 window.openNewsDetail = (idx) => {
     const item = allNews[idx];
+    
+    // Tìm đơn giá từ bảng giá đất dựa trên mô tả hoặc tiêu đề (đối soát khu vực)
+    const normTitle = normalizeAddress(item.tenKhu + " " + item.moTa);
+    const priceMatch = landPriceData.find(lp => normTitle.includes(normalizeAddress(lp.region)));
+    const unitPrice = priceMatch ? priceMatch.unitPrice : 25000000; // Mặc định 25tr nếu không khớp
+    const kFactor = priceMatch ? (priceMatch.defaultK || 1.5) : 1.5;
+    const finalPrice = unitPrice * kFactor;
+
     document.getElementById('detail-title').innerText = item.tenKhu;
-    document.getElementById('detail-body').innerHTML = `<div style="white-space: pre-wrap; line-height:1.8; font-family:'Inter'">${item.moTa}</div><br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">${item.nguonTin}</a></small>`;
+    document.getElementById('detail-body').innerHTML = `
+        <div style="background:#f8fafc; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.85rem; line-height:1.8; color:#1e293b;">${item.moTa}</p>
+            <p style="margin-top:10px; font-size:0.75rem;">Nguồn: <a href="${item.nguonTin}" target="_blank" style="color:#2563eb; font-weight:600;">${item.nguonTin.substring(0, 40)}...</a></p>
+        </div>
+
+        <div style="background:linear-gradient(135deg, #fffbeb, #fef3c7); padding:20px; border-radius:16px; border:1px solid #fcd34d;">
+            <h4 style="font-size:0.85rem; color:#92400e; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-calculator"></i> DỰ TÍNH BỒI THƯỜNG (THAM KHẢO)
+            </h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div style="background:white; padding:10px; border-radius:8px;">
+                    <p style="font-size:0.6rem; color:#64748b; text-transform:uppercase;">Đơn giá đất</p>
+                    <p style="font-size:0.8rem; font-weight:700;">${new Intl.NumberFormat('vi-VN').format(unitPrice)} đ/m²</p>
+                </div>
+                <div style="background:white; padding:10px; border-radius:8px;">
+                    <p style="font-size:0.6rem; color:#64748b; text-transform:uppercase;">Hệ số K</p>
+                    <p style="font-size:0.8rem; font-weight:700;">${kFactor}</p>
+                </div>
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.5); padding:15px; border-radius:12px;">
+                <label style="font-size:0.7rem; font-weight:700; color:#92400e;">NHẬP DIỆN TÍCH NHÀ BẠN (M²):</label>
+                <input type="number" id="news_calc_area" placeholder="Ví dụ: 50" style="width:100%; padding:12px; border:1px solid #fcd34d; border-radius:8px; margin-top:8px; font-size:1rem; font-weight:700;" oninput="updateNewsComp(${finalPrice})">
+                <div style="margin-top:15px; text-align:center;">
+                    <p style="font-size:0.7rem; color:#92400e; text-transform:uppercase;">Tổng số tiền nhận được</p>
+                    <h2 id="news_total_comp" style="color:#be123c; font-weight:900; margin-top:5px;">0 VNĐ</h2>
+                </div>
+            </div>
+            <p style="font-size:0.6rem; color:#92400e; margin-top:10px; font-style:italic;">* Kết quả dựa trên dữ liệu bảng giá đất khu vực ${priceMatch ? priceMatch.region : 'Hà Nội'}.</p>
+        </div>
+    `;
+    
     document.getElementById('detail-panel').style.display = 'flex';
     setTimeout(() => document.getElementById('detail-panel').classList.add('open'), 10);
+};
+
+window.updateNewsComp = (price) => {
+    const area = document.getElementById('news_calc_area').value;
+    const total = area * price;
+    document.getElementById('news_total_comp').innerText = new Intl.NumberFormat('vi-VN').format(total) + " VNĐ";
 };
 
 function showModal(title, text, icon) {
