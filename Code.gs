@@ -1,91 +1,118 @@
 /**
- * GOOGLE APPS SCRIPT - QUY HOACH SONG HONG
- * Version: 2.5 (Clean Data Init)
+ * GOOGLE APPS SCRIPT - BUILT-IN SCRAPER & GITHUB SYNC
+ * Version: 4.0 (Zero Cost & Fully Automated)
  */
 
-var SOURCES = [
+var GITHUB_CONFIG = {
+  token: "YOUR_GITHUB_TOKEN", // Hãy dán GitHub Token (classic) của bạn vào đây
+  owner: "9dpi",
+  repo: "quyhoachsonghong",
+  path: "data/database.json",
+  branch: "main"
+};
+
+var RSS_SOURCES = [
   "https://tuoitre.vn/rss/ha-noi.rss",
   "https://vietnamnet.vn/rss/bat-dong-san.rss",
   "https://baochinhphu.vn/rss/quy-hoach.rss"
 ];
 
-function doGet() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheets()[0];
-  var values = sheet.getDataRange().getValues();
-  
-  if (values.length < 2 || values[0][0] == "") {
-    initSheet(sheet);
-    values = sheet.getDataRange().getValues();
-  }
-  
-  var headers = values[0];
-  var result = [];
-  for(var i = 1; i < values.length; i++) {
-    var item = {};
-    for(var j = 0; j < headers.length; j++) {
-      item[headers[j]] = values[i][j];
-    }
-    result.push(item);
-  }
-  
-  result.sort((a, b) => new Date(b.ngayCapNhat || 0) - new Date(a.ngayCapNhat || 0));
-  
-  return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-}
-
 /**
- * HÀM KHỞI TẠO 100 BÀI VIẾT (MASSIVE DATA) - CLEAN VERSION
- * Chạy hàm này một lần để có dữ liệu khởi tạo chuyên nghiệp (Không có đánh số).
+ * HÀM CHÍNH: QUÉT TIN TỨC VÀ ĐẨY LÊN GITHUB
+ * Hướng dẫn: Chọn hàm này và nhấn "Run" để kiểm tra, hoặc cài Trigger định kỳ.
  */
-function initMassiveData() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheets()[0];
-  initSheet(sheet);
+function runBuiltInScraper() {
+  var allNewData = [];
   
-  var locations = [
-    {n: "Mê Linh", lat: 21.18, lng: 105.71},
-    {n: "Đông Anh ven sông", lat: 21.12, lng: 105.82},
-    {n: "Bắc Từ Liêm", lat: 21.08, lng: 105.78},
-    {n: "Tây Hồ Tây", lat: 21.06, lng: 105.81},
-    {n: "Bãi giữa Sông Hồng", lat: 21.04, lng: 105.85},
-    {n: "Long Biên", lat: 21.03, lng: 105.88},
-    {n: "Hoàng Mai ven sông", lat: 20.98, lng: 105.87},
-    {n: "Gia Lâm", lat: 20.99, lng: 105.93},
-    {n: "Thanh Trì", lat: 20.95, lng: 105.91},
-    {n: "Thường Tín", lat: 20.89, lng: 105.95}
-  ];
-  
-  var dataToPush = [];
-  for (var i = 1; i <= 100; i++) {
-    var loc = locations[i % locations.length];
-    var randomLat = loc.lat + (Math.random() - 0.5) * 0.05;
-    var randomLng = loc.lng + (Math.random() - 0.5) * 0.05;
-    
-    // TIÊU ĐỀ SẠCH - KHÔNG CÓ ĐÁNH SỐ
-    var projectTitle = "Dự án " + loc.n + " - Phân khu R" + (i % 5 + 1);
-    
-    dataToPush.push([
-      i,
-      projectTitle,
-      randomLat,
-      randomLng,
-      (Math.floor(Math.random() * 500) + 10) + "ha",
-      "Thông tin quy hoạch chi tiết về phân khu đô thị sông Hồng đoạn qua " + loc.n + ". Dự kiến triển khai năm 2026.",
-      "https://kinhtedothi.vn/quy-hoach",
-      new Date(Date.now() - i * 3600000), 
-      i % 10 == 0 ? "Quy hoạch" : "Dự án", 
-      i <= 5 ? "YES" : "NO" 
-    ]);
+  RSS_SOURCES.forEach(function(url) {
+    try {
+      var xml = UrlFetchApp.fetch(url).getContentText();
+      var document = XmlService.parse(xml);
+      var items = document.getRootElement().getChild('channel').getChildren('item');
+      
+      items.forEach(function(item) {
+        var title = item.getChild('title').getText();
+        var link = item.getChild('link').getText();
+        var description = item.getChild('description').getText();
+        
+        // Lọc tin liên quan đến Sông Hồng hoặc Quy hoạch
+        if (title.toLowerCase().includes("sông hồng") || title.toLowerCase().includes("quy hoạch")) {
+          allNewData.push({
+            "id": Date.now() + Math.floor(Math.random()*1000),
+            "tenKhu": title,
+            "viDo": 21.0285 + (Math.random() - 0.5) * 0.1, // Ngẫu nhiên quanh trung tâm HN
+            "kinhDo": 105.8542 + (Math.random() - 0.5) * 0.1,
+            "dienTich": "Xem chi tiết trong nguồn tin",
+            "moTa": description.replace(/<[^>]*>?/gm, '').trim(), 
+            "nguonTin": link,
+            "ngayCapNhat": new Date().toISOString(),
+            "loai": "Tin tức",
+            "isHeadline": "NO"
+          });
+        }
+      });
+    } catch (e) {
+      console.log("Lỗi nguồn " + url + ": " + e.toString());
+    }
+  });
+
+  if (allNewData.length > 0) {
+    syncMultipleToGithub(allNewData);
+  } else {
+    console.log("Không tìm thấy tin mới trong lần quét này.");
   }
-  
-  sheet.getRange(2, 1, dataToPush.length, dataToPush[0].length).setValues(dataToPush);
-  console.log("Đã khởi tạo thành công 100 bài viết sạch!");
 }
 
-function initSheet(sheet) {
-  var headers = ["id", "tenKhu", "viDo", "kinhDo", "dienTich", "moTa", "nguonTin", "ngayCapNhat", "loai", "isHeadline"];
-  sheet.clear();
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight("bold").setBackground("#f3f3f3");
+function syncMultipleToGithub(newItems) {
+  var fileData = getFileFromGithub();
+  var db = [];
+  var sha = "";
+
+  if (fileData) {
+    db = JSON.parse(Utilities.newBlob(Utilities.base64Decode(fileData.content)).getDataAsString());
+    sha = fileData.sha;
+  }
+
+  var updatedCount = 0;
+  newItems.forEach(function(newItem) {
+    // Chống trùng lặp dựa trên tiêu đề bài báo
+    var exists = db.find(item => item.tenKhu === newItem.tenKhu);
+    if (!exists) {
+      db.unshift(newItem);
+      updatedCount++;
+    }
+  });
+
+  if (updatedCount > 0) {
+    if (db.length > 1000) db = db.slice(0, 1000); // Giới hạn 1000 bài
+    updateFileToGithub(JSON.stringify(db, null, 2), sha);
+    console.log("Đã cập nhật thành công " + updatedCount + " tin mới lên GitHub!");
+  }
+}
+
+function getFileFromGithub() {
+  var url = "https://api.github.com/repos/" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo + "/contents/" + GITHUB_CONFIG.path;
+  var options = {
+    "headers": { "Authorization": "token " + GITHUB_CONFIG.token, "Accept": "application/vnd.github.v3+json" },
+    "muteHttpExceptions": true
+  };
+  var response = UrlFetchApp.fetch(url, options);
+  return response.getResponseCode() == 200 ? JSON.parse(response.getContentText()) : null;
+}
+
+function updateFileToGithub(content, sha) {
+  var url = "https://api.github.com/repos/" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo + "/contents/" + GITHUB_CONFIG.path;
+  var payload = {
+    "message": "Auto-sync news from Built-in Scraper",
+    "content": Utilities.base64Encode(Utilities.newBlob(content, "application/json").getBytes()),
+    "branch": GITHUB_CONFIG.branch
+  };
+  if (sha) payload.sha = sha;
+  var options = {
+    "method": "put",
+    "headers": { "Authorization": "token " + GITHUB_CONFIG.token, "Accept": "application/vnd.github.v3+json" },
+    "contentType": "application/json",
+    "payload": JSON.stringify(payload)
+  };
+  UrlFetchApp.fetch(url, options);
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quy Hoạch Sông Hồng | Pro Dashboard 1.8.1</title>
+    <title>DULIEUQUYHOACH.COM | Live Data</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,7 +16,6 @@
             --detail-width: 450px;
             --bg-light: #f8fafc;
             --sidebar-bg: #ffffff;
-            --border: rgba(0, 0, 0, 0.05);
             --text-main: #0f172a;
             --text-sub: #64748b;
         }
@@ -24,26 +23,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        header {
-            background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000;
-        }
-        .header-left .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-        
-        .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; position: relative; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
-        .ticker-content {
-            display: inline-block; white-space: nowrap; padding-left: 100%;
-            animation: ticker 30s linear infinite; cursor: pointer;
-            font-size: 0.85rem; font-weight: 600; color: #1e40af;
-        }
-        .ticker-content:hover { animation-play-state: paused; text-decoration: underline; }
+        header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
+        .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+        .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 30s linear infinite; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #1e40af; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        .header-right .main-menu { display: flex; gap: 20px; list-style: none; }
-        .main-menu li a { text-decoration: none; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); }
-
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
-        #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
+        #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
         #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .project-item { background: #ffffff; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .project-item:hover { border-color: var(--primary); background: #f0f7ff; }
@@ -58,7 +45,7 @@
             display: none; flex-direction: column;
         }
         #detail-panel.open { right: 0; display: flex; }
-
+        
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
     </style>
@@ -71,25 +58,13 @@
     </div>
 
     <header>
-        <div class="header-left"><div class="logo">SONGHONG.MAP</div></div>
-        <div class="header-center">
-            <div id="ticker" class="ticker-content">Tin tức: Đang tải thông tin quy hoạch mới nhất...</div>
-        </div>
-        <div class="header-right">
-            <ul class="main-menu">
-                <li><a href="#">Trang chủ</a></li>
-                <li><a href="#">Tra cứu</a></li>
-                <li><a href="#">Liên hệ</a></li>
-            </ul>
-        </div>
+        <div class="logo">DULIEUQUYHOACH.COM</div>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đang kết nối kho dữ liệu quy hoạch...</div></div>
+        <div class="header-right"><ul style="display:flex; gap:20px; list-style:none; font-size:0.9rem; font-weight:600; color:var(--text-sub)"><li>Trang chủ</li><li>Bản đồ</li></ul></div>
     </header>
 
     <div class="app-container">
-        <aside id="sidebar">
-            <div id="projectList"></div>
-            <button id="loadMoreBtn" style="margin-top:15px; padding:10px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer; font-weight:600; color:var(--primary); display:none;">Tải thêm dự án...</button>
-        </aside>
-
+        <aside id="sidebar"><div id="projectList"></div></aside>
         <main id="main-content">
             <div id="map"></div>
             <div id="detail-panel">
@@ -104,69 +79,66 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec';
+        // SỬ DỤNG LINK RAW GITHUB ĐỂ ĐẢM BẢO KẾT NỐI KHÔNG BỊ GIÁN ĐOẠN
+        const DATA_URL = 'https://raw.githubusercontent.com/9dpi/quyhoachsonghong/main/data/database.json'; 
         let allData = [];
-        let displayedCount = 0;
 
         const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
         async function init() {
             try {
-                const res = await fetch(SCRIPT_URL);
+                // Thêm tham số timestamp để tránh trình duyệt cache file cũ
+                const res = await fetch(DATA_URL + "?t=" + Date.now());
+                if (!res.ok) throw new Error("File not found");
                 allData = await res.json();
-                
-                loadProjects(10);
-                
-                // Cập nhật và kích hoạt click cho Headline
-                const ticker = document.getElementById('ticker');
-                const headlines = allData.filter(i => i.isHeadline === "YES");
-                if(headlines.length > 0) {
-                    ticker.innerText = headlines.map(h => h.tenKhu).join("  |  ");
-                    // Khi click vào Headline -> Mở tin nổi bật đầu tiên
-                    ticker.onclick = () => openDetail(headlines[0]);
-                }
-
+                renderData(allData);
                 document.getElementById('loader').style.display = 'none';
-                if(allData.length > 10) document.getElementById('loadMoreBtn').style.display = 'block';
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Lỗi tải JSON:", e);
+                // Nếu lỗi link GitHub, thử tải file local dự phòng
+                try {
+                    const fallbackRes = await fetch('./data/database.json');
+                    allData = await fallbackRes.json();
+                    renderData(allData);
+                    document.getElementById('loader').style.display = 'none';
+                } catch (err) {
+                    document.getElementById('ticker').innerText = "Lỗi kết nối database. Vui lòng kiểm tra link GitHub!";
+                }
+            }
         }
 
-        function loadProjects(count) {
+        function renderData(data) {
             const list = document.getElementById('projectList');
-            const target = allData.slice(displayedCount, displayedCount + count);
+            const ticker = document.getElementById('ticker');
+            list.innerHTML = '';
             
-            target.forEach(item => {
-                if(!item.viDo || !item.kinhDo) return;
+            const headlines = data.filter(i => i.isHeadline === "YES");
+            if(headlines.length > 0) {
+                ticker.innerText = headlines.map(h => h.tenKhu).join("  |  ");
+                ticker.onclick = () => openDetail(headlines[0]);
+            } else {
+                ticker.innerText = data.slice(0, 5).map(h => h.tenKhu).join("  |  ");
+            }
+
+            data.forEach(item => {
                 const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                
-                const popupDiv = document.createElement('div');
-                popupDiv.style.cursor = 'pointer';
-                popupDiv.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0,60)}...</p><b style="color:var(--primary)">XEM CHI TIẾT →</b>`;
-                popupDiv.onclick = () => openDetail(item);
-                marker.bindPopup(popupDiv);
+                marker.bindPopup(`<b>${item.tenKhu}</b>`).on('click', () => openDetail(item));
 
                 const div = document.createElement('div');
                 div.className = 'project-item';
-                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 50)}...</p>`;
-                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
+                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 100)}...</p>`;
+                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); openDetail(item); };
                 list.appendChild(div);
             });
-            
-            displayedCount += count;
-            if(displayedCount >= allData.length) document.getElementById('loadMoreBtn').style.display = 'none';
         }
 
         function openDetail(item) {
             document.getElementById('detail-title').innerText = item.tenKhu;
             document.getElementById('detail-body').innerHTML = `
-                <div style="font-size:0.85rem; color:#64748b; margin-bottom:15px">
-                    <span><b>Quy mô:</b> ${item.dienTich}</span> | 
-                    <span><b>Loại:</b> ${item.loai}</span>
-                </div>
-                <p>${item.moTa}</p>
-                <br><hr style="border:0; border-top:1px solid #f1f5f9; margin:15px 0">
-                <small><b>Nguồn:</b> <a href="${item.nguonTin || '#'}" target="_blank">${item.nguonTin ? new URL(item.nguonTin).hostname : 'Chính thống'}</a></small>
+                <p style="font-weight:600; color:var(--primary); margin-bottom:10px">${item.loai || 'Quy hoạch'} | ${item.dienTich || 'N/A'}</p>
+                <div style="white-space: pre-wrap;">${item.moTa}</div>
+                <br><small>Nguồn: <a href="${item.nguonTin}" target="_blank">Xem bài viết gốc</a></small>
             `;
             const panel = document.getElementById('detail-panel');
             panel.style.display = 'flex';
@@ -178,8 +150,6 @@
             panel.classList.remove('open');
             setTimeout(() => panel.style.display = 'none', 400);
         }
-
-        document.getElementById('loadMoreBtn').onclick = () => loadProjects(20);
 
         init();
     </script>
