@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quy Hoạch Sông Hồng | Hệ thống Tra cứu</title>
+    <title>Quy Hoạch Sông Hồng | Pro Dashboard 1.8</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,225 +12,179 @@
     <style>
         :root {
             --primary: #2563eb;
-            --sidebar-width: 360px;
+            --sidebar-width: 340px;
+            --detail-width: 450px;
             --bg-light: #f8fafc;
             --sidebar-bg: #ffffff;
-            --glass: rgba(255, 255, 255, 0.9);
             --border: rgba(0, 0, 0, 0.05);
             --text-main: #0f172a;
             --text-sub: #64748b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* Sidebar Light Style */
-        #sidebar {
-            width: var(--sidebar-width);
-            height: 100%;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            z-index: 2000;
+        /* NEW HEADER STRUCTURE */
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            height: 65px;
             display: flex;
-            flex-direction: column;
-            padding: 24px;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.02);
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 5000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        .logo h1 { 
-            font-family: 'Outfit'; font-size: 1.6rem; font-weight: 800;
-            color: var(--primary); margin-bottom: 30px; 
-            letter-spacing: -1px;
+        .header-left .logo { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+        
+        .header-center { flex-grow: 1; max-width: 50%; margin: 0 40px; overflow: hidden; position: relative; background: #f1f5f9; border-radius: 99px; padding: 6px 0; }
+        .ticker-content {
+            display: inline-block; white-space: nowrap; padding-left: 100%;
+            animation: ticker 30s linear infinite; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600; color: #1e40af;
         }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
-        .stat-card { 
-            background: #f1f5f9; padding: 15px; border-radius: 16px; 
-            border: 1px solid transparent; transition: 0.3s;
-        }
-        .stat-card:hover { background: #e2e8f0; border-color: var(--primary); }
-        .stat-card span { font-size: 0.7rem; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
-        .stat-card div { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 700; margin-top: 5px; color: var(--text-main); }
+        .header-right .main-menu { display: flex; gap: 20px; list-style: none; }
+        .main-menu li a { text-decoration: none; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); transition: 0.2s; }
+        .main-menu li a:hover { color: var(--primary); }
 
-        .list-header { 
-            font-size: 0.8rem; font-weight: 700; color: var(--text-sub); 
-            text-transform: uppercase; margin-bottom: 15px; display: flex; justify-content: space-between; 
-            letter-spacing: 1px;
-        }
+        .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
 
-        #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .project-item { 
-            background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #f1f5f9;
-            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .project-item:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            border-color: var(--primary); 
-        }
-        .project-item h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
-        .project-item p { font-size: 0.75rem; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+        /* Sidebar */
+        #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
+        #projectList { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .project-item { background: #ffffff; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
+        .project-item:hover { border-color: var(--primary); background: #f0f7ff; }
 
-        /* Main Content & Map */
-        #main-content { flex-grow: 1; position: relative; background: #e2e8f0; }
+        /* Map & Detail Panel */
+        #main-content { flex-grow: 1; position: relative; }
         #map { width: 100%; height: 100%; }
 
-        .search-overlay {
-            position: absolute; top: 20px; left: 20px; z-index: 1000;
-            width: 420px; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.08));
+        #detail-panel {
+            position: absolute; right: -var(--detail-width); top: 0; bottom: 0;
+            width: var(--detail-width); background: white; z-index: 4000;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none; /* TRANG THÁI MẶC ĐỊNH LÀ ẨN */
+            flex-direction: column;
         }
-        .search-box {
-            background: #ffffff; padding: 14px 22px; border-radius: 16px;
-            border: 1px solid #ffffff; display: flex; align-items: center; gap: 14px;
-        }
-        .search-box input { 
-            background: transparent; border: none; color: var(--text-main); 
-            width: 100%; outline: none; font-size: 0.95rem; font-weight: 500;
-        }
+        #detail-panel.open { right: 0; display: flex; }
 
-        /* Popup Light Style */
-        .leaflet-popup-content-wrapper { 
-            background: #ffffff !important; color: var(--text-main) !important; 
-            border-radius: 16px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
-            padding: 0 !important;
-        }
-        .leaflet-popup-content { margin: 0 !important; width: 300px !important; }
-        .popup-header { 
-            background: var(--primary); padding: 18px; border-radius: 16px 16px 0 0; color: white;
-        }
-        .popup-header h3 { font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; }
-        .popup-body { padding: 20px; font-size: 0.9rem; line-height: 1.6; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        
-        #loader { 
-            position: fixed; inset: 0; background: #ffffff; z-index: 9999; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-        }
-        .spinner { 
-            width: 50px; height: 50px; border: 4px solid #f1f5f9; 
-            border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; 
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
     </style>
 </head>
 <body>
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; font-weight: 600; color: var(--text-sub);">Đang tải dữ liệu quy hoạch...</p>
+        <p style="margin-top:15px; font-weight: 600; color:var(--text-sub)">Cập nhật thông tin quy hoạch...</p>
     </div>
 
-    <aside id="sidebar">
-        <div class="logo"><h1>SONGHONG.MAP</h1></div>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span>DỰ ÁN ĐANG THEO DÕI</span>
-                <div id="countProjects">0</div>
-            </div>
-            <div class="stat-card">
-                <span>QUY MÔ TỔNG CỘNG</span>
-                <div id="totalArea">0 ha</div>
-            </div>
+    <header>
+        <div class="header-left">
+            <div class="logo">SONGHONG.MAP</div>
         </div>
+        <div class="header-center">
+            <div id="ticker" class="ticker-content">Tin tức: Đang tải thông tin quy hoạch mới nhất...</div>
+        </div>
+        <div class="header-right">
+            <ul class="main-menu">
+                <li><a href="#">Trang chủ</a></li>
+                <li><a href="#">Tra cứu</a></li>
+                <li><a href="#">Bản đồ</a></li>
+                <li><a href="#">Liên hệ</a></li>
+            </ul>
+        </div>
+    </header>
 
-        <div class="list-header">
-            <span>Danh sách dự án</span>
-            <i class="fa-solid fa-arrow-down-short-wide"></i>
-        </div>
+    <div class="app-container">
+        <aside id="sidebar">
+            <div id="projectList"></div>
+            <button id="loadMoreBtn" style="margin-top:15px; padding:10px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer; font-weight:600; color:var(--primary); display:none;">Tải thêm dự án...</button>
+        </aside>
 
-        <div id="projectList">
-            <!-- Items injected by JS -->
-        </div>
-    </aside>
-
-    <main id="main-content">
-        <div class="search-overlay">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass" style="color: var(--primary)"></i>
-                <input type="text" id="searchInput" placeholder="Tra cứu quy hoạch, địa điểm...">
+        <main id="main-content">
+            <div id="map"></div>
+            <div id="detail-panel">
+                <div style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
+                    <h2 id="detail-title" style="font-size:1.3rem">Chi tiết</h2>
+                    <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.5rem" onclick="closeDetail()"></i>
+                </div>
+                <div id="detail-body" style="padding:25px; overflow-y:auto; line-height:1.7"></div>
             </div>
-        </div>
-        <div id="map"></div>
-    </main>
+        </main>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec';
-        let markers = [];
+        let allData = [];
+        let displayedCount = 0;
 
-        // Light Theme Map Tiles (Voyager)
-        const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 12);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-        }).addTo(map);
-
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        const map = L.map('map', { zoomControl: false }).setView([21.05, 105.85], 11);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
         async function init() {
             try {
                 const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
+                allData = await res.json();
                 
-                // Update Stats
-                document.getElementById('countProjects').innerText = data.length;
-                let area = 0;
-                data.forEach(item => {
-                    if(item.dienTich) area += parseFloat(item.dienTich) || 0;
-                });
-                document.getElementById('totalArea').innerText = area + " ha";
-
-                const list = document.getElementById('projectList');
-                list.innerHTML = '';
-
-                data.forEach(item => {
-                    if(!item.viDo || !item.kinhDo) return;
-
-                    const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-                    
-                    const popupHtml = `
-                        <div class="popup-header"><h3>${item.tenKhu}</h3></div>
-                        <div class="popup-body">
-                            <p><b>Quy mô:</b> ${item.dienTich || 'N/A'}</p>
-                            <p><b>Loại:</b> ${item.loai || 'Quy hoạch'}</p>
-                            <hr style="margin:12px 0; border:0; border-top:1px solid #eee">
-                            <p style="color:#64748b">${item.moTa || 'Đang cập nhật chi tiết...'}</p>
-                        </div>
-                    `;
-                    marker.bindPopup(popupHtml);
-                    markers.push({ name: item.tenKhu.toLowerCase(), marker: marker });
-
-                    const div = document.createElement('div');
-                    div.className = 'project-item';
-                    div.innerHTML = `
-                        <h4>${item.tenKhu}</h4>
-                        <p><i class="fa-solid fa-tag" style="color:var(--primary)"></i> ${item.loai || 'Quy hoạch'}</p>
-                        <p style="margin-top:6px; font-size:0.7rem"><i class="fa-regular fa-calendar"></i> Cập nhật: ${new Date(item.ngayCapNhat).toLocaleDateString('vi-VN')}</p>
-                    `;
-                    div.onclick = () => {
-                        map.flyTo([item.viDo, item.kinhDo], 15);
-                        marker.openPopup();
-                    };
-                    list.appendChild(div);
-                });
+                // CHỈ TẢI 10 TIN ĐẦU TIÊN
+                loadProjects(10);
+                
+                // Cập nhật Headline
+                const headlines = allData.filter(i => i.isHeadline === "YES").map(h => h.tenKhu);
+                if(headlines.length > 0) document.getElementById('ticker').innerText = headlines.join("  |  ");
 
                 document.getElementById('loader').style.display = 'none';
-
+                if(allData.length > 10) document.getElementById('loadMoreBtn').style.display = 'block';
             } catch (e) { console.error(e); }
         }
 
-        document.getElementById('searchInput').oninput = (e) => {
-            const val = e.target.value.toLowerCase();
-            const match = markers.find(m => m.name.includes(val));
-            if(match && val.length > 2) {
-                map.flyTo(match.marker.getLatLng(), 15);
-                match.marker.openPopup();
-            }
-        };
+        function loadProjects(count) {
+            const list = document.getElementById('projectList');
+            const target = allData.slice(displayedCount, displayedCount + count);
+            
+            target.forEach(item => {
+                if(!item.viDo || !item.kinhDo) return;
+                const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
+                
+                const popupDiv = document.createElement('div');
+                popupDiv.style.cursor = 'pointer';
+                popupDiv.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0,60)}...</p><b style="color:var(--primary)">XEM CHI TIẾT →</b>`;
+                popupDiv.onclick = () => openDetail(item);
+                marker.bindPopup(popupDiv);
+
+                const div = document.createElement('div');
+                div.className = 'project-item';
+                div.innerHTML = `<h4>${item.tenKhu}</h4><p>${item.moTa.substring(0, 50)}...</p>`;
+                div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
+                list.appendChild(div);
+            });
+            
+            displayedCount += count;
+            if(displayedCount >= allData.length) document.getElementById('loadMoreBtn').style.display = 'none';
+        }
+
+        function openDetail(item) {
+            document.getElementById('detail-title').innerText = item.tenKhu;
+            document.getElementById('detail-body').innerHTML = `<p>${item.moTa}</p><br><small>Nguồn: ${item.nguonTin || 'Chính thống'}</small>`;
+            const panel = document.getElementById('detail-panel');
+            panel.style.display = 'flex';
+            setTimeout(() => panel.classList.add('open'), 10);
+        }
+
+        function closeDetail() {
+            const panel = document.getElementById('detail-panel');
+            panel.classList.remove('open');
+            setTimeout(() => panel.style.display = 'none', 400);
+        }
+
+        document.getElementById('loadMoreBtn').onclick = () => loadProjects(20);
 
         init();
     </script>

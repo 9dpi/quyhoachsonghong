@@ -1,6 +1,6 @@
 /**
  * GOOGLE APPS SCRIPT - QUY HOACH SONG HONG
- * Version: 2.2 (Automation & Trigger System)
+ * Version: 2.4 (Headline & Massive Data Init)
  */
 
 var SOURCES = [
@@ -36,89 +36,53 @@ function doGet() {
 }
 
 /**
- * Hàm khởi tạo Trigger - BẠN CHỈ CẦN CHẠY HÀM NÀY 1 LẦN
+ * HÀM KHỞI TẠO 100 BÀI VIẾT (MASSIVE DATA)
+ * Chạy hàm này một lần để có dữ liệu khởi tạo chuyên nghiệp.
  */
-function setupAutoTrigger() {
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    ScriptApp.deleteTrigger(triggers[i]);
-  }
-  
-  ScriptApp.newTrigger('startClawProcess')
-      .timeBased()
-      .everyHours(12)
-      .create();
-      
-  console.log("Đã thiết lập Trigger tự động chạy mỗi 12 giờ.");
-}
-
-function startClawProcess() {
-  // Logic này sẽ phối hợp với OpenClaw Agent
-  console.log("Đang quét các nguồn tin: " + SOURCES.join(", "));
-  // Giả lập tìm thấy tin mới
-  testSaveData();
-}
-
-function saveDataFromClaw(data) {
+function initMassiveData() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var dataSheet = ss.getSheets()[0];
-  var logSheet = ss.getSheetByName("Logs") || ss.insertSheet("Logs");
+  var sheet = ss.getSheets()[0];
+  initSheet(sheet);
   
-  if (logSheet.getLastRow() === 0) {
-    logSheet.appendRow(["Thời gian", "Nguồn", "Trạng thái", "Chi tiết raw"]);
+  var locations = [
+    {n: "Khu vực Mê Linh", lat: 21.18, lng: 105.71},
+    {n: "Đông Anh ven sông", lat: 21.12, lng: 105.82},
+    {n: "Bắc Từ Liêm", lat: 21.08, lng: 105.78},
+    {n: "Tây Hồ Tây", lat: 21.06, lng: 105.81},
+    {n: "Bãi giữa Sông Hồng", lat: 21.04, lng: 105.85},
+    {n: "Long Biên", lat: 21.03, lng: 105.88},
+    {n: "Hoàng Mai ven sông", lat: 20.98, lng: 105.87},
+    {n: "Gia Lâm", lat: 20.99, lng: 105.93},
+    {n: "Thanh Trì", lat: 20.95, lng: 105.91},
+    {n: "Thường Tín", lat: 20.89, lng: 105.95}
+  ];
+  
+  var dataToPush = [];
+  for (var i = 1; i <= 100; i++) {
+    var loc = locations[i % locations.length];
+    var randomLat = loc.lat + (Math.random() - 0.5) * 0.05;
+    var randomLng = loc.lng + (Math.random() - 0.5) * 0.05;
+    
+    dataToPush.push([
+      i,
+      "Dự án " + loc.n + " - Phân khu R" + (i % 5 + 1) + " (Số " + i + ")",
+      randomLat,
+      randomLng,
+      (Math.floor(Math.random() * 500) + 10) + "ha",
+      "Thông tin quy hoạch chi tiết về phân khu đô thị sông Hồng đoạn qua " + loc.n + ". Dự kiến triển khai năm 2026.",
+      "https://kinhtedothi.vn/quy-hoach",
+      new Date(Date.now() - i * 3600000), // Mỗi bài cách nhau 1 tiếng
+      i % 10 == 0 ? "Quy hoạch" : "Dự án", // Loại
+      i <= 5 ? "YES" : "NO" // Cột Headline (5 tin đầu là YES)
+    ]);
   }
-
-  try {
-    var values = dataSheet.getDataRange().getValues();
-    var exists = false;
-    var targetRow = -1;
-
-    for (var i = 1; i < values.length; i++) {
-      if (values[i][1] === data.tenKhu) {
-        exists = true;
-        targetRow = i + 1;
-        break;
-      }
-    }
-
-    var rowData = [
-      exists ? values[targetRow-1][0] : Date.now(), 
-      data.tenKhu,
-      data.viDo,
-      data.kinhDo,
-      data.dienTich,
-      data.moTa,
-      data.url,
-      new Date(), 
-      data.loai || "Quy hoạch"
-    ];
-
-    if (exists) {
-      dataSheet.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);
-      logSheet.appendRow([new Date(), data.url, "Updated", "Update: " + data.tenKhu]);
-    } else {
-      dataSheet.appendRow(rowData);
-      logSheet.appendRow([new Date(), data.url, "Success", "New: " + data.tenKhu]);
-    }
-  } catch (e) {
-    logSheet.appendRow([new Date(), data.url, "Error", e.toString()]);
-  }
-}
-
-function testSaveData() {
-  saveDataFromClaw({
-    tenKhu: "Khu dân cư Thượng Cát " + Math.floor(Math.random()*100),
-    viDo: 21.102,
-    kinhDo: 105.755,
-    dienTich: "45ha",
-    moTa: "Quy hoạch khu dân cư sinh thái ven sông",
-    url: "https://vneconomy.vn/ha-nooi-phe-duyet-quy-hoach.html",
-    loai: "Quy hoạch"
-  });
+  
+  sheet.getRange(2, 1, dataToPush.length, dataToPush[0].length).setValues(dataToPush);
+  console.log("Đã khởi tạo thành công 100 bài viết!");
 }
 
 function initSheet(sheet) {
-  var headers = ["id", "tenKhu", "viDo", "kinhDo", "dienTich", "moTa", "nguonTin", "ngayCapNhat", "loai"];
+  var headers = ["id", "tenKhu", "viDo", "kinhDo", "dienTich", "moTa", "nguonTin", "ngayCapNhat", "loai", "isHeadline"];
   sheet.clear();
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight("bold").setBackground("#f3f3f3");
 }
