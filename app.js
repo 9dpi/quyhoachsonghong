@@ -51,6 +51,9 @@ async function init() {
         renderNews(allNews);
         renderProgress(progressData);
         renderFAQ(faqData);
+        
+        // TẢI RĂNH GIỚI QUY HOẠCH (GIS)
+        loadPlanningGIS();
     } catch (e) {
         console.error("Data Load Error:", e);
     }
@@ -439,5 +442,32 @@ function showModal(title, text, icon) {
 
 function closeModal() { document.getElementById('custom-modal').classList.remove('active'); }
 function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); setTimeout(() => document.getElementById('detail-panel').style.display = 'none', 400); }
+
+function loadPlanningGIS() {
+    // URL dẫn tới file GeoJSON chứa ranh giới các dự án (Vành đai 4, cầu Tứ Liên...)
+    const GIS_URL = "data/map.geojson"; 
+    
+    fetch(GIS_URL)
+        .then(res => res.json())
+        .then(geojsonData => {
+            L.geoJSON(geojsonData, {
+                style: function(feature) {
+                    return {
+                        color: "#ef4444",
+                        weight: 2,
+                        fillColor: "#ef4444",
+                        fillOpacity: 0.1
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    if (feature.properties && feature.properties.name) {
+                        layer.bindPopup(`<b>VÙNG QUY HOẠCH:</b><br>${feature.properties.name}`);
+                    }
+                }
+            }).addTo(map);
+            console.log("Đã tải ranh giới GIS quy hoạch.");
+        })
+        .catch(err => console.log("Chưa có file map.geojson để hiển thị ranh giới."));
+}
 
 document.addEventListener('DOMContentLoaded', init);

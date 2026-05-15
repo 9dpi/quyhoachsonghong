@@ -13,6 +13,7 @@ var GITHUB_CONFIG = {
 
 var SHEET_ID = "1_uwGa7TvGL6JJHMbSGDj_OqUbNMrGI5TqI7ozrg48_I"; 
 var SHEET_NAME = "4_Khu_Tai_Dinh_Cu";
+var GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // Cấu hình tại đây để kích hoạt AI
 
 var RSS_SOURCES = [
   "https://tuoitre.vn/rss/ha-noi.rss",
@@ -82,10 +83,10 @@ function runBuiltInScraper() {
         
         // Sử dụng logic lọc tin mở rộng
         if (isRelatedToQuyHoach(title, description)) {
-          allNewData.push({
+          var newsItem = {
             "id": Date.now() + Math.floor(Math.random()*1000),
             "tenKhu": title,
-            "viDo": 21.0285 + (Math.random() - 0.5) * 0.1, // Ngẫu nhiên quanh trung tâm HN
+            "viDo": 21.0285 + (Math.random() - 0.5) * 0.1, 
             "kinhDo": 105.8542 + (Math.random() - 0.5) * 0.1,
             "dienTich": "Xem chi tiết trong nguồn tin",
             "moTa": description.replace(/<[^>]*>?/gm, '').trim(), 
@@ -93,7 +94,13 @@ function runBuiltInScraper() {
             "ngayCapNhat": new Date().toISOString(),
             "loai": "Tin tức",
             "isHeadline": "NO"
-          });
+          };
+          allNewData.push(newsItem);
+          
+          // NẾU CÓ GEMINI API KEY -> TỰ ĐỘNG TRÍCH XUẤT ĐỊA CHỈ QUY HOẠCH
+          if (GEMINI_API_KEY !== "YOUR_GEMINI_API_KEY") {
+            tryAutoExtractPlanning(title, description, link);
+          }
         }
       });
     } catch (e) {
@@ -337,6 +344,52 @@ function initializeSystemSheets() {
   });
   
   console.log("Hoàn tất khởi tạo hệ thống bảng tính.");
+}
+
+/**
+ * TỰ ĐỘNG TRÍCH XUẤT THÔNG TIN QUY HOẠCH BẰNG AI
+ */
+function tryAutoExtractPlanning(title, description, sourceUrl) {
+  var prompt = "Bạn là chuyên gia quy hoạch. Hãy đọc tiêu đề: '" + title + "' và nội dung: '" + description + "'. " +
+               "Hãy trích xuất thông tin quy hoạch dưới dạng JSON chuẩn với các key: " +
+               "stdAddress (Địa chỉ cụ thể/đường/phường), projectName (Tên dự án), status (Có/Không), landPrice (Ước tính giá đền bù nếu có, chỉ lấy số), region (Quận/Huyện). " +
+               "Nếu không có thông tin cụ thể, hãy để null. Chỉ trả về JSON, không giải thích.";
+  
+  var payload = {
+    "contents": [{ "parts": [{ "text": prompt }] }]
+  };
+  
+  var options = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+  
+  var response = UrlFetchApp.fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY, options);
+  var json = JSON.parse(response.getContentText());
+  
+  try {
+    var resultText = json.candidates[0].content.parts[0].text;
+    var result = JSON.parse(resultText.replace(/```json|```/g, ""));
+    
+    if (result.stdAddress && result.projectName) {
+      var ss = SpreadsheetApp.openById(SHEET_ID);
+      var sheet = ss.getSheetByName("DanhSachQuyHoach");
+      sheet.appendRow([
+        result.stdAddress, 
+        result.projectName, 
+        result.status || "Đang xác minh", 
+        1.5, // Mặc định K=1.5
+        result.landPrice || 0,
+        result.region || "",
+        sourceUrl
+      ]);
+      console.log("AI đã trích xuất địa chỉ: " + result.stdAddress);
+    }
+  } catch (e) {
+    console.log("Lỗi AI Extract: " + e.toString());
+  }
 }
 
 /**
