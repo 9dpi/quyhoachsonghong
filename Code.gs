@@ -11,8 +11,8 @@ var GITHUB_CONFIG = {
   branch: "main"
 };
 
-var SHEET_ID = "YOUR_GOOGLE_SHEET_ID"; // Dán ID Google Sheet của bạn vào đây
-var SHEET_NAME = "Database";
+var SHEET_ID = "1_uwGa7TvGL6JJHMbSGDj_OqUbNMrGI5TqI7ozrg48_I"; 
+var SHEET_NAME = "4_Khu_Tai_Dinh_Cu";
 
 var RSS_SOURCES = [
   "https://tuoitre.vn/rss/ha-noi.rss",
@@ -21,7 +21,26 @@ var RSS_SOURCES = [
 ];
 
 /**
- * HÀM CHÍNH: QUÉT TIN TỨC VÀ ĐẨY LÊN GITHUB
+ * CÀI ĐẶT TRIGGER TỰ ĐỘNG (Chạy 1 lần duy nhất)
+ */
+function setupDailyTriggers() {
+  // Xóa các trigger cũ để tránh trùng lặp
+  var allTriggers = ScriptApp.getProjectTriggers();
+  allTriggers.forEach(t => ScriptApp.deleteTrigger(t));
+  
+  // Trigger 9h sáng
+  ScriptApp.newTrigger('runBuiltInScraper')
+    .timeBased().atHour(9).everyDays(1).inTimezone("Asia/Ho_Chi_Minh").create();
+    
+  // Trigger 16h chiều
+  ScriptApp.newTrigger('runBuiltInScraper')
+    .timeBased().atHour(16).everyDays(1).inTimezone("Asia/Ho_Chi_Minh").create();
+    
+  console.log("Đã thiết lập 2 trigger tự động (9h & 16h).");
+}
+
+/**
+ * HÀM CHÍNH: QUÉT TIN TỨC VÀ ĐẨY VÀO SHEET & GITHUB
  * Hướng dẫn: Chọn hàm này và nhấn "Run" để kiểm tra, hoặc cài Trigger định kỳ.
  */
 function runBuiltInScraper() {
@@ -97,7 +116,7 @@ function doGet() {
   var ss = SpreadsheetApp.openById(SHEET_ID);
   
   return ContentService.createTextOutput(JSON.stringify({
-    news: getSheetData(ss, "Database"),
+    news: getSheetData(ss, "4_Khu_Tai_Dinh_Cu"),
     progress: getSheetData(ss, "Progress"),
     faq: getSheetData(ss, "FAQ")
   }))

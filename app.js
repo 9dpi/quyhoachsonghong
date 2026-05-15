@@ -7,7 +7,7 @@ const NEWS_URL = BASE_URL + 'database.json';
 const EXTRA_URL = BASE_URL + 'extra_data.json'; 
 
 // Dán URL Web App sau khi Deploy Code.gs vào đây
-const GAS_API_URL = "YOUR_GAS_WEB_APP_URL"; 
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec"; 
 
 let allNews = [];
 let homeMarker = null;
@@ -52,7 +52,6 @@ async function init() {
 function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    // Các tab vẫn có thể click nhưng nội dung không hiển thị theo yêu cầu
     ['projectList', 'progressList', 'faqList'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -60,6 +59,11 @@ function switchTab(tab, btn) {
             el.style.display = 'none';
         }
     });
+    const target = document.getElementById(tab + 'List');
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'flex';
+    }
 }
 
 async function checkMyHome() {
