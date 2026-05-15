@@ -45,13 +45,13 @@
         .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
         #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 15px; }
         
-        .primary-search-card { background: linear-gradient(135deg, #1e40af, #2563eb); padding: 18px; border-radius: 16px; margin-bottom: 20px; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); }
+        .primary-search-card { flex-shrink: 0; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 18px; border-radius: 16px; margin-bottom: 20px; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); }
         .search-input-group { display: flex; background: white; border-radius: 10px; padding: 4px; gap: 4px; }
         .search-input-group input { flex-grow: 1; border: none; outline: none; padding: 8px 12px; font-size: 0.85rem; font-family: var(--font-main); color: #000; width: 100%; }
         .search-input-group button { background: var(--secondary); color: white; border: none; border-radius: 8px; width: 40px; height: 36px; cursor: pointer; }
 
         /* TAB STYLE - FIX FONT TIẾNG VIỆT */
-        .sidebar-tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #f1f5f9; padding: 4px; border-radius: 10px; }
+        .sidebar-tabs { flex-shrink: 0; display: flex; gap: 5px; margin-bottom: 15px; background: #f1f5f9; padding: 4px; border-radius: 10px; }
         .tab-btn { 
             flex: 1; 
             border: none; 

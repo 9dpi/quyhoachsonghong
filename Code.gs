@@ -241,6 +241,53 @@ function updateFileToGithub(content, sha) {
 }
 
 /**
+ * IMPORT DỮ LIỆU FAQ TỪ FILE QA.json TRÊN GITHUB VÀO SHEET
+ * Chọn hàm này và nhấn "Run" để cập nhật bộ câu hỏi mới nhất.
+ */
+function importFAQFromGithub() {
+  var url = "https://raw.githubusercontent.com/" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo + "/" + GITHUB_CONFIG.branch + "/data/QA.json";
+  try {
+    var content = UrlFetchApp.fetch(url).getContentText();
+    var lines = content.split('\n');
+    var faqData = [];
+    var currentQ = "";
+    var currentA = "";
+    
+    lines.forEach(function(line) {
+      line = line.trim();
+      if (!line) return;
+      
+      // Nhận diện câu hỏi (bắt đầu bằng số. )
+      if (/^\d+\./.test(line)) {
+        if (currentQ) faqData.push([currentQ, currentA.trim()]);
+        currentQ = line.replace(/^\d+\.\s*/, "");
+        currentA = "";
+      } else if (line.startsWith("Trả lời:")) {
+        // Bắt đầu phần trả lời
+      } else if (line.startsWith("Nguồn:")) {
+        currentA += "\n(Nguồn: ";
+      } else if (currentQ) {
+        currentA += (currentA.includes("(Nguồn:") ? line + ")" : line + " ");
+      }
+    });
+    
+    // Thêm câu cuối cùng
+    if (currentQ) faqData.push([currentQ, currentA.trim()]);
+    
+    if (faqData.length > 0) {
+      var ss = SpreadsheetApp.openById(SHEET_ID);
+      var sheet = ss.getSheetByName("FAQ") || ss.insertSheet("FAQ");
+      sheet.clear();
+      sheet.appendRow(["Câu hỏi", "Trả lời"]);
+      sheet.getRange(2, 1, faqData.length, 2).setValues(faqData);
+      console.log("Đã import thành công " + faqData.length + " câu hỏi vào tab FAQ.");
+    }
+  } catch (e) {
+    console.log("Lỗi import FAQ: " + e.toString());
+  }
+}
+
+/**
  * KIỂM TRA TIN TỨC CÓ LIÊN QUAN ĐẾN QUY HOẠCH KHÔNG
  */
 function isRelatedToQuyHoach(title, description) {

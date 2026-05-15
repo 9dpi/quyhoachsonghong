@@ -177,11 +177,14 @@ function renderProgress(data) {
 
 function renderFAQ(data) {
     const list = document.getElementById('faqList');
-    if (!data) return;
+    if (!data || data.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:0.8rem; font-family:\'Inter\'">Dữ liệu Hỏi đáp đang được cập nhật từ hệ thống...</div>';
+        return;
+    }
     list.innerHTML = data.map(f => `
         <div class="faq-item" onclick="this.classList.toggle('open')">
-            <div class="faq-q" style="font-family:'Inter'">${f.q}</div>
-            <div class="faq-a" style="font-size:0.75rem; line-height:1.6; font-family:'Inter'">${f.a}</div>
+            <div class="faq-q" style="font-family:'Inter'">${f.q || "Câu hỏi đang cập nhật"}</div>
+            <div class="faq-a" style="font-size:0.75rem; line-height:1.6; font-family:'Inter'">${f.a || "Câu trả lời đang cập nhật"}</div>
         </div>
     `).join('');
 }
