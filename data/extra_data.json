@@ -1,0 +1,12 @@
+{
+  "progress": [
+    { "region": "ĐÔNG ANH", "content": "Tổ chức họp dân xã Vĩnh Ngọc công bố phương án GPMB Thành phố Thông minh.", "date": "15/05/2026" },
+    { "region": "HOÀI ĐỨC", "content": "Thi công hạ tầng khu tái định cư Vành đai 4 tại xã Tiền Yên đạt 90%.", "date": "14/05/2026" },
+    { "region": "MÊ LINH", "content": "Niêm yết danh sách bồi thường đợt 2 cho các hộ dân xã Văn Khê.", "date": "13/05/2026" }
+  ],
+  "faq": [
+    { "q": "Khi nào được cấp đất tái định cư?", "a": "Khi bị thu hồi 100% đất ở và không còn chỗ ở nào khác trên địa bàn xã đó." },
+    { "q": "Giá bồi thường đất nông nghiệp?", "a": "Gồm giá đất nhà nước + hỗ trợ chuyển đổi nghề nghiệp (2-5 lần)." },
+    { "q": "Làm sao biết nhà bị quy hoạch?", "a": "Sử dụng công cụ tìm kiếm địa chỉ trên web này để đối soát ranh giới dự kiến." }
+  ]
+}
