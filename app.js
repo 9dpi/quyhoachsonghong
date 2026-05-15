@@ -6,6 +6,9 @@ const BASE_URL = './data/';
 const NEWS_URL = BASE_URL + 'database.json'; 
 const EXTRA_URL = BASE_URL + 'extra_data.json'; 
 
+// Dán URL Web App sau khi Deploy Code.gs vào đây
+const GAS_API_URL = "YOUR_GAS_WEB_APP_URL"; 
+
 let allNews = [];
 let homeMarker = null;
 
@@ -14,17 +17,33 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 
 async function init() {
     try {
-        const [newsRes, extraRes] = await Promise.all([
-            fetch(NEWS_URL + "?t=" + Date.now()),
-            fetch(EXTRA_URL + "?t=" + Date.now())
-        ]);
-        
-        allNews = await newsRes.json();
-        const extraData = await extraRes.json();
+        let newsData = [];
+        let progressData = [];
+        let faqData = [];
 
+        // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
+        if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
+            const gasRes = await fetch(GAS_API_URL);
+            const fullData = await gasRes.json();
+            newsData = fullData.news || [];
+            progressData = fullData.progress || [];
+            faqData = fullData.faq || [];
+        } else {
+            // Fallback lấy từ file JSON local (GitHub Pages)
+            const [newsRes, extraRes] = await Promise.all([
+                fetch(NEWS_URL + "?t=" + Date.now()),
+                fetch(EXTRA_URL + "?t=" + Date.now())
+            ]);
+            newsData = await newsRes.json();
+            const extraData = await extraRes.json();
+            progressData = extraData.progress || [];
+            faqData = extraData.faq || [];
+        }
+        
+        allNews = newsData;
         renderNews(allNews);
-        renderProgress(extraData.progress);
-        renderFAQ(extraData.faq);
+        renderProgress(progressData);
+        renderFAQ(faqData);
     } catch (e) {
         console.error("Data Load Error:", e);
     }

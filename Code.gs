@@ -4,12 +4,15 @@
  */
 
 var GITHUB_CONFIG = {
-  token: "YOUR_GITHUB_TOKEN", // Hãy dán GitHub Token (classic) của bạn vào đây
+  token: "YOUR_GITHUB_TOKEN", 
   owner: "9dpi",
   repo: "quyhoachsonghong",
   path: "data/database.json",
   branch: "main"
 };
+
+var SHEET_ID = "YOUR_GOOGLE_SHEET_ID"; // Dán ID Google Sheet của bạn vào đây
+var SHEET_NAME = "Database";
 
 var RSS_SOURCES = [
   "https://tuoitre.vn/rss/ha-noi.rss",
@@ -57,10 +60,72 @@ function runBuiltInScraper() {
   });
 
   if (allNewData.length > 0) {
-    syncMultipleToGithub(allNewData);
+    saveToSheet(allNewData);
+    syncMultipleToGithub(allNewData); // Vẫn giữ đồng bộ GitHub để làm dự phòng
   } else {
     console.log("Không tìm thấy tin mới trong lần quét này.");
   }
+}
+
+/**
+ * LƯU DỮ LIỆU VÀO GOOGLE SHEET
+ */
+function saveToSheet(newItems) {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  
+  // Tạo header nếu sheet trống
+  if (sheet.getLastRow() == 0) {
+    sheet.appendRow(["ID", "Tên Khu", "Vĩ Độ", "Kinh Độ", "Diện Tích", "Mô Tả", "Nguồn Tin", "Ngày Cập Nhật", "Loại"]);
+  }
+  
+  var existingTitles = sheet.getRange(2, 2, sheet.getLastRow() > 1 ? sheet.getLastRow() - 1 : 1).getValues().flat();
+  
+  newItems.forEach(function(item) {
+    if (!existingTitles.includes(item.tenKhu)) {
+      sheet.appendRow([
+        item.id, item.tenKhu, item.viDo, item.kinhDo, item.dienTich, item.moTa, item.nguonTin, item.ngayCapNhat, item.loai
+      ]);
+    }
+  });
+}
+
+/**
+ * API ĐỂ FRONTEND LẤY DỮ LIỆU TỔNG HỢP
+ */
+function doGet() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    news: getSheetData(ss, "Database"),
+    progress: getSheetData(ss, "Progress"),
+    faq: getSheetData(ss, "FAQ")
+  }))
+  .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getSheetData(ss, name) {
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) return [];
+  var data = sheet.getDataRange().getValues();
+  var headers = data.shift();
+  return data.map(function(row) {
+    var obj = {};
+    headers.forEach(function(h, i) {
+      var key = mapKey(h);
+      obj[key] = row[i];
+    });
+    return obj;
+  });
+}
+
+function mapKey(h) {
+  var maps = {
+    "Tên Khu": "tenKhu", "Vĩ Độ": "viDo", "Kinh Độ": "kinhDo", "Mô Tả": "moTa", "Nguồn Tin": "nguonTin",
+    "Ngày": "date", "Khu vực": "region", "Nội dung": "content",
+    "Câu hỏi": "q", "Trả lời": "a"
+  };
+  return maps[h] || h;
 }
 
 function syncMultipleToGithub(newItems) {
