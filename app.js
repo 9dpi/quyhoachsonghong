@@ -10,7 +10,7 @@ const EXTRA_URL = BASE_URL + 'extra_data.json';
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec"; 
 
 let allNews = [];
-let displayedNewsCount = 10;
+let displayedNewsCount = 30;
 let planningData = [];
 let projectsData = [];
 let landPriceData = [];
