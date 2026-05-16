@@ -315,6 +315,12 @@ function renderPlanningResult(match, addr, coords) {
             <input type="number" id="calc_area" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; margin-top:5px;" oninput="updateTotalCompFromInput()">
             <h3 id="total_comp_val" style="margin-top:10px; color:#be123c; font-weight:900;">0 VNĐ</h3>
         </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: center;">
+            <button onclick="shareFacebook()" style="background: #1877F2; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 700;"><i class="fa-brands fa-facebook"></i> Facebook</button>
+            <button onclick="shareZalo()" style="background: #0068FF; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 700;"><i class="fa-solid fa-message"></i> Zalo</button>
+        </div>
+
         <p style="font-size:0.6rem; color:#94a3b8; margin-top:15px; text-align:center;">* Thông tin mang tính chất tham khảo dựa trên QĐ 30/2024/QĐ-UBND</p>
     `;
     
@@ -431,6 +437,16 @@ window.submitQuestion = async () => {
         console.error(e);
         showModal("Lỗi", "Không thể kết nối tới máy chủ.", "fa-circle-xmark");
     }
+};
+
+window.shareFacebook = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+};
+
+window.shareZalo = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://zalo.me/s/share?url=${url}`, '_blank');
 };
 
 window.runGlobalCalc = () => {
