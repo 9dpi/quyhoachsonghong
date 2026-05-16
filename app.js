@@ -45,26 +45,30 @@ async function init() {
         } catch (cacheError) {
             console.log("Static cache failed, falling back to GAS API or defaults.", cacheError);
             
-            // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
-            if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
-                const gasRes = await fetch(GAS_API_URL);
-                const fullData = await gasRes.json();
-                newsData = fullData.news || [];
-                progressData = fullData.progress || [];
-                faqData = fullData.faq || [];
-                planningData = fullData.planning || [];
-                projectsData = fullData.projects || [];
-                landPriceData = fullData.landPrice || [];
-            } else {
-                // Fallback lấy từ file JSON local (GitHub Pages)
-                const [newsRes, extraRes] = await Promise.all([
-                    fetch(NEWS_URL + "?t=" + Date.now()),
-                    fetch(EXTRA_URL + "?t=" + Date.now())
-                ]);
-                newsData = await newsRes.json();
-                const extraData = await extraRes.json();
-                progressData = extraData.progress || [];
-                faqData = extraData.faq || [];
+            try {
+                // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
+                if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
+                    const gasRes = await fetch(GAS_API_URL);
+                    const fullData = await gasRes.json();
+                    newsData = fullData.news || [];
+                    progressData = fullData.progress || [];
+                    faqData = fullData.faq || [];
+                    planningData = fullData.planning || [];
+                    projectsData = fullData.projects || [];
+                    landPriceData = fullData.landPrice || [];
+                } else {
+                    // Fallback lấy từ file JSON local (GitHub Pages)
+                    const [newsRes, extraRes] = await Promise.all([
+                        fetch(NEWS_URL + "?t=" + Date.now()),
+                        fetch(EXTRA_URL + "?t=" + Date.now())
+                    ]);
+                    newsData = await newsRes.json();
+                    const extraData = await extraRes.json();
+                    progressData = extraData.progress || [];
+                    faqData = extraData.faq || [];
+                }
+            } catch (fallbackError) {
+                console.log("Fallback fetch also failed (likely due to file:// protocol CORS). Using mock data.", fallbackError);
             }
         }
         
@@ -101,8 +105,8 @@ async function init() {
 
         if (newsData.length === 0) {
             newsData = [
-                { tenKhu: "Khu đô thị mới Mê Linh", loai: "Quy hoạch", viDo: 21.1833, kinhDo: 105.7167, link: "#" },
-                { tenKhu: "Khu tái định cư Lĩnh Nam", loai: "Tái định cư", viDo: 20.9833, kinhDo: 105.8667, link: "#" }
+                { tenKhu: "Khu đô thị mới Mê Linh", loai: "Quy hoạch", viDo: 21.1833, kinhDo: 105.7167, moTa: "Dự án phát triển đô thị tại huyện Mê Linh", link: "#" },
+                { tenKhu: "Khu tái định cư Lĩnh Nam", loai: "Tái định cư", viDo: 20.9833, kinhDo: 105.8667, moTa: "Dự án tái định cư phục vụ giải phóng mặt bằng", link: "#" }
             ];
         }
         
@@ -111,7 +115,9 @@ async function init() {
         
         // Thiết lập sự kiện cuộn để load thêm tin (Lazy Load)
         setupLazyLoad();
-        renderProgress(progressData);
+        
+        // renderProgress(progressData); // Tạm ẩn do thiếu #progressList trong HTML. Dữ liệu tiến độ đã hiển thị trong tab Dự án.
+        
         renderFAQ(faqData);
         renderProjectsInMapTab(projectsData);
         
@@ -149,14 +155,22 @@ function switchTab(tab, btn) {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
-            // Gỡ bỏ style inline nếu đã lỡ bị set
             el.style.display = ''; 
         }
     });
     
-    const target = document.getElementById(tab + 'List');
-    if (target) {
-        target.classList.add('active');
+    if (tab === 'realmap') {
+        document.body.classList.add('show-map');
+        // Cần invalidateSize cho Leaflet khi hiện bản đồ
+        if (typeof map !== 'undefined') {
+            setTimeout(() => { map.invalidateSize(); }, 200);
+        }
+    } else {
+        document.body.classList.remove('show-map');
+        const target = document.getElementById(tab + 'List');
+        if (target) {
+            target.classList.add('active');
+        }
     }
 }
 
@@ -213,33 +227,53 @@ async function handleAddressLookup(normAddr, rawAddr) {
         const data = await res.json();
         const lat = data && data.length > 0 ? parseFloat(data[0].lat) : 21.0285;
         const lon = data && data.length > 0 ? parseFloat(data[0].lon) : 105.8542;
+        const coords = [lat, lon];
 
-        if (match) {
-            renderPlanningResult(match, rawAddr, [lat, lon]);
-        } else {
-            const warningAreas = ["mê linh", "lĩnh nam", "hồng hà", "phú thượng", "bát tràng", "bồ đề", "ngọc thụy", "phố huế"];
-            const isWarning = warningAreas.some(area => normAddr.includes(area));
-            if (isWarning) {
-                renderPlanningWarning(rawAddr, [lat, lon]);
+        // Tạo icon ngôi nhà bằng FontAwesome
+        const houseIcon = L.divIcon({
+            html: '<div style="background: white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #be123c;"><i class="fa-solid fa-house" style="font-size: 18px; color: #be123c;"></i></div>',
+            className: 'house-marker-icon',
+            iconSize: [36, 36],
+            iconAnchor: [18, 18]
+        });
+
+        // Tạo marker và gán tooltip (direction: top để không đè lên icon)
+        homeMarker = L.marker(coords, { icon: houseIcon }).addTo(map);
+        homeMarker.bindTooltip(rawAddr, { permanent: true, direction: 'top', className: 'house-tooltip' }).openTooltip();
+
+        // Bấm vào marker thì mới ra bảng tra cứu
+        homeMarker.on('click', () => {
+            if (match) {
+                renderPlanningResult(match, rawAddr, coords);
             } else {
-                const formHtml = `
-                    <p style="margin-bottom: 15px; font-size: 0.85rem; color: #64748b;">Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này. Bạn có thể gửi yêu cầu tra cứu, chúng tôi sẽ cập nhật sớm!</p>
-                    <div style="text-align: left;">
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Địa chỉ:</label>
-                        <input type="text" id="ask_address" value="${rawAddr}" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; background: #f8fafc;" readonly>
-                        
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Câu hỏi / Ghi chú:</label>
-                        <textarea id="ask_question" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; font-family: inherit;" rows="3" placeholder="Ví dụ: Đất nhà tôi có nằm trong ranh giới dự án X không?"></textarea>
-                        
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Email hoặc SĐT để nhận phản hồi:</label>
-                        <input type="text" id="ask_contact" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 15px;" placeholder="Ví dụ: 0912345678">
-                        
-                        <button onclick="submitQuestion()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">GỬI YÊU CẦU</button>
-                    </div>
-                `;
-                showModal("Gửi yêu cầu tra cứu", formHtml, "fa-file-signature");
-                map.flyTo([lat, lon], 15);
+                const warningAreas = ["mê linh", "lĩnh nam", "hồng hà", "phú thượng", "bát tràng", "bồ đề", "ngọc thụy", "phố huế"];
+                const isWarning = warningAreas.some(area => normAddr.includes(area));
+                if (isWarning) {
+                    renderPlanningWarning(rawAddr, coords);
+                } else {
+                    const formHtml = `
+                        <p style="margin-bottom: 15px; font-size: 0.85rem; color: #64748b;">Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này. Bạn có thể gửi yêu cầu tra cứu, chúng tôi sẽ cập nhật sớm!</p>
+                        <div style="text-align: left;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Địa chỉ:</label>
+                            <input type="text" id="ask_address" value="${rawAddr}" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; background: #f8fafc;" readonly>
+                            
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Câu hỏi / Ghi chú:</label>
+                            <textarea id="ask_question" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; font-family: inherit;" rows="3" placeholder="Ví dụ: Đất nhà tôi có nằm trong ranh giới dự án X không?"></textarea>
+                            
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Email hoặc SĐT để nhận phản hồi:</label>
+                            <input type="text" id="ask_contact" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 15px;" placeholder="Ví dụ: 0912345678">
+                            
+                            <button onclick="submitQuestion()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">GỬI YÊU CẦU</button>
+                        </div>
+                    `;
+                    showModal("Gửi yêu cầu tra cứu", formHtml, "fa-file-signature");
+                }
             }
+        });
+
+        // Bay tới khu vực đó
+        map.flyTo(coords, 17);
+        closeModal(); // Đóng modal "Đang phân tích"
         }
     } catch (e) { console.error(e); }
 }
@@ -346,9 +380,13 @@ window.searchFromCTA = (baseArea) => {
 function renderPlanningResult(match, addr, coords) {
     const project = projectsData.find(p => p.projectName === match.project) || {};
     const timeline = progressData.filter(p => p.project === match.project).slice(0, 2);
-    const price = match.landPrice || 0;
     const k = match.kFactor || 1.0;
-    const totalUnitPrice = price * k;
+    
+    // Lấy giá cho 4 vị trí (nếu có, nếu không tự tính theo tỷ lệ)
+    const priceVt1 = match.gia_dat_o_vt1 || match.landPrice || 0;
+    const priceVt2 = match.gia_dat_o_vt2 || Math.round(priceVt1 * 0.8);
+    const priceVt3 = match.gia_dat_o_vt3 || Math.round(priceVt1 * 0.6);
+    const priceVt4 = match.gia_dat_o_vt4 || Math.round(priceVt1 * 0.4);
 
     document.getElementById('detail-title').innerText = "KẾT QUẢ TRA CỨU";
     document.getElementById('detail-body').innerHTML = `
@@ -371,17 +409,46 @@ function renderPlanningResult(match, addr, coords) {
         </div>
 
         <div style="background:#fffbeb; border:1px solid #fef3c7; padding:15px; border-radius:12px;">
-            <h4 style="font-size:0.8rem; margin-bottom:10px; color:#92400e;">💰 ƯỚC TÍNH BỒI THƯỜNG</h4>
+            <h4 style="font-size:0.8rem; margin-bottom:10px; color:#92400e;">💰 BẢNG GIÁ ĐẤT ĐỀN BÙ DỰ KIẾN</h4>
+            <table style="width:100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; margin-bottom: 15px; border: 1px solid #fcd34d;">
+                <tr style="background: #fef3c7; color: #92400e;">
+                    <th style="padding: 6px; border: 1px solid #fcd34d;">Vị trí</th>
+                    <th style="padding: 6px; border: 1px solid #fcd34d;">Giá gốc (đ/m²)</th>
+                    <th style="padding: 6px; border: 1px solid #fcd34d;">x Hệ số K (${k})</th>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">VT1 (Mặt tiền)</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">${new Intl.NumberFormat('vi-VN').format(priceVt1)}</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d; font-weight:700; color: #be123c;">${new Intl.NumberFormat('vi-VN').format(priceVt1 * k)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">VT2 (Ngõ > 3m)</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">${new Intl.NumberFormat('vi-VN').format(priceVt2)}</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d; font-weight:700; color: #be123c;">${new Intl.NumberFormat('vi-VN').format(priceVt2 * k)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">VT3 (Ngõ 2-3m)</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">${new Intl.NumberFormat('vi-VN').format(priceVt3)}</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d; font-weight:700; color: #be123c;">${new Intl.NumberFormat('vi-VN').format(priceVt3 * k)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">VT4 (Ngõ < 2m)</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d;">${new Intl.NumberFormat('vi-VN').format(priceVt4)}</td>
+                    <td style="padding: 6px; border: 1px solid #fcd34d; font-weight:700; color: #be123c;">${new Intl.NumberFormat('vi-VN').format(priceVt4 * k)}</td>
+                </tr>
+            </table>
+
+            <h4 style="font-size:0.8rem; margin-bottom:10px; color:#92400e;">🧮 CÔNG CỤ TÍNH NHANH</h4>
             <label style="font-size:0.7rem; color:#92400e; font-weight:700;">Chọn vị trí đất:</label>
-            <select id="calc_position" style="width:100%; padding:8px; border:1px solid #fcd34d; border-radius:8px; margin-top:5px; margin-bottom:10px; font-size:0.8rem;" onchange="updateCompWithPosition(${price}, ${k})">
+            <select id="calc_position" style="width:100%; padding:8px; border:1px solid #fcd34d; border-radius:8px; margin-top:5px; margin-bottom:10px; font-size:0.8rem;" onchange="updateCompWithPositionSpecific(${priceVt1}, ${priceVt2}, ${priceVt3}, ${priceVt4}, ${k})">
                 <option value="1">Vị trí 1 (Mặt tiền)</option>
                 <option value="2">Vị trí 2 (Ngõ > 3m)</option>
                 <option value="3">Vị trí 3 (Ngõ 2-3m)</option>
                 <option value="4">Vị trí 4 (Ngõ < 2m)</option>
             </select>
-            <p style="font-size:0.75rem;">Đơn giá gốc: <b id="base_price_val">${new Intl.NumberFormat('vi-VN').format(price)}</b> đ/m²</p>
+            <p style="font-size:0.75rem;">Đơn giá gốc: <b id="base_price_val">${new Intl.NumberFormat('vi-VN').format(priceVt1)}</b> đ/m²</p>
             <p style="font-size:0.75rem;">Hệ số K: <b>${k}</b></p>
-            <p style="font-size:0.9rem; color:#b45309; font-weight:800; margin:10px 0;">→ TỔNG ĐƠN GIÁ: <b id="total_unit_price_val">${new Intl.NumberFormat('vi-VN').format(totalUnitPrice)}</b> đ/m²</p>
+            <p style="font-size:0.9rem; color:#b45309; font-weight:800; margin:10px 0;">→ TỔNG ĐƠN GIÁ: <b id="total_unit_price_val">${new Intl.NumberFormat('vi-VN').format(priceVt1 * k)}</b> đ/m²</p>
             <label style="font-size:0.7rem;">Nhập diện tích (m²):</label>
             <input type="number" id="calc_area" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; margin-top:5px;" oninput="updateTotalCompFromInput()">
             <h3 id="total_comp_val" style="margin-top:10px; color:#be123c; font-weight:900;">0 VNĐ</h3>
@@ -423,14 +490,13 @@ window.updateTotalComp = (unitPrice) => {
     document.getElementById('total_comp_val').innerText = new Intl.NumberFormat('vi-VN').format(total) + " VNĐ";
 };
 
-window.updateCompWithPosition = (basePrice, k) => {
+window.updateCompWithPositionSpecific = (p1, p2, p3, p4, k) => {
     const pos = document.getElementById('calc_position').value;
-    let factor = 1.0;
-    if (pos === "2") factor = 0.8;
-    else if (pos === "3") factor = 0.6;
-    else if (pos === "4") factor = 0.4;
+    let currentPrice = p1;
+    if (pos === "2") currentPrice = p2;
+    else if (pos === "3") currentPrice = p3;
+    else if (pos === "4") currentPrice = p4;
     
-    const currentPrice = basePrice * factor;
     const totalUnitPrice = currentPrice * k;
     
     document.getElementById('base_price_val').innerText = new Intl.NumberFormat('vi-VN').format(currentPrice);
@@ -530,18 +596,31 @@ function renderNews(data, append = false) {
     
     data.forEach((item, index) => {
         const actualIndex = append ? (displayedNewsCount - data.length + index) : index;
-        const marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
-        marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:void(0)" onclick="openNewsDetail(${actualIndex})">Xem chi tiết</a>`);
+        
+        let marker = null;
+        if (item.viDo && item.kinhDo) {
+            marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
+            marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:void(0)" onclick="openNewsDetail(${actualIndex})">Xem chi tiết</a>`);
+        }
         
         const div = document.createElement('div');
         div.className = 'project-item';
         const tagClass = item.loai === "Tái định cư" ? "tag-tdc" : "tag-qh";
+        const moTaText = item.moTa || "Chưa có mô tả chi tiết cho dự án này.";
         div.innerHTML = `
             <span class="tag ${tagClass}">${item.loai}</span>
             <h4 style="font-family:'Inter'">${item.tenKhu}</h4>
-            <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">${item.moTa.substring(0, 50)}...</p>
+            <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">${moTaText.substring(0, 50)}...</p>
         `;
-        div.onclick = () => { map.flyTo([item.viDo, item.kinhDo], 15); marker.openPopup(); };
+        
+        div.onclick = () => { 
+            if (item.viDo && item.kinhDo) {
+                map.flyTo([item.viDo, item.kinhDo], 15); 
+                if (marker) marker.openPopup(); 
+            } else {
+                showModal("Thông báo", "Vị trí của khu vực này chưa được xác định trên bản đồ.", "fa-location-dot");
+            }
+        };
         list.appendChild(div);
     });
 }

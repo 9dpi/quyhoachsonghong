@@ -179,9 +179,25 @@
             .header-right { width: 100%; }
             .header-right ul { justify-content: flex-end; }
             
-            .app-container { flex-direction: column; }
-            #sidebar { width: 100% !important; height: 40vh !important; border-right: none; border-bottom: 1px solid #e2e8f0; }
-            #main-content { height: 60vh !important; }
+            .app-container { flex-direction: column; height: calc(100vh - 65px); position: relative; }
+            #sidebar { width: 100% !important; height: 100% !important; border-right: none; }
+            
+            #main-content { 
+                position: absolute; 
+                top: 145px; /* Chiều cao của search card + tabs */
+                bottom: 0; 
+                left: 0; 
+                right: 0; 
+                height: auto !important;
+                display: none;
+                z-index: 10;
+            }
+            
+            /* Hiển thị bản đồ khi có class show-map */
+            body.show-map #main-content { display: block !important; }
+            body.show-map #projectList, body.show-map #faqList, body.show-map #mapList { display: none !important; }
+            
+            #tab-realmap { display: block !important; }
             
             #detail-panel { 
                 width: 100% !important; 
@@ -190,6 +206,7 @@
                 bottom: 0 !important; 
                 transform: translateY(100%) !important; 
                 box-shadow: 0 -10px 30px rgba(0,0,0,0.1) !important;
+                z-index: 5000;
             }
             #detail-panel.open { transform: translateY(0) !important; }
             
@@ -235,6 +252,7 @@
                 <button class="tab-btn active" id="tab-project" onclick="switchTab('project', this)">BẢN TIN</button>
                 <button class="tab-btn" id="tab-faq" onclick="switchTab('faq', this)">HỎI ĐÁP</button>
                 <button class="tab-btn" id="tab-map" onclick="switchTab('map', this)">DỰ ÁN</button>
+                <button class="tab-btn" id="tab-realmap" onclick="switchTab('realmap', this)" style="display:none;">BẢN ĐỒ</button>
             </div>
             <div id="projectList" class="active"></div>
             <div id="faqList"></div>
