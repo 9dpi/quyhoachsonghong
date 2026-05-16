@@ -43,11 +43,11 @@ git commit -m "%msg%"
 
 :: 5. Đẩy lên GitHub
 echo [*] Dang day len GitHub...
-git push origin main
+git push origin HEAD:main
 
 if %errorlevel% neq 0 (
     echo [!] Push bi tu choi. Dang thu giai phap ep buoc...
-    git push origin main --force
+    git push origin HEAD:main --force
 )
 
 echo ======================================================

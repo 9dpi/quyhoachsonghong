@@ -151,22 +151,7 @@ async function handleAddressLookup(normAddr, rawAddr) {
             if (isWarning) {
                 renderPlanningWarning(rawAddr, [lat, lon]);
             } else {
-                const formHtml = `
-                    <p style="margin-bottom: 15px; font-size: 0.85rem; color: #64748b;">Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này. Bạn có thể gửi yêu cầu tra cứu, chúng tôi sẽ cập nhật sớm!</p>
-                    <div style="text-align: left;">
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Địa chỉ:</label>
-                        <input type="text" id="ask_address" value="${rawAddr}" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; background: #f8fafc;" readonly>
-                        
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Câu hỏi / Ghi chú:</label>
-                        <textarea id="ask_question" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; font-family: inherit;" rows="3" placeholder="Ví dụ: Đất nhà tôi có nằm trong ranh giới dự án X không?"></textarea>
-                        
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Email hoặc SĐT để nhận phản hồi:</label>
-                        <input type="text" id="ask_contact" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 15px;" placeholder="Ví dụ: 0912345678">
-                        
-                        <button onclick="submitQuestion()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">GỬI YÊU CẦU</button>
-                    </div>
-                `;
-                showModal("Gửi yêu cầu tra cứu", formHtml, "fa-file-signature");
+                showModal("Thông tin", "Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này.", "fa-circle-info");
                 map.flyTo([lat, lon], 15);
             }
         }
@@ -402,35 +387,6 @@ window.calcComp = () => {
     const total = area * 55 * 2;
     document.getElementById('home_comp_val').innerText = new Intl.NumberFormat('vi-VN').format(total * 1000000) + " VNĐ";
     document.getElementById('home_calc_res').style.display = 'block';
-};
-
-window.submitQuestion = async () => {
-    const address = document.getElementById('ask_address').value;
-    const question = document.getElementById('ask_question').value;
-    const contact = document.getElementById('ask_contact').value;
-    
-    if (!question || !contact) {
-        alert("Vui lòng nhập đầy đủ câu hỏi và thông tin liên hệ!");
-        return;
-    }
-    
-    showModal("Đang gửi", "Đang gửi câu hỏi của bạn lên hệ thống...", "fa-spinner fa-spin");
-    
-    try {
-        const res = await fetch(GAS_API_URL, {
-            method: "POST",
-            body: JSON.stringify({ address, question, contact })
-        });
-        const result = await res.json();
-        if (result.status === "success") {
-            showModal("Thành công", "Đã gửi câu hỏi thành công! Chúng tôi sẽ liên hệ lại sớm.", "fa-circle-check");
-        } else {
-            showModal("Lỗi", "Gửi câu hỏi thất bại: " + result.message, "fa-circle-xmark");
-        }
-    } catch (e) {
-        console.error(e);
-        showModal("Lỗi", "Không thể kết nối tới máy chủ.", "fa-circle-xmark");
-    }
 };
 
 window.runGlobalCalc = () => {
