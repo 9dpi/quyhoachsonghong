@@ -26,7 +26,31 @@ async function init() {
         let newsData = [];
         let faqData = [];
 
-        // Thử lấy từ Cache tĩnh (file JSON trên GitHub) trước để tải nhanh
+        // 1. THỬ LẤY TỪ LOCALSTORAGE CACHE TRƯỚC ĐỂ LOAD NHANH
+        const cached = localStorage.getItem('dqh_cache');
+        if (cached) {
+            try {
+                const cacheData = JSON.parse(cached);
+                if (Date.now() - cacheData.time < 3600000) {
+                    console.log("Loaded data from localStorage cache.");
+                    newsData = cacheData.data.news || [];
+                    progressData = cacheData.data.progress || [];
+                    faqData = cacheData.data.faq || [];
+                    planningData = cacheData.data.planning || [];
+                    projectsData = cacheData.data.projects || [];
+                    landPriceData = cacheData.data.landPrice || [];
+                    
+                    allNews = newsData;
+                    renderNews(allNews.slice(0, displayedNewsCount));
+                    renderFAQ(faqData);
+                    renderProjectsInMapTab(projectsData);
+                }
+            } catch (e) {
+                console.log("Cache parse error, falling back to network.");
+            }
+        }
+
+        // 2. FETCH DỮ LIỆU MỚI TỪ MẠNG TRONG NỀN
         try {
             const cacheRes = await fetch("data/sheet_data.json?t=" + Date.now());
             if (cacheRes.ok) {
@@ -109,6 +133,10 @@ async function init() {
             ];
         }
         
+        // Lưu dữ liệu mới vào cache
+        const freshData = { news: newsData, progress: progressData, faq: faqData, planning: planningData, projects: projectsData, landPrice: landPriceData };
+        localStorage.setItem('dqh_cache', JSON.stringify({ time: Date.now(), data: freshData }));
+
         allNews = newsData;
         renderNews(allNews.slice(0, displayedNewsCount));
         
