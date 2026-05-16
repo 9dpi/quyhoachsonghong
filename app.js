@@ -49,6 +49,37 @@ async function init() {
             faqData = extraData.faq || [];
         }
         
+        // Mock Data để test trải nghiệm khi chưa có dữ liệu từ Sheet
+        if (projectsData.length === 0) {
+            projectsData = [
+                { projectName: "Vành đai 4", investor: "Tập đoàn Vingroup", scale: "112.8 km", description: "Dự án đường vành đai liên vùng thủ đô" },
+                { projectName: "Cầu Tứ Liên", investor: "Sungroup", scale: "4.8 km", description: "Cầu dây văng kết nối Đông Anh và trung tâm" },
+                { projectName: "Trục Thăng Long", investor: "UDIC", scale: "Khu đô thị", description: "Phát triển đô thị phía Tây" }
+            ];
+        }
+        
+        if (planningData.length === 0) {
+            planningData = [
+                { stdAddress: "Số 5 Cổ Linh", project: "Vành đai 4", status: "Một phần", kFactor: 2.0, landPrice: 50000000 },
+                { stdAddress: "Ngõ 12 Thạch Bàn", project: "Cầu Tứ Liên", status: "Toàn bộ", kFactor: 1.5, landPrice: 40000000 },
+                { stdAddress: "Mê Linh Plaza", project: "Trục Thăng Long", status: "Cảnh báo", kFactor: 1.0, landPrice: 30000000 }
+            ];
+        }
+        
+        if (progressData.length === 0) {
+            progressData = [
+                { project: "Vành đai 4", date: "2026-05-15", milestone: "Đang giải phóng mặt bằng", detail: "Đã đền bù 70% diện tích" },
+                { project: "Cầu Tứ Liên", date: "2026-05-10", milestone: "Phê duyệt quy hoạch 1/500", detail: "Đang chuẩn bị đấu thầu" }
+            ];
+        }
+        
+        if (newsData.length === 0) {
+            newsData = [
+                { tenKhu: "Khu đô thị mới Mê Linh", loai: "Quy hoạch", viDo: 21.1833, kinhDo: 105.7167, link: "#" },
+                { tenKhu: "Khu tái định cư Lĩnh Nam", loai: "Tái định cư", viDo: 20.9833, kinhDo: 105.8667, link: "#" }
+            ];
+        }
+        
         allNews = newsData;
         renderNews(allNews.slice(0, displayedNewsCount));
         
