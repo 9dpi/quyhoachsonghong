@@ -56,6 +56,7 @@ async function init() {
         setupLazyLoad();
         renderProgress(progressData);
         renderFAQ(faqData);
+        renderProjectsInMapTab(projectsData);
         
         // TẢI RĂNH GIỚI QUY HOẠCH (GIS)
         loadPlanningGIS();
@@ -81,7 +82,7 @@ function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    ['projectList', 'progressList', 'faqList'].forEach(id => {
+    ['projectList', 'progressList', 'faqList', 'mapList'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
@@ -558,6 +559,45 @@ function renderFAQ(data) {
         </div>
     `).join('');
 }
+
+function renderProjectsInMapTab(data) {
+    const list = document.getElementById('mapList');
+    if (!data || data.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:0.8rem; font-family:\'Inter\'">Dữ liệu Bản đồ đang được cập nhật...</div>';
+        return;
+    }
+    
+    list.innerHTML = `
+        <div style="padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 15px;">
+            <p style="font-size: 0.75rem; color: #64748b; text-align: center;">Danh sách các khu vực quy hoạch. Click để xem trên bản đồ.</p>
+        </div>
+        ${data.map(p => `
+            <div class="project-item" onclick="zoomToProject('${p.projectName}')">
+                <span class="tag tag-qh">Dự án</span>
+                <h4 style="font-family:'Inter'">${p.projectName}</h4>
+                <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">Chủ đầu tư: ${p.investor || "Đang cập nhật"}</p>
+                <p style="font-size:0.7rem; color:#94a3b8; font-family:'Inter'">Quy mô: ${p.scale || "Đang cập nhật"}</p>
+            </div>
+        `).join('')}
+    `;
+}
+
+window.zoomToProject = async (projectName) => {
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(projectName + ", Hanoi")}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            map.flyTo([lat, lon], 15);
+        } else {
+            alert("Không tìm thấy vị trí của dự án này trên bản đồ.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Lỗi khi tìm kiếm vị trí.");
+    }
+};
 
 window.openNewsDetail = (idx) => {
     const item = allNews[idx];
