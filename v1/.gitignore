@@ -1,0 +1,5 @@
+Code.gs
+configs/
+.env
+*.log
+.DS_Store

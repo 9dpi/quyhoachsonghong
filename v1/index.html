@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DULIEUQUYHOACH.COM | Hệ thống Tra cứu Quy hoạch Minh bạch</title>
+    <meta name="description" content="Tra cứu quy hoạch, tính toán bồi thường và theo dõi tiến độ dự án Sông Hồng. Thông tin minh bạch, chính xác, vì lợi ích người dân.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #f59e0b;
+            --sidebar-width: 380px;
+            --detail-width: 480px;
+            --bg-light: #f8fafc;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --font-main: 'Inter', sans-serif;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, input, button, select, textarea, span, div, h1, h2, h3, h4, h5, h6 { font-family: var(--font-main); }
+        .fa, .fas, .far, .fab, .fa-solid, .fa-brands { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; }
+        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+
+        header { flex-shrink: 0; background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 5000; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+        .logo-text { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        
+        .header-center { flex-grow: 1; max-width: 45%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; border: 1px solid #e2e8f0; }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.82rem; font-weight: 600; color: #1e40af; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
+        #sidebar { width: var(--sidebar-width); height: 100%; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 15px; }
+        
+        .primary-search-card { flex-shrink: 0; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 18px; border-radius: 16px; margin-bottom: 20px; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); }
+        .search-input-group { display: flex; background: white; border-radius: 10px; padding: 4px; gap: 4px; }
+        .search-input-group input { flex-grow: 1; border: none; outline: none; padding: 8px 12px; font-size: 0.85rem; font-family: var(--font-main); color: #000; width: 100%; }
+        .search-input-group button { background: var(--secondary); color: white; border: none; border-radius: 8px; width: 40px; height: 36px; cursor: pointer; }
+
+        /* TAB STYLE - FIX FONT TIẾNG VIỆT */
+        .sidebar-tabs { flex-shrink: 0; display: flex; gap: 5px; margin-bottom: 15px; background: #f1f5f9; padding: 4px; border-radius: 10px; }
+        .tab-btn { 
+            flex: 1; 
+            border: none; 
+            padding: 10px 5px; 
+            border-radius: 8px; 
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.7rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            color: var(--text-sub); 
+            background: transparent; 
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        #projectList, #progressList, #faqList { flex: 1 1 0; min-height: 0; overflow-y: auto; display: none; flex-direction: column; gap: 10px; padding-right: 5px; }
+        #projectList.active, #progressList.active, #faqList.active { display: flex; }
+
+        .progress-item { position: relative; padding-left: 15px; border-left: 2px solid #e2e8f0; margin-bottom: 5px; }
+        .progress-item::before { content: ""; position: absolute; left: -7px; top: 0; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 3px solid white; }
+        .progress-header { font-size: 0.65rem; font-weight: 800; color: var(--primary); margin-bottom: 3px; }
+        .progress-card { background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #f1f5f9; }
+        
+        .faq-item { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; cursor: pointer; }
+        .faq-q { font-weight: 700; font-size: 0.78rem; color: #1e293b; margin-bottom: 8px; }
+        .faq-a { font-size: 0.85rem; color: #2563eb; font-weight: 500; line-height: 1.7; display: none; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
+        .faq-item.open .faq-a { display: block; }
+
+        /* TIMELINE PROJECT STYLE */
+        .sub-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; flex-shrink: 0; }
+        .sub-tabs::-webkit-scrollbar { display: none; }
+        .sub-btn { 
+            white-space: nowrap; 
+            padding: 8px 16px; 
+            background: #fff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 99px; 
+            font-size: 0.7rem; 
+            font-weight: 700; 
+            color: #64748b; 
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
+        .sub-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+
+        .timeline-container { display: flex; flex-direction: column; gap: 0; flex-grow: 1; overflow-y: auto; }
+        .timeline-item { position: relative; padding-left: 24px; padding-bottom: 24px; border-left: 2px solid #e2e8f0; margin-left: 10px; }
+        .timeline-item:last-child { border-left-color: transparent; }
+        .timeline-dot { position: absolute; left: -7px; top: 0; width: 12px; height: 12px; background: white; border: 3px solid var(--primary); border-radius: 50%; z-index: 1; }
+        .timeline-date { font-size: 0.65rem; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: block; text-transform: uppercase; }
+        .timeline-content { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; }
+        .timeline-title { font-size: 0.8rem; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+        .timeline-desc { font-size: 0.72rem; color: #64748b; line-height: 1.5; }
+        .timeline-source { font-size: 0.65rem; color: var(--primary); margin-top: 8px; display: inline-block; font-weight: 600; text-decoration: none; }
+
+        .project-item { background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.3s; }
+        .project-item:hover { border-color: var(--primary); transform: translateX(4px); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .tag-tdc { background: #fee2e2; color: #ef4444; }
+        .tag-qh { background: #dcfce7; color: #16a34a; }
+
+        #main-content { flex-grow: 1; position: relative; }
+        #map { width: 100%; height: 100%; z-index: 1; }
+
+        #detail-panel { 
+            position: absolute; 
+            top: 0; right: 0; bottom: 0; 
+            width: var(--detail-width); 
+            background: white; 
+            z-index: 4000; 
+            box-shadow: -15px 0 40px rgba(0,0,0,0.08); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform: translateX(100%);
+            display: flex; 
+            flex-direction: column; 
+            pointer-events: none;
+        }
+        #detail-panel.open { transform: translateX(0); pointer-events: auto; }
+
+        footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 12px 24px; font-size: 0.72rem; color: #94a3b8; text-align: center; display: flex; justify-content: space-between; align-items: center; }
+        .footer-links { display: flex; gap: 15px; }
+        .footer-links a { color: #64748b; text-decoration: none; cursor: pointer; font-weight: 500; }
+
+        #custom-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+
+        /* AREA RESULT STYLES */
+        .area-result { font-family: var(--font-main); }
+        .result-header { padding: 15px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; text-align: center; margin-bottom: 15px; text-transform: uppercase; }
+        .result-header.warning { background: #be123c; color: white; box-shadow: 0 4px 12px rgba(190, 18, 60, 0.2); }
+        .result-header.partial { background: #f59e0b; color: white; }
+        .result-header.safe { background: #10b981; color: white; }
+        
+        .area-info h3 { font-size: 1rem; color: #1e293b; margin-bottom: 5px; }
+        .area-info p { font-size: 0.75rem; color: #64748b; margin-bottom: 20px; }
+        
+        .section-title { font-size: 0.75rem; font-weight: 800; color: #1e40af; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        
+        .impact-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #f8fafc; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .impact-table th, .impact-table td { padding: 12px; text-align: left; font-size: 0.72rem; border-bottom: 1px solid #e2e8f0; }
+        .impact-table th { background: #f1f5f9; font-weight: 700; color: #475569; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; white-space: nowrap; }
+        .badge.full { background: #fee2e2; color: #ef4444; }
+        .badge.partial { background: #ffedd5; color: #f59e0b; }
+        .badge.buffer { background: #fef9c3; color: #ca8a04; }
+        .badge.none { background: #dcfce7; color: #16a34a; }
+        
+        .cta-box { background: #eff6ff; border: 1px dashed #3b82f6; padding: 20px; border-radius: 16px; margin-top: 20px; text-align: center; }
+        .cta-box p { font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 12px; }
+        .cta-box input { width: 100%; padding: 10px; border: 1px solid #bfdbfe; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; }
+        .cta-box button { width: 100%; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .modal-content { background: white; width: 90%; max-width: 450px; padding: 35px; border-radius: 28px; text-align: center; }
+        #custom-modal.active { display: flex; }
+
+        .analysis-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-size: 0.8rem; cursor: pointer; font-weight: 700; margin-top: 12px; font-family: 'Inter', sans-serif; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .analysis-btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); }
+
+        /* GLASSMORPHISM CALCULATOR */
+        .calc-container { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 24px; margin-top: 15px; }
+        .calc-input { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin: 12px 0; font-family: 'Inter'; font-size: 1rem; outline: none; transition: border-color 0.3s; }
+        .calc-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .calc-result-box { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-radius: 16px; padding: 20px; text-align: center; margin-top: 20px; border: 1px solid #bfdbfe; }
+    </style>
+</head>
+<body>
+
+    <div id="custom-modal">
+        <div class="modal-content">
+            <div id="modalIcon" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-circle-info"></i></div>
+            <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 10px;" id="modalTitle">Thông báo</div>
+            <div style="font-size: 0.88rem; color: #64748b; line-height: 1.7; text-align: left; margin-bottom: 25px;" id="modalText">...</div>
+            <button style="background:var(--primary); color:white; border:none; padding:10px 30px; border-radius:12px; cursor:pointer; font-weight:700;" onclick="closeModal()">Đã hiểu</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-icon"><i class="fa-solid fa-compass"></i></div>
+            <span class="logo-text">DULIEUQUYHOACH.COM</span>
+        </div>
+        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đông Anh lên Quận 2025 | Vành đai 4 đẩy nhanh tiến độ | Phê duyệt Quy hoạch Sông Hồng R1-R2...</div></div>
+        <div class="header-right">
+            <ul style="display:flex; gap:15px; list-style:none;">
+                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside id="sidebar">
+            <div class="primary-search-card">
+                <h2 style="font-size:0.82rem; margin-bottom:12px; font-weight:800"><i class="fa-solid fa-house-circle-exclamation"></i> NHÀ TÔI CÓ BỊ QUY HOẠCH?</h2>
+                <div class="search-input-group">
+                    <input type="text" id="addrInput" placeholder="Nhập địa chỉ nhà bạn..." onkeypress="if(event.key==='Enter') checkMyHome()">
+                    <button onclick="checkMyHome()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+            <div class="sidebar-tabs">
+                <button class="tab-btn active" id="tab-project" onclick="switchTab('project', this)">BẢN TIN</button>
+                <button class="tab-btn" id="tab-progress" onclick="switchTab('progress', this)">TIẾN ĐỘ</button>
+                <button class="tab-btn" id="tab-faq" onclick="switchTab('faq', this)">HỎI ĐÁP</button>
+            </div>
+            <div id="projectList" class="active"></div>
+            <div id="progressList" style="display:flex; flex-direction:column; overflow:hidden;"></div>
+            <div id="faqList"></div>
+        </aside>
+
+        <main id="main-content">
+            <div id="map"></div>
+            <div id="detail-panel">
+                <div style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
+                    <h2 id="detail-title" style="font-size:1.1rem; font-weight:800">Chi tiết</h2>
+                    <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.5rem; color:#94a3b8" onclick="closeDetail()"></i>
+                </div>
+                <div id="detail-body" style="padding:25px; overflow-y:auto; line-height:1.7; font-size:0.92rem; color:#334155"></div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div>© 2026 DULIEUQUYHOACH.COM</div>
+        <div class="footer-links">
+            <a onclick="showInfo('about')">Giới thiệu</a>
+            <a onclick="showInfo('terms')">Điều khoản</a>
+            <a href="https://www.linkedin.com/in/cuongvq/" target="_blank">Liên hệ</a>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<<<<<<< HEAD
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+=======
+>>>>>>> origin/main
+    <script src="app.js"></script>
+</body>
+</html>
