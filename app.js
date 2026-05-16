@@ -24,7 +24,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 async function init() {
     try {
         let newsData = [];
-        let progressData = [];
         let faqData = [];
 
         // Thử lấy từ Cache tĩnh (file JSON trên GitHub) trước để tải nhanh
@@ -274,7 +273,6 @@ async function handleAddressLookup(normAddr, rawAddr) {
         // Bay tới khu vực đó
         map.flyTo(coords, 17);
         closeModal(); // Đóng modal "Đang phân tích"
-        }
     } catch (e) { console.error(e); }
 }
 
