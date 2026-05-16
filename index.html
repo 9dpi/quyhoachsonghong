@@ -68,8 +68,8 @@
         }
         .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        #projectList, #progressList, #faqList { flex: 1 1 0; min-height: 0; overflow-y: auto; display: none; flex-direction: column; gap: 10px; padding-right: 5px; }
-        #projectList.active, #progressList.active, #faqList.active { display: flex; }
+        #projectList, #faqList, #mapList { flex: 1 1 0; min-height: 0; overflow-y: auto; display: none; flex-direction: column; gap: 10px; padding-right: 5px; }
+        #projectList.active, #faqList.active, #mapList.active { display: flex; }
 
         .progress-item { position: relative; padding-left: 15px; border-left: 2px solid #e2e8f0; margin-bottom: 5px; }
         .progress-item::before { content: ""; position: absolute; left: -7px; top: 0; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 3px solid white; }
@@ -213,12 +213,10 @@
             </div>
             <div class="sidebar-tabs">
                 <button class="tab-btn active" id="tab-project" onclick="switchTab('project', this)">BẢN TIN</button>
-                <button class="tab-btn" id="tab-progress" onclick="switchTab('progress', this)">TIẾN ĐỘ</button>
                 <button class="tab-btn" id="tab-faq" onclick="switchTab('faq', this)">HỎI ĐÁP</button>
-                <button class="tab-btn" id="tab-map" onclick="switchTab('map', this)">BẢN ĐỒ</button>
+                <button class="tab-btn" id="tab-map" onclick="switchTab('map', this)">DỰ ÁN</button>
             </div>
             <div id="projectList" class="active"></div>
-            <div id="progressList" style="display:flex; flex-direction:column; overflow:hidden;"></div>
             <div id="faqList"></div>
             <div id="mapList"></div>
         </aside>

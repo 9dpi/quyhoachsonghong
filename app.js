@@ -73,6 +73,13 @@ async function init() {
             ];
         }
         
+        if (faqData.length === 0) {
+            faqData = [
+                { q: "Làm sao để biết nhà tôi có bị quy hoạch không?", a: "Bạn chỉ cần nhập địa chỉ vào ô tìm kiếm ở trên. Hệ thống sẽ đối soát và báo kết quả ngay." },
+                { q: "Giá đền bù được tính như thế nào?", a: "Giá đền bù = Đơn giá đất (theo vị trí) x Hệ số K. Bạn có thể tự tính bằng bảng tính trong phần kết quả." }
+            ];
+        }
+
         if (newsData.length === 0) {
             newsData = [
                 { tenKhu: "Khu đô thị mới Mê Linh", loai: "Quy hoạch", viDo: 21.1833, kinhDo: 105.7167, link: "#" },
@@ -113,7 +120,7 @@ function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    ['projectList', 'progressList', 'faqList', 'mapList'].forEach(id => {
+    ['projectList', 'faqList', 'mapList'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
@@ -602,14 +609,22 @@ function renderProjectsInMapTab(data) {
         <div style="padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 15px;">
             <p style="font-size: 0.75rem; color: #64748b; text-align: center;">Danh sách các khu vực quy hoạch. Click để xem trên bản đồ.</p>
         </div>
-        ${data.map(p => `
-            <div class="project-item" onclick="zoomToProject('${p.projectName}')">
-                <span class="tag tag-qh">Dự án</span>
-                <h4 style="font-family:'Inter'">${p.projectName}</h4>
-                <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">Chủ đầu tư: ${p.investor || "Đang cập nhật"}</p>
-                <p style="font-size:0.7rem; color:#94a3b8; font-family:'Inter'">Quy mô: ${p.scale || "Đang cập nhật"}</p>
-            </div>
-        `).join('')}
+        ${data.map(p => {
+            const timeline = progressData.filter(t => t.project === p.projectName).slice(0, 2);
+            return `
+                <div class="project-item" onclick="zoomToProject('${p.projectName}')">
+                    <span class="tag tag-qh">Dự án</span>
+                    <h4 style="font-family:'Inter'">${p.projectName}</h4>
+                    <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">Chủ đầu tư: ${p.investor || "Đang cập nhật"}</p>
+                    <p style="font-size:0.7rem; color:#94a3b8; font-family:'Inter'">Quy mô: ${p.scale || "Đang cập nhật"}</p>
+                    
+                    <div style="margin-top: 10px; padding: 8px; background: #f0f9ff; border-radius: 6px;">
+                        <p style="font-size: 0.7rem; color: #0369a1; font-weight: 700; margin-bottom: 5px;">📍 Tiến độ:</p>
+                        ${timeline.length > 0 ? timeline.map(t => `<p style="font-size:0.65rem; color: #0c4a6e; margin-bottom:2px;">• <b>${t.date}:</b> ${t.milestone}</p>`).join('') : '<p style="font-size:0.65rem; color: #64748b;">Đang cập nhật...</p>'}
+                    </div>
+                </div>
+            `;
+        }).join('')}
     `;
 }
 
