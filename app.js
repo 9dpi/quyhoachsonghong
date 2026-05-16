@@ -27,26 +27,45 @@ async function init() {
         let progressData = [];
         let faqData = [];
 
-        // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
-        if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
-            const gasRes = await fetch(GAS_API_URL);
-            const fullData = await gasRes.json();
-            newsData = fullData.news || [];
-            progressData = fullData.progress || [];
-            faqData = fullData.faq || [];
-            planningData = fullData.planning || [];
-            projectsData = fullData.projects || [];
-            landPriceData = fullData.landPrice || [];
-        } else {
-            // Fallback lấy từ file JSON local (GitHub Pages)
-            const [newsRes, extraRes] = await Promise.all([
-                fetch(NEWS_URL + "?t=" + Date.now()),
-                fetch(EXTRA_URL + "?t=" + Date.now())
-            ]);
-            newsData = await newsRes.json();
-            const extraData = await extraRes.json();
-            progressData = extraData.progress || [];
-            faqData = extraData.faq || [];
+        // Thử lấy từ Cache tĩnh (file JSON trên GitHub) trước để tải nhanh
+        try {
+            const cacheRes = await fetch("data/sheet_data.json?t=" + Date.now());
+            if (cacheRes.ok) {
+                const fullData = await cacheRes.json();
+                newsData = fullData.news || [];
+                progressData = fullData.progress || [];
+                faqData = fullData.faq || [];
+                planningData = fullData.planning || [];
+                projectsData = fullData.projects || [];
+                landPriceData = fullData.landPrice || [];
+                console.log("Loaded data from static cache.");
+            } else {
+                throw new Error("Cache file not found or empty.");
+            }
+        } catch (cacheError) {
+            console.log("Static cache failed, falling back to GAS API or defaults.", cacheError);
+            
+            // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
+            if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
+                const gasRes = await fetch(GAS_API_URL);
+                const fullData = await gasRes.json();
+                newsData = fullData.news || [];
+                progressData = fullData.progress || [];
+                faqData = fullData.faq || [];
+                planningData = fullData.planning || [];
+                projectsData = fullData.projects || [];
+                landPriceData = fullData.landPrice || [];
+            } else {
+                // Fallback lấy từ file JSON local (GitHub Pages)
+                const [newsRes, extraRes] = await Promise.all([
+                    fetch(NEWS_URL + "?t=" + Date.now()),
+                    fetch(EXTRA_URL + "?t=" + Date.now())
+                ]);
+                newsData = await newsRes.json();
+                const extraData = await extraRes.json();
+                progressData = extraData.progress || [];
+                faqData = extraData.faq || [];
+            }
         }
         
         // Mock Data để test trải nghiệm khi chưa có dữ liệu từ Sheet
@@ -101,14 +120,20 @@ async function init() {
 
         // Khởi tạo Fuse.js cho tìm kiếm mờ
         if (planningData.length > 0) {
+            // Chuẩn hóa dữ liệu trước khi đưa vào Fuse (thêm trường không dấu)
+            const processedData = planningData.map(item => ({
+                ...item,
+                cleanAddress: normalizeAddress(item.stdAddress)
+            }));
+
             const options = {
-                keys: ['stdAddress'],
+                keys: ['stdAddress', 'cleanAddress'],
                 threshold: 0.4,
                 distance: 100,
                 includeScore: true,
                 ignoreLocation: true
             };
-            fuse = new Fuse(planningData, options);
+            fuse = new Fuse(processedData, options);
             console.log("Đã khởi tạo Fuse.js cho tra cứu địa chỉ.");
         }
     } catch (e) {
@@ -163,10 +188,17 @@ async function checkMyHome() {
 async function handleAddressLookup(normAddr, rawAddr) {
     let match = null;
     if (fuse) {
+        // Tìm kiếm bằng cả chuỗi gốc và chuỗi không dấu
         const results = fuse.search(rawAddr);
-        if (results.length > 0) {
-            match = results[0].item;
-            console.log("Fuse.js match score:", results[0].score);
+        const resultsNoAccent = fuse.search(normAddr);
+        
+        // Gộp kết quả và lấy cái tốt nhất
+        const allResults = [...results, ...resultsNoAccent];
+        allResults.sort((a, b) => a.score - b.score);
+        
+        if (allResults.length > 0 && allResults[0].score < 0.5) {
+            match = allResults[0].item;
+            console.log("Fuse.js match score:", allResults[0].score);
         }
     } else {
         match = planningData.find(item => 

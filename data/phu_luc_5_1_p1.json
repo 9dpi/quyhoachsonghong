@@ -1,0 +1,155 @@
+[
+  {
+    "ten_duong": "An Dương Vương (đường gom chân đê)",
+    "doan_tu": "Ngõ 1 An Dương Vương (trong đê)",
+    "doan_den": "Ngõ 14 An Dương Vương (trong đê)",
+    "gia_dat_o_vt1": 96172,
+    "gia_dat_o_vt2": 54818,
+    "gia_dat_o_vt3": 42581,
+    "gia_dat_o_vt4": 38051
+  },
+  {
+    "ten_duong": "An Trạch",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 143404,
+    "gia_dat_o_vt2": 77438,
+    "gia_dat_o_vt3": 60314,
+    "gia_dat_o_vt4": 53460
+  },
+  {
+    "ten_duong": "Âu Cơ (Trong đê)",
+    "doan_tu": "Ngõ 54 Âu Cơ (Ngã ba giao cắt Xuân Diệu)",
+    "doan_den": "Ngã ba Từ Hoa - Yên Phụ",
+    "gia_dat_o_vt1": 176920,
+    "gia_dat_o_vt2": 92894,
+    "gia_dat_o_vt3": 72042,
+    "gia_dat_o_vt4": 63665
+  },
+  {
+    "ten_duong": "Âu Cơ (Trong đê)",
+    "doan_tu": "An Dương Vương",
+    "doan_den": "Ngõ 54 Âu Cơ (Ngã ba giao cắt Xuân Diệu)",
+    "gia_dat_o_vt1": 114231,
+    "gia_dat_o_vt2": 62827,
+    "gia_dat_o_vt3": 49043,
+    "gia_dat_o_vt4": 43712
+  },
+  {
+    "ten_duong": "Ấu Triệu",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 242521,
+    "gia_dat_o_vt2": 121261,
+    "gia_dat_o_vt3": 91385,
+    "gia_dat_o_vt4": 79962
+  },
+  {
+    "ten_duong": "Bà Huyện Thanh Quan",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 318675,
+    "gia_dat_o_vt2": 158545,
+    "gia_dat_o_vt3": 119483,
+    "gia_dat_o_vt4": 104548
+  },
+  {
+    "ten_duong": "Bà Triệu",
+    "doan_tu": "Hàng Khay",
+    "doan_den": "Trần Hưng Đạo",
+    "gia_dat_o_vt1": 702257,
+    "gia_dat_o_vt2": 316016,
+    "gia_dat_o_vt3": 229183,
+    "gia_dat_o_vt4": 196442
+  },
+  {
+    "ten_duong": "Bà Triệu",
+    "doan_tu": "Trần Hưng Đạo",
+    "doan_den": "Nguyễn Du",
+    "gia_dat_o_vt1": 576854,
+    "gia_dat_o_vt2": 265107,
+    "gia_dat_o_vt3": 193345,
+    "gia_dat_o_vt4": 166406
+  },
+  {
+    "ten_duong": "Bà Triệu",
+    "doan_tu": "Nguyễn Du",
+    "doan_den": "Thái Phiên",
+    "gia_dat_o_vt1": 366476,
+    "gia_dat_o_vt2": 175909,
+    "gia_dat_o_vt3": 133117,
+    "gia_dat_o_vt4": 115602
+  },
+  {
+    "ten_duong": "Bà Triệu",
+    "doan_tu": "Thái Phiên",
+    "doan_den": "Đại Cồ Việt",
+    "gia_dat_o_vt1": 296601,
+    "gia_dat_o_vt2": 145334,
+    "gia_dat_o_vt3": 108968,
+    "gia_dat_o_vt4": 95282
+  },
+  {
+    "ten_duong": "Bắc Sơn",
+    "doan_tu": "Đường Độc Lập",
+    "doan_den": "Hoàng Diệu",
+    "gia_dat_o_vt1": 415377,
+    "gia_dat_o_vt2": 197304,
+    "gia_dat_o_vt3": 148894,
+    "gia_dat_o_vt4": 129042
+  },
+  {
+    "ten_duong": "Bắc Sơn",
+    "doan_tu": "Ông Ích Khiêm",
+    "doan_den": "Ngọc Hà",
+    "gia_dat_o_vt1": 307194,
+    "gia_dat_o_vt2": 150525,
+    "gia_dat_o_vt3": 112860,
+    "gia_dat_o_vt4": 98573
+  },
+  {
+    "ten_duong": "Bảo Khánh",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 379950,
+    "gia_dat_o_vt2": 182376,
+    "gia_dat_o_vt3": 136011,
+    "gia_dat_o_vt4": 118115
+  },
+  {
+    "ten_duong": "Bát Đàn",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 328588,
+    "gia_dat_o_vt2": 159365,
+    "gia_dat_o_vt3": 119173,
+    "gia_dat_o_vt4": 103696
+  },
+  {
+    "ten_duong": "Bát Sứ",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 328588,
+    "gia_dat_o_vt2": 159365,
+    "gia_dat_o_vt3": 119173,
+    "gia_dat_o_vt4": 103696
+  },
+  {
+    "ten_duong": "Bích Câu",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 162320,
+    "gia_dat_o_vt2": 86029,
+    "gia_dat_o_vt3": 66576,
+    "gia_dat_o_vt4": 58835
+  },
+  {
+    "ten_duong": "Bùi Thị Xuân",
+    "doan_tu": "Đầu đường",
+    "doan_den": "Cuối đường",
+    "gia_dat_o_vt1": 296601,
+    "gia_dat_o_vt2": 145334,
+    "gia_dat_o_vt3": 108968,
+    "gia_dat_o_vt4": 95282
+  }
+]
