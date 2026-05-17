@@ -481,6 +481,8 @@ function renderPlanningResult(match, addr, coords) {
             <h3 id="total_comp_val" style="margin-top:10px; color:#be123c; font-weight:900;">0 VNĐ</h3>
         </div>
         
+        <a href="tai-ban-do-quy-hoach.html" style="display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px;"><i class="fa-solid fa-file-invoice-dollar"></i> TRA CỨU BẢNG GIÁ ĐẤT</a>
+
         <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: center;">
             <button onclick="shareFacebook()" style="background: #1877F2; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 700;"><i class="fa-brands fa-facebook"></i> Facebook</button>
             <button onclick="shareZalo()" style="background: #0068FF; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 700;"><i class="fa-solid fa-message"></i> Zalo</button>
@@ -832,6 +834,7 @@ window.openNewsDetail = (idx) => {
             </div>
             <p style="font-size:0.6rem; color:#92400e; margin-top:10px; font-style:italic;">* Kết quả dựa trên dữ liệu bảng giá đất khu vực ${priceMatch ? priceMatch.region : 'Hà Nội'}.</p>
         </div>
+        <a href="tai-ban-do-quy-hoach.html" style="display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px;"><i class="fa-solid fa-file-invoice-dollar"></i> TRA CỨU BẢNG GIÁ ĐẤT</a>
     `;
     
     document.getElementById('detail-panel').classList.add('open');
