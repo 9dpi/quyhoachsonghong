@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- Google Adsense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8079778054351942"
-         crossorigin="anonymous"></script>
-         
+        crossorigin="anonymous"></script>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDK7GC6X9J"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-FDK7GC6X9J');
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-FDK7GC6X9J');
     </script>
-    
+
     <title>Tải Bản Đồ Quy Hoạch Hà Nội Mới Nhất | Dulieuquyhoach.com</title>
-    <meta name="description" content="Tải về bản đồ quy hoạch Hà Nội mới nhất và bảng giá đất Hà Nội 2026 dự kiến. Dữ liệu chuẩn xác, hỗ trợ tra cứu thông tin quy hoạch trực quan.">
-    
+    <meta name="description"
+        content="Tải về bản đồ quy hoạch Hà Nội mới nhất và bảng giá đất Hà Nội 2026 dự kiến. Dữ liệu chuẩn xác, hỗ trợ tra cứu thông tin quy hoạch trực quan.">
+
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
-    
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
+
     <style>
         :root {
             --primary: #2563eb;
@@ -41,67 +44,282 @@
             --font-main: 'Inter', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-main); background: var(--bg-light); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        header { background: #ffffff; border-bottom: 1px solid #e2e8f0; height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 1000; }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
-        .logo-text { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; }
-        
-        .header-center { flex-grow: 1; max-width: 45%; margin: 0 40px; overflow: hidden; background: #f1f5f9; border-radius: 99px; padding: 6px 0; border: 1px solid #e2e8f0; }
-        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 0.82rem; font-weight: 600; color: #1e40af; }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        .header-right ul { display: flex; gap: 20px; list-style: none; align-items: center; }
-        .header-right a { color: var(--text-sub); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.2s; }
-        .header-right a:hover { color: var(--primary); }
-        .header-right .btn-download { background: var(--primary); color: white; padding: 8px 16px; border-radius: 8px; }
-        .header-right .btn-download:hover { background: var(--primary-dark); color: white; }
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-        main { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
-        
-        .download-card { background: white; max-width: 600px; width: 100%; padding: 40px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); text-align: center; border: 1px solid #e2e8f0; }
-        .download-card h1 { font-size: 1.75rem; font-weight: 800; color: #1e293b; margin-bottom: 16px; }
-        .download-card p { font-size: 1rem; color: #64748b; line-height: 1.6; margin-bottom: 32px; }
-        
-        .btn-large { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 16px 32px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-        .btn-large:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); }
-        
-        .file-info { margin-top: 24px; font-size: 0.8rem; color: #94a3b8; display: flex; justify-content: center; gap: 15px; }
-        
-        .ads-container { margin: 40px 0; width: 100%; max-width: 728px; min-height: 90px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.8rem; border: 1px dashed #cbd5e1; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-        footer { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 20px 24px; font-size: 0.8rem; color: #94a3b8; text-align: center; display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-        .footer-links { display: flex; gap: 15px; }
-        .footer-links a { color: #64748b; text-decoration: none; font-weight: 500; }
-        .footer-links a:hover { color: var(--primary); }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .header-center {
+            flex-grow: 1;
+            max-width: 45%;
+            margin: 0 40px;
+            overflow: hidden;
+            background: #f1f5f9;
+            border-radius: 99px;
+            padding: 6px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker 40s linear infinite;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            100% {
+                transform: translate3d(-100%, 0, 0);
+            }
+        }
+
+        .header-right ul {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .header-right a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .header-right a:hover {
+            color: var(--primary);
+        }
+
+        .header-right .btn-download {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .header-right .btn-download:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .download-card {
+            background: white;
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .download-card h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .download-card p {
+            font-size: 1rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .btn-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .file-info {
+            margin-top: 24px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .ads-container {
+            margin: 40px 0;
+            width: 100%;
+            max-width: 728px;
+            min-height: 90px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            border: 1px dashed #cbd5e1;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 24px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
 
         @media (max-width: 640px) {
-            header { padding: 0 15px; }
-            .header-right ul { gap: 10px; }
-            .download-card { padding: 25px; }
-            .download-card h1 { font-size: 1.5rem; }
-            footer { flex-direction: column; gap: 10px; }
+            header {
+                padding: 0 15px;
+            }
+
+            .header-right ul {
+                gap: 10px;
+            }
+
+            .download-card {
+                padding: 25px;
+            }
+
+            .download-card h1 {
+                font-size: 1.5rem;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header>
         <div class="header-left">
-            <img src="branding/dulieuquyhoac.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px;">
-            <a href="index.html" class="logo-text" style="font-size: 1.5rem; font-weight: 800; margin: 0; display: inline; text-decoration: none;">DỮ LIỆU QUY HOẠCH <span style="color: var(--secondary);">2026</span></a>
+            <img src="branding/dulieuquyhoac.png" alt="Logo"
+                style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px;">
+            <a href="index.html" class="logo-text"
+                style="font-size: 1.5rem; font-weight: 800; margin: 0; display: inline; text-decoration: none;">DỮ LIỆU
+                QUY HOẠCH <span style="color: var(--secondary);">2026</span></a>
         </div>
-        <div class="header-center"><div id="ticker" class="ticker-content">Tin tức: Đông Anh lên Quận 2025 | Vành đai 4 đẩy nhanh tiến độ | Phê duyệt Quy hoạch Sông Hồng R1-R2...</div></div>
+        <div class="header-center">
+            <div id="ticker" class="ticker-content">Tin tức: Đông Anh lên Quận 2025 | Vành đai 4 đẩy nhanh tiến độ | Phê
+                duyệt Quy hoạch Sông Hồng R1-R2...</div>
+        </div>
         <div class="header-right">
             <ul style="display:flex; gap:15px; list-style:none; align-items:center;">
-                <li><a href="index.html" style="color:var(--text-sub); font-size:0.85rem; font-weight:700; text-decoration:none;">Trang chủ</a></li>
-                <li><a href="tai-ban-do-quy-hoach.html" style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; font-size:0.85rem; font-weight:700; text-decoration:none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);"><i class="fa-solid fa-download"></i> Tải về Bảng giá Quy hoạch</a></li>
-                <li><a href="https://www.facebook.com/groups/1694801338541423" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
-                <li><a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
-                <li><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-solid fa-comment-dots" title="Zalo"></i></a></li>
-                <li><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-youtube"></i></a></li>
+                <li><a href="index.html"
+                        style="color:var(--text-sub); font-size:0.85rem; font-weight:700; text-decoration:none;">Trang
+                        chủ</a></li>
+                <li><a href="tai-ban-do-quy-hoach.html"
+                        style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; font-size:0.85rem; font-weight:700; text-decoration:none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);"><i
+                            class="fa-solid fa-download"></i> Tải về Bảng giá Quy hoạch</a></li>
+                <li><a href="https://www.facebook.com/groups/1694801338541423" target="_blank"
+                        style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"
+                        style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
+                <li><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"
+                        style="color:var(--text-sub); font-size:1.1rem"><i class="fa-solid fa-comment-dots"
+                            title="Zalo"></i></a></li>
+                <li><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"
+                        style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-youtube"></i></a></li>
             </ul>
         </div>
     </header>
@@ -114,14 +332,17 @@
         </div>
 
         <div class="download-card">
-            <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-file-arrow-down"></i></div>
+            <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i
+                    class="fa-solid fa-file-arrow-down"></i></div>
             <h1>Tải Bản Đồ Quy Hoạch & Bảng Giá Đất</h1>
-            <p>Bản đồ quy hoạch Hà Nội mới nhất và bảng giá đất năm 2026 dự kiến. Dữ liệu được tổng hợp từ các nguồn tin cậy, hỗ trợ nhà đầu tư và người dân tra cứu thông tin minh bạch.</p>
-            
-            <a href="https://drive.google.com/file/d/1kKSBI-hzIrgOBbZVRqKHAS0w12Fz-sq9/view?usp=sharing" class="btn-large" target="_blank">
+            <p>Bản đồ quy hoạch Hà Nội mới nhất và bảng giá đất năm 2026 dự kiến. Dữ liệu được tổng hợp từ các nguồn tin
+                cậy, hỗ trợ nhà đầu tư và người dân tra cứu thông tin minh bạch.</p>
+
+            <a href="https://drive.google.com/file/d/1kKSBI-hzIrgOBbZVRqKHAS0w12Fz-sq9/view?usp=sharing"
+                class="btn-large" target="_blank">
                 <i class="fa-solid fa-download"></i> Tải bảng giá đất 2026 (Dự kiến)
             </a>
-            
+
             <div class="file-info">
                 <span><i class="fa-solid fa-file-pdf"></i> Định dạng: PDF</span>
                 <span><i class="fa-solid fa-weight-scale"></i> Dung lượng: ~2.4 MB</span>
@@ -130,67 +351,98 @@
         </div>
 
         <div class="library-section" style="max-width: 600px; width: 100%; margin-top: 40px;">
-            <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 20px; text-align: center;">Thư viện tài liệu quy hoạch & pháp lý</h2>
-            
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 20px; text-align: center;">
+                Thư viện tài liệu quy hoạch & pháp lý</h2>
+
             <!-- Nhóm 1: Bảng giá đất & Đền bù -->
-            <div class="doc-group" style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; text-align: left;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-scale-balanced"></i> 1. Văn bản về Bảng giá đất & Đền bù</h3>
+            <div class="doc-group"
+                style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; text-align: left;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 15px;"><i
+                        class="fa-solid fa-scale-balanced"></i> 1. Văn bản về Bảng giá đất & Đền bù</h3>
                 <ul style="list-style: none;">
                     <li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
-                        <a href="https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Quyết định 71/2024/QĐ-UBND Hà Nội
+                        <a href="https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf"
+                            target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Quyết định 71/2024/QĐ-UBND Hà
+                            Nội
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Áp dụng từ 20/12/2024. Điều chỉnh, sửa đổi, bổ sung bảng giá đất theo Quyết định 30/2019/QĐ-UBND.</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Áp dụng từ 20/12/2024. Điều
+                            chỉnh, sửa đổi, bổ sung bảng giá đất theo Quyết định 30/2019/QĐ-UBND.</p>
                     </li>
                     <li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
-                        <a href="https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban.hanoi.gov.vn/documents/10182/2518750/QDPQ_30_2019.pdf" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Quyết định 30/2019/QĐ-UBND Hà Nội
+                        <a href="https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban.hanoi.gov.vn/documents/10182/2518750/QDPQ_30_2019.pdf"
+                            target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Quyết định 30/2019/QĐ-UBND Hà
+                            Nội
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Văn bản gốc ban hành quy định và bảng giá các loại đất trên địa bàn Hà Nội giai đoạn 2020-2024.</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Văn bản gốc ban hành quy định và
+                            bảng giá các loại đất trên địa bàn Hà Nội giai đoạn 2020-2024.</p>
                     </li>
                     <li>
-                        <a href="https://vanban.hanoi.gov.vn" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-arrow-up-right-from-square" style="color: #3b82f6;"></i> Văn bản hướng dẫn bồi thường, hỗ trợ tái định cư
+                        <a href="https://vanban.hanoi.gov.vn" target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="color: #3b82f6;"></i> Văn bản hướng
+                            dẫn bồi thường, hỗ trợ tái định cư
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Tra cứu các quy định chi tiết về bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất tại Cổng thông tin Hà Nội.</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Tra cứu các quy định chi tiết về
+                            bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất tại Cổng thông tin Hà Nội.</p>
                     </li>
                 </ul>
             </div>
 
             <!-- Nhóm 2: Quy hoạch sử dụng đất -->
-            <div class="doc-group" style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; text-align: left;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-map-location-dot"></i> 2. Các Quy hoạch sử dụng đất</h3>
+            <div class="doc-group"
+                style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; text-align: left;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 15px;"><i
+                        class="fa-solid fa-map-location-dot"></i> 2. Các Quy hoạch sử dụng đất</h3>
                 <ul style="list-style: none;">
                     <li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
-                        <a href="https://www.theonenetwork.vn/post/ph%C3%AA-duy%E1%BB%87t-quy-ho%E1%BA%A1ch-s%E1%BB%AD-d%E1%BB%A5ng-%C4%91%E1%BA%A5t-%C4%91%E1%BA%BFn-n%C4%83m-2030-huy%E1%BB%87n-gia-l%C3%A2m-s%E1%BB%91-5162-q%C4%91-ubnd-ng%C3%A0y-7-12-2021" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-file-lines" style="color: #3b82f6;"></i> Quyết định 5162/QĐ-UBND huyện Gia Lâm
+                        <a href="https://www.theonenetwork.vn/post/ph%C3%AA-duy%E1%BB%87t-quy-ho%E1%BA%A1ch-s%E1%BB%AD-d%E1%BB%A5ng-%C4%91%E1%BA%A5t-%C4%91%E1%BA%BFn-n%C4%83m-2030-huy%E1%BB%87n-gia-l%C3%A2m-s%E1%BB%91-5162-q%C4%91-ubnd-ng%C3%A0y-7-12-2021"
+                            target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-file-lines" style="color: #3b82f6;"></i> Quyết định 5162/QĐ-UBND huyện
+                            Gia Lâm
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Phê duyệt Quy hoạch sử dụng đất đến năm 2030 của huyện Gia Lâm (Bản sao văn bản).</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Phê duyệt Quy hoạch sử dụng đất
+                            đến năm 2030 của huyện Gia Lâm (Bản sao văn bản).</p>
                     </li>
                     <li>
-                        <a href="https://vqh.hanoi.gov.vn" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-map" style="color: #10b981;"></i> Quy hoạch phân khu (Ký hiệu S, N, H...)
+                        <a href="https://vqh.hanoi.gov.vn" target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-map" style="color: #10b981;"></i> Quy hoạch phân khu (Ký hiệu S, N,
+                            H...)
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Tra cứu các bản đồ quy hoạch chi tiết phân khu đô thị Hà Nội tại Viện Quy hoạch Xây dựng.</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Tra cứu các bản đồ quy hoạch chi
+                            tiết phân khu đô thị Hà Nội tại Viện Quy hoạch Xây dựng.</p>
                     </li>
                 </ul>
             </div>
 
             <!-- Nhóm 3: Các dự án hạ tầng lớn -->
-            <div class="doc-group" style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: left;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-city"></i> 3. Các dự án hạ tầng lớn</h3>
+            <div class="doc-group"
+                style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: left;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 15px;"><i
+                        class="fa-solid fa-city"></i> 3. Các dự án hạ tầng lớn</h3>
                 <ul style="list-style: none;">
                     <li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
-                        <a href="https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Quy hoạch phân khu đô thị sông Hồng (QĐ 1045/QĐ-UBND)
+                        <a href="https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0"
+                            target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Quy hoạch phân khu đô thị sông
+                            Hồng (QĐ 1045/QĐ-UBND)
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Phê duyệt Quy hoạch phân khu đô thị sông Hồng, tỷ lệ 1/5000 (đoạn từ cầu Hồng Hà đến cầu Mễ Sở).</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Phê duyệt Quy hoạch phân khu đô
+                            thị sông Hồng, tỷ lệ 1/5000 (đoạn từ cầu Hồng Hà đến cầu Mễ Sở).</p>
                     </li>
                     <li>
-                        <a href="https://vanban.hanoi.gov.vn" target="_blank" style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                        <a href="https://vanban.hanoi.gov.vn" target="_blank"
+                            style="font-weight: 600; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-road" style="color: #64748b;"></i> Dự án Vành đai 4 - Vùng Thủ đô
                         </a>
-                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Thông tin quy hoạch và giải phóng mặt bằng dự án đường Vành đai 4 tại Cổng thông tin Hà Nội.</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Thông tin quy hoạch và giải
+                            phóng mặt bằng dự án đường Vành đai 4 tại Cổng thông tin Hà Nội.</p>
                     </li>
                 </ul>
             </div>
@@ -212,4 +464,5 @@
     </footer>
 
 </body>
+
 </html>
