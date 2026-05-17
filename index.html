@@ -253,7 +253,13 @@
             }
             
             /* Hiển thị bản đồ khi có class show-map */
-            body.show-map #main-content { display: block !important; }
+            body.show-map #sidebar { height: auto !important; }
+            body.show-map #main-content { 
+                display: block !important; 
+                position: relative !important; 
+                top: auto !important; 
+                flex: 1; 
+            }
             body.show-map #projectList, body.show-map #faqList, body.show-map #mapList { display: none !important; }
             
             #tab-realmap { display: block !important; }
@@ -294,10 +300,10 @@
             <ul style="display:flex; gap:15px; list-style:none; align-items:center;">
                 <li><a href="index.html" style="color:var(--text-sub); font-size:0.85rem; font-weight:700; text-decoration:none;">Trang chủ</a></li>
                 <li><a href="tai-ban-do-quy-hoach.html" style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; font-size:0.85rem; font-weight:700; text-decoration:none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);"><i class="fa-solid fa-download"></i> Tải về Bảng giá Quy hoạch</a></li>
-                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
-                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
-                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-solid fa-comment-dots" title="Zalo"></i></a></li>
-                <li><a href="#" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-youtube"></i></a></li>
+                <li><a href="https://www.facebook.com/groups/1694801338541423" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="https://www.tiktok.com/@seldon_oracle" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
+                <li><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-solid fa-comment-dots" title="Zalo"></i></a></li>
+                <li><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank" style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-youtube"></i></a></li>
             </ul>
         </div>
     </header>
