@@ -324,7 +324,7 @@ async function handleAreaLookup(normAddr, rawAddr) {
         if (hotspot) {
             renderPlanningWarning(rawAddr, coords);
         } else {
-            showModal("Thông tin", "Khu vực này hiện chưa có thông tin quy hoạch trong hệ thống.", "fa-circle-info");
+            showModal("Thông tin", "Khu vực này hiện chưa có thông tin quy hoạch trong hệ thống.<br><br><a href='tai-ban-do-quy-hoach.html' style='display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;'><i class='fa-solid fa-file-invoice-dollar'></i> TRA CỨU BẢNG GIÁ ĐẤT</a>", "fa-circle-info");
             map.flyTo(coords, 14);
         }
     }
@@ -593,7 +593,7 @@ window.submitQuestion = async () => {
         });
         const result = await res.json();
         if (result.status === "success") {
-            showModal("Thành công", "Đã gửi câu hỏi thành công! Chúng tôi sẽ liên hệ lại sớm.", "fa-circle-check");
+            showModal("Thành công", "Đã gửi câu hỏi thành công! Chúng tôi sẽ liên hệ lại sớm.<br><br><a href='tai-ban-do-quy-hoach.html' style='display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;'><i class='fa-solid fa-file-invoice-dollar'></i> TRA CỨU BẢNG GIÁ ĐẤT</a>", "fa-circle-check");
         } else {
             showModal("Lỗi", "Gửi câu hỏi thất bại: " + result.message, "fa-circle-xmark");
         }
@@ -645,7 +645,7 @@ function renderNews(data, append = false) {
                 map.flyTo([item.viDo, item.kinhDo], 15); 
                 if (marker) marker.openPopup(); 
             } else {
-                showModal("Thông báo", "Vị trí của khu vực này chưa được xác định trên bản đồ.", "fa-location-dot");
+                showModal("Thông báo", "Vị trí của khu vực này chưa được xác định trên bản đồ.<br><br><a href='tai-ban-do-quy-hoach.html' style='display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;'><i class='fa-solid fa-file-invoice-dollar'></i> TRA CỨU BẢNG GIÁ ĐẤT</a>", "fa-location-dot");
             }
         };
         list.appendChild(div);
