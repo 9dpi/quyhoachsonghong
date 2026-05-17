@@ -291,6 +291,7 @@ async function handleAddressLookup(normAddr, rawAddr) {
                             <input type="text" id="ask_contact" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 15px;" placeholder="Ví dụ: 0912345678">
                             
                             <button onclick="submitQuestion()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">GỬI YÊU CẦU</button>
+                            <a href="tai-ban-do-quy-hoach.html" style="display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px;"><i class="fa-solid fa-file-invoice-dollar"></i> TRA CỨU BẢNG GIÁ ĐẤT</a>
                         </div>
                     `;
                     showModal("Gửi yêu cầu tra cứu", formHtml, "fa-file-signature");
