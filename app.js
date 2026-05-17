@@ -900,4 +900,72 @@ function loadPlanningGIS() {
         .catch(err => console.log("Chưa có file map.geojson để hiển thị ranh giới."));
 }
 
+window.showInfo = function(type) {
+    if (type === 'about') {
+        const html = `
+            <div style="text-align: left; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                <p style="font-weight: 700; color: #1e40af; margin-bottom: 10px;">Dữ Liệu Quy Hoạch – Kênh thông tin chính thống về quy hoạch, đền bù và bất động sản Hà Nội</p>
+                <p style="margin-bottom: 10px;">📍 <b>Tra cứu ngay:</b> Nhà bạn có nằm trong diện giải tỏa? Giá đất đền bù là bao nhiêu? Tiến độ dự án thế nào?</p>
+                <p style="margin-bottom: 10px;">🗺️ <b>Dữ liệu từ:</b> UBND TP Hà Nội và các đồ án quy hoạch phân khu.</p>
+                <p style="margin-bottom: 10px;">💡 <b>Tham gia cộng đồng</b> để hỏi đáp và cập nhật tin tức mới nhất:</p>
+                <p style="font-weight: 700; color: #1e40af; margin-top: 15px; margin-bottom: 5px;">🔗 Các kênh chính thức:</p>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 8px;"><i class="fa-solid fa-globe" style="color: #64748b; width: 20px;"></i> <b>Website:</b> <a href="https://dulieuquyhoach.com" target="_blank" style="color: #2563eb; text-decoration: none;">https://dulieuquyhoach.com</a></li>
+                    <li style="margin-bottom: 8px;"><i class="fa-brands fa-facebook" style="color: #1877F2; width: 20px;"></i> <b>Facebook Group:</b> <a href="https://www.facebook.com/groups/1694801338541423" target="_blank" style="color: #2563eb; text-decoration: none;">Tham gia nhóm</a></li>
+                    <li style="margin-bottom: 8px;"><i class="fa-brands fa-tiktok" style="color: #000; width: 20px;"></i> <b>TikTok:</b> <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank" style="color: #2563eb; text-decoration: none;">@dulieuquyhoach</a></li>
+                    <li style="margin-bottom: 8px;"><i class="fa-brands fa-youtube" style="color: #FF0000; width: 20px;"></i> <b>YouTube:</b> <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank" style="color: #2563eb; text-decoration: none;">Xem kênh</a></li>
+                    <li style="margin-bottom: 8px;"><i class="fa-solid fa-comment-dots" style="color: #0068FF; width: 20px;"></i> <b>Zalo Group:</b> <a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank" style="color: #2563eb; text-decoration: none;">Tham gia nhóm</a></li>
+                </ul>
+            </div>
+        `;
+        showModal("Giới thiệu", html, "fa-circle-info");
+    } else if (type === 'terms') {
+        const html = `
+            <div style="text-align: left; font-size: 0.85rem; line-height: 1.6; color: #334155; max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+                <p style="font-weight: 700; color: #1e40af; margin-bottom: 10px;">1. Bản chất của thông tin</p>
+                <p>Dữ liệu, bản đồ, bảng giá, thông tin về quy hoạch, đền bù, tiến độ dự án... được cung cấp trên website dulieuquyhoach.com (sau đây gọi là "Chúng tôi") là từ các nguồn sau:</p>
+                <ul style="margin-bottom: 10px; padding-left: 20px;">
+                    <li>Các văn bản pháp luật, quyết định của cơ quan nhà nước có thẩm quyền (UBND Thành phố Hà Nội, Sở Tài nguyên và Môi trường, ...).</li>
+                    <li>Các đồ án quy hoạch được công bố công khai.</li>
+                    <li>Dữ liệu do người dùng đóng góp qua mục "Hỏi đáp".</li>
+                </ul>
+                <p style="margin-bottom: 15px;">Chúng tôi không phải là cơ quan nhà nước, không phải là đơn vị thẩm định giá, và không trực tiếp tham gia vào quá trình ra quyết định hành chính hay phê duyệt dự án. Do đó, mọi thông tin trên website chỉ mang tính chất THAM KHẢO.</p>
+
+                <p style="font-weight: 700; color: #1e40af; margin-bottom: 10px;">2. Không đảm bảo tính chính xác tuyệt đối</p>
+                <p>Chúng tôi nỗ lực hết sức để tập hợp, xử lý và cập nhật dữ liệu một cách chính xác và kịp thời nhất. Tuy nhiên, chúng tôi không thể đảm bảo rằng thông tin hiển thị luôn luôn đầy đủ, chính xác tuyệt đối hoặc không có bất kỳ sai sót nào do các nguyên nhân sau:</p>
+                <ul style="margin-bottom: 10px; padding-left: 20px;">
+                    <li>Lỗi trong quá trình trích xuất, nhập liệu, xử lý dữ liệu từ các nguồn chính thống.</li>
+                    <li>Sự chậm trễ trong việc cập nhật so với các văn bản pháp luật mới hoặc điều chỉnh của cơ quan có thẩm quyền.</li>
+                    <li>Lỗi từ các nguồn dữ liệu công khai mà chúng tôi tham khảo.</li>
+                    <li>Lỗi kỹ thuật từ hệ thống máy chủ, quá trình truyền tải dữ liệu.</li>
+                </ul>
+
+                <p style="font-weight: 700; color: #1e40af; margin-bottom: 10px;">3. Không thay thế nguồn thông tin chính thức</p>
+                <p>Thông tin trên dulieuquyhoach.com KHÔNG thay thế cho các văn bản pháp lý gốc, các quyết định hành chính của cơ quan nhà nước, hay sự tư vấn từ các chuyên gia pháp lý, luật sư, hoặc chuyên gia bất động sản.</p>
+                <p style="margin-bottom: 10px;">Trước khi đưa ra bất kỳ quyết định quan trọng liên quan đến quyền lợi tài sản, đất đai (ví dụ: quyết định mua bán, đầu tư, nhận đền bù, xây dựng, chuyển nhượng...), bạn BẮT BUỘC phải liên hệ và xác nhận thông tin từ các nguồn chính thức như:</p>
+                <ul style="margin-bottom: 15px; padding-left: 20px;">
+                    <li>Văn phòng Đăng ký đất đai Hà Nội.</li>
+                    <li>UBND quận/huyện nơi có đất.</li>
+                    <li>Phòng Tài nguyên và Môi trường quận/huyện.</li>
+                    <li>Các văn phòng công chứng và luật sư chuyên ngành.</li>
+                </ul>
+
+                <p style="font-weight: 700; color: #1e40af; margin-bottom: 10px;">4. Về dữ liệu do người dùng cung cấp (mục Hỏi đáp)</p>
+                <p style="margin-bottom: 15px;">Nội dung trong phần "Hỏi đáp" đến từ sự đóng góp của cộng đồng người dùng. Chúng tôi khuyến khích các chia sẻ hữu ích, nhưng sẽ không kiểm chứng độc lập và không chịu trách nhiệm về tính chính xác, trung thực của các câu hỏi, câu trả lời, hay bất kỳ thông tin nào được trao đổi giữa người dùng với nhau trong phần này.</p>
+
+                <p style="font-weight: 700; color: #1e40af; margin-bottom: 10px;">5. Giới hạn trách nhiệm pháp lý</p>
+                <p>Trong phạm vi tối đa được pháp luật cho phép, Dữ Liệu Quy Hoạch và các thành viên, cộng tác viên sẽ KHÔNG chịu bất kỳ trách nhiệm pháp lý hay bồi thường thiệt hại nào (bao gồm nhưng không giới hạn: thiệt hại trực tiếp, gián tiếp, do mất dữ liệu, mất cơ hội kinh doanh, hoặc các chi phí phát sinh) phát sinh từ hoặc liên quan đến việc:</p>
+                <ul style="margin-bottom: 10px; padding-left: 20px;">
+                    <li>Sử dụng hoặc không thể sử dụng thông tin từ website.</li>
+                    <li>Sự phụ thuộc của bạn vào bất kỳ thông tin nào trên website.</li>
+                    <li>Hành động của bạn dựa trên thông tin từ website.</li>
+                    <li>Bất kỳ sai sót, thiếu chính xác của dữ liệu.</li>
+                </ul>
+                <p style="font-weight: 700; color: #be123c; margin-top: 15px;">Bằng việc sử dụng website dulieuquyhoach.com, bạn đồng ý rằng bạn tự chịu trách nhiệm về mọi rủi ro liên quan đến việc tra cứu, sử dụng thông tin, và bất kỳ quyết định nào của bạn dựa trên thông tin từ chúng tôi.</p>
+            </div>
+        `;
+        showModal("Điều khoản sử dụng", html, "fa-file-contract");
+    }
+};
+
 document.addEventListener('DOMContentLoaded', init);
