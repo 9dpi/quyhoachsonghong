@@ -2,7 +2,7 @@ name: Update Static Cache
 
 on:
   schedule:
-    - cron: '0 * * * *' # Chạy mỗi giờ
+    - cron: '0 2,9,16 * * *' # Chạy 3 lần/ngày: 2h, 9h, 16h (UTC) = 9h, 16h, 23h (GMT+7)
   workflow_dispatch: # Cho phép chạy thủ công
 
 jobs:
@@ -14,10 +14,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch data from GAS API
+      - name: Fetch and validate data from GAS API
         run: |
           mkdir -p data
-          curl -L "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec" -o data/sheet_data.json
+          # Tải về file tạm
+          HTTP_STATUS=$(curl -L -s -o /tmp/sheet_data_new.json -w "%{http_code}" \
+            "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec")
+          
+          echo "HTTP Status: $HTTP_STATUS"
+          
+          # Kiểm tra HTTP status và JSON hợp lệ
+          if [ "$HTTP_STATUS" = "200" ]; then
+            # Kiểm tra có phải JSON hợp lệ không (có trường "news")
+            if python3 -c "
+import json, sys
+with open('/tmp/sheet_data_new.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+assert 'news' in data, 'Missing news key'
+assert len(data['news']) > 0, 'Empty news array'
+assert 'tenKhu' in data['news'][0], 'Missing tenKhu field - invalid structure'
+print(f'Valid JSON: {len(data[\"news\"])} news items, {len(data.get(\"faq\",[]))} FAQs')
+"; then
+              cp /tmp/sheet_data_new.json data/sheet_data.json
+              echo "sheet_data.json updated successfully."
+            else
+              echo "WARNING: GAS API returned invalid JSON structure. Keeping existing file."
+            fi
+          else
+            echo "WARNING: GAS API returned HTTP $HTTP_STATUS. Keeping existing file."
+          fi
 
       - name: Commit and push if changed
         run: |

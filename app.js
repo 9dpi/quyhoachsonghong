@@ -48,92 +48,153 @@ async function init() {
     try {
         let newsData = [];
         let faqData = [];
+        const CACHE_KEY = 'dqh_cache_v3'; // Đổi key → tự động xóa cache cũ
 
-        // 1. THỬ LẤY TỪ LOCALSTORAGE CACHE TRƯỚC ĐỂ LOAD NHANH
-        const cached = localStorage.getItem('dqh_cache');
+        // Hàm kiểm tra dữ liệu news hợp lệ (có tenKhu và moTa)
+        const isValidNews = (arr) => Array.isArray(arr) && arr.length > 0 && arr[0].tenKhu;
+
+        // 1. THỬ LẤY TỪ LOCALSTORAGE CACHE (CHỈ DÙNG NẾU DỮ LIỆU HỢP LỆ)
+        const cached = localStorage.getItem(CACHE_KEY);
+        let usedCache = false;
         if (cached) {
             try {
                 const cacheData = JSON.parse(cached);
-                if (Date.now() - cacheData.time < 3600000) {
-                    console.log("Loaded data from localStorage cache.");
+                // Cache còn trong 30 phút VÀ dữ liệu news hợp lệ
+                if (Date.now() - cacheData.time < 1800000 && isValidNews(cacheData.data.news)) {
+                    console.log("[Cache] Loaded valid data from localStorage.");
                     newsData = cacheData.data.news || [];
                     progressData = cacheData.data.progress || [];
                     faqData = cacheData.data.faq || [];
                     planningData = cacheData.data.planning || [];
                     projectsData = cacheData.data.projects || [];
                     landPriceData = cacheData.data.landPrice || [];
-                    
+                    usedCache = true;
+                } else {
+                    console.log("[Cache] Cache expired or invalid, clearing.");
+                    localStorage.removeItem(CACHE_KEY);
+                }
+            } catch (e) {
+                console.log("[Cache] Parse error, clearing cache.");
+                localStorage.removeItem(CACHE_KEY);
+            }
+        }
+
+        // 2. LUÔN LẤY DỮ LIỆU MỚI TỪ MẠNG (bất kể cache)
+        // Render cache trước nếu có để UX nhanh, sau đó replace bằng fresh data
+        const loadFreshData = async () => {
+            // Ưu tiên 1: sheetDataInlined (sync XHR pre-load trong index.html)
+            if (window.sheetDataInlined) {
+                const fullData = window.sheetDataInlined;
+                if (isValidNews(fullData.news)) {
+                    console.log("[Data] Loaded from sheetDataInlined.");
+                    return fullData;
+                }
+            }
+
+            // Ưu tiên 2: Fetch sheet_data.json (tĩnh trên GitHub Pages)
+            try {
+                const res = await fetch("data/sheet_data.json?t=" + Date.now());
+                if (res.ok) {
+                    const text = await res.text();
+                    const fullData = JSON.parse(text); // Sẽ throw nếu là HTML error page
+                    if (isValidNews(fullData.news)) {
+                        console.log("[Data] Loaded from static sheet_data.json.");
+                        return fullData;
+                    }
+                }
+            } catch (e) {
+                console.log("[Data] sheet_data.json invalid or not JSON:", e.message);
+            }
+
+            // Ưu tiên 3: GAS API trực tiếp (với timeout 10s)
+            if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 10000);
+                    const gasRes = await fetch(GAS_API_URL, { signal: controller.signal });
+                    clearTimeout(timeout);
+                    const fullData = await gasRes.json();
+                    if (isValidNews(fullData.news)) {
+                        console.log("[Data] Loaded from GAS API.");
+                        return fullData;
+                    }
+                } catch (e) {
+                    console.log("[Data] GAS API failed:", e.message);
+                }
+            }
+
+            // Ưu tiên 4: Fallback - lấy từng file riêng lẻ
+            try {
+                const results = await Promise.allSettled([
+                    fetch("data/database.json?t=" + Date.now()),
+                    fetch("data/QA.json?t=" + Date.now()),
+                    fetch("data/extra_data.json?t=" + Date.now())
+                ]);
+                let fallbackNews = [], fallbackFaq = [], fallbackExtra = {};
+                if (results[0].status === 'fulfilled' && results[0].value.ok) {
+                    try { fallbackNews = await results[0].value.json(); } catch(e){}
+                }
+                if (results[1].status === 'fulfilled' && results[1].value.ok) {
+                    try { fallbackFaq = await results[1].value.json(); } catch(e){}
+                }
+                if (results[2].status === 'fulfilled' && results[2].value.ok) {
+                    try { fallbackExtra = await results[2].value.json(); } catch(e){}
+                }
+                if (fallbackNews.length > 0 || fallbackFaq.length > 0) {
+                    console.log("[Data] Loaded from individual fallback files.");
+                    return {
+                        news: Array.isArray(fallbackNews) ? fallbackNews : [],
+                        faq: Array.isArray(fallbackFaq) ? fallbackFaq : (fallbackExtra.faq || []),
+                        progress: fallbackExtra.progress || [],
+                        planning: fallbackExtra.planning || [],
+                        projects: fallbackExtra.projects || [],
+                        landPrice: fallbackExtra.landPrice || []
+                    };
+                }
+            } catch (e) {
+                console.log("[Data] All fallbacks failed.", e.message);
+            }
+
+            return null; // Không lấy được dữ liệu từ đâu
+        };
+
+        // Nếu dùng cache, render ngay để UX nhanh, rồi fetch fresh ở background
+        if (usedCache) {
+            allNews = newsData;
+            renderNews(allNews.slice(0, displayedNewsCount));
+            renderFAQ(faqData);
+            renderProjectsInMapTab(projectsData);
+            // Fetch fresh data ở background để cập nhật
+            loadFreshData().then(freshData => {
+                if (freshData && isValidNews(freshData.news)) {
+                    newsData = freshData.news || [];
+                    progressData = freshData.progress || [];
+                    faqData = freshData.faq || [];
+                    planningData = freshData.planning || [];
+                    projectsData = freshData.projects || [];
+                    landPriceData = freshData.landPrice || [];
                     allNews = newsData;
                     renderNews(allNews.slice(0, displayedNewsCount));
                     renderFAQ(faqData);
                     renderProjectsInMapTab(projectsData);
+                    localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data: freshData }));
+                    console.log("[Cache] Background refresh complete.");
                 }
-            } catch (e) {
-                console.log("Cache parse error, falling back to network.");
-            }
-        }
-
-        // 2. SỬ DỤNG DỮ LIỆU PRE-LOADED (tránh CORS khi mở bằng file://)
-        if (window.sheetDataInlined) {
-            const fullData = window.sheetDataInlined;
-            newsData = fullData.news || [];
-            progressData = fullData.progress || [];
-            faqData = fullData.faq || [];
-            planningData = fullData.planning || [];
-            projectsData = fullData.projects || [];
-            landPriceData = fullData.landPrice || [];
-            console.log("Loaded data from pre-loaded sheetDataInlined.");
+            });
         } else {
-            // 3. FETCH DỮ LIỆU TỪ MẠNG
-            try {
-                const cacheRes = await fetch("data/sheet_data.json?t=" + Date.now());
-                if (cacheRes.ok) {
-                    const fullData = await cacheRes.json();
-                    newsData = fullData.news || [];
-                    progressData = fullData.progress || [];
-                    faqData = fullData.faq || [];
-                    planningData = fullData.planning || [];
-                    projectsData = fullData.projects || [];
-                    landPriceData = fullData.landPrice || [];
-                    console.log("Loaded data from static cache.");
-                } else {
-                    throw new Error("Cache file not found or empty.");
-                }
-            } catch (cacheError) {
-                console.log("Static cache failed, falling back to GAS API or defaults.", cacheError);
-                
-                try {
-                    // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
-                    if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
-                        const controller = new AbortController();
-                        const timeout = setTimeout(() => controller.abort(), 8000); // Timeout 8s
-                        const gasRes = await fetch(GAS_API_URL, { signal: controller.signal });
-                        clearTimeout(timeout);
-                        const fullData = await gasRes.json();
-                        newsData = fullData.news || [];
-                        progressData = fullData.progress || [];
-                        faqData = fullData.faq || [];
-                        planningData = fullData.planning || [];
-                        projectsData = fullData.projects || [];
-                        landPriceData = fullData.landPrice || [];
-                    } else {
-                        // Fallback lấy từ file JSON local (GitHub Pages)
-                        const [newsRes, extraRes] = await Promise.all([
-                            fetch(NEWS_URL + "?t=" + Date.now()),
-                            fetch(EXTRA_URL + "?t=" + Date.now())
-                        ]);
-                        newsData = await newsRes.json();
-                        const extraData = await extraRes.json();
-                        progressData = extraData.progress || [];
-                        faqData = extraData.faq || [];
-                    }
-                } catch (fallbackError) {
-                    console.log("Fallback fetch also failed (likely due to file:// protocol CORS). Using mock data.", fallbackError);
-                }
+            // Không có cache - đợi lấy fresh data
+            const freshData = await loadFreshData();
+            if (freshData) {
+                newsData = freshData.news || [];
+                progressData = freshData.progress || [];
+                faqData = freshData.faq || [];
+                planningData = freshData.planning || [];
+                projectsData = freshData.projects || [];
+                landPriceData = freshData.landPrice || [];
             }
         }
         
-        // Mock Data để test trải nghiệm khi chưa có dữ liệu từ Sheet
+        // Mock Data fallback khi không lấy được dữ liệu từ bất kỳ nguồn nào
         if (projectsData.length === 0) {
             projectsData = [
                 { projectName: "Vành đai 4", investor: "Tập đoàn Vingroup", scale: "112.8 km", description: "Dự án đường vành đai liên vùng thủ đô" },
@@ -141,22 +202,7 @@ async function init() {
                 { projectName: "Trục Thăng Long", investor: "UDIC", scale: "Khu đô thị", description: "Phát triển đô thị phía Tây" }
             ];
         }
-        
-        if (planningData.length === 0) {
-            planningData = [
-                { stdAddress: "Số 5 Cổ Linh", project: "Vành đai 4", status: "Một phần", kFactor: 2.0, landPrice: 50000000 },
-                { stdAddress: "Ngõ 12 Thạch Bàn", project: "Cầu Tứ Liên", status: "Toàn bộ", kFactor: 1.5, landPrice: 40000000 },
-                { stdAddress: "Mê Linh Plaza", project: "Trục Thăng Long", status: "Cảnh báo", kFactor: 1.0, landPrice: 30000000 }
-            ];
-        }
-        
-        if (progressData.length === 0) {
-            progressData = [
-                { project: "Vành đai 4", date: "2026-05-15", milestone: "Đang giải phóng mặt bằng", detail: "Đã đền bù 70% diện tích" },
-                { project: "Cầu Tứ Liên", date: "2026-05-10", milestone: "Phê duyệt quy hoạch 1/500", detail: "Đang chuẩn bị đấu thầu" }
-            ];
-        }
-        
+
         if (faqData.length === 0) {
             faqData = [
                 { q: "Làm sao để biết nhà tôi có bị quy hoạch không?", a: "Bạn chỉ cần nhập địa chỉ vào ô tìm kiếm ở trên. Hệ thống sẽ đối soát và báo kết quả ngay." },
@@ -170,21 +216,21 @@ async function init() {
                 { tenKhu: "Khu tái định cư Lĩnh Nam", loai: "Tái định cư", viDo: 20.9833, kinhDo: 105.8667, moTa: "Dự án tái định cư phục vụ giải phóng mặt bằng", link: "#" }
             ];
         }
-        
-        // Lưu dữ liệu mới vào cache
-        const freshData = { news: newsData, progress: progressData, faq: faqData, planning: planningData, projects: projectsData, landPrice: landPriceData };
-        localStorage.setItem('dqh_cache', JSON.stringify({ time: Date.now(), data: freshData }));
 
-        allNews = newsData;
-        renderNews(allNews.slice(0, displayedNewsCount));
-        
-        // Thiết lập sự kiện cuộn để load thêm tin (Lazy Load)
+        // Nếu không dùng cache, render và lưu cache mới
+        if (!usedCache) {
+            allNews = newsData;
+            renderNews(allNews.slice(0, displayedNewsCount));
+            renderFAQ(faqData);
+            renderProjectsInMapTab(projectsData);
+            // Lưu dữ liệu vào cache mới
+            const dataToCache = { news: newsData, progress: progressData, faq: faqData, planning: planningData, projects: projectsData, landPrice: landPriceData };
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data: dataToCache }));
+            console.log("[Cache] Fresh data cached.");
+        }
+
+        // Thiết lập sự kiện cuộn để load thêm tin (Lazy Load) - cần gọi sau khi render
         setupLazyLoad();
-        
-        // renderProgress(progressData); // Tạm ẩn do thiếu #progressList trong HTML. Dữ liệu tiến độ đã hiển thị trong tab Dự án.
-        
-        renderFAQ(faqData);
-        renderProjectsInMapTab(projectsData);
         
         // TẢI RĂNH GIỚI QUY HOẠCH (GIS)
         loadPlanningGIS();
