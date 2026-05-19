@@ -820,6 +820,28 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
+        .map-overlay-control button {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
+        }
+
+        .map-overlay-control button:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px -1px rgba(239, 68, 68, 0.4);
+            transform: scale(1.02);
+        }
+
         /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
             header {
@@ -1022,6 +1044,7 @@
                 <select id="district-select">
                     <option value="">-- Chọn Quận/Huyện --</option>
                 </select>
+                <button id="clear-boundary-btn" style="display: none;"><i class="fa-solid fa-xmark"></i> Xóa</button>
             </div>
             <div id="detail-panel">
                 <div

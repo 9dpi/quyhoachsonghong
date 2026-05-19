@@ -18,6 +18,7 @@ let progressData = [];
 let homeMarker = null;
 let fuse = null;
 let landPriceFuse = null;
+let planningPolygons = [];
 
 const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
@@ -298,45 +299,25 @@ async function handleAddressLookup(normAddr, rawAddr) {
             iconAnchor: [18, 18]
         });
 
-        // Tạo marker và gán tooltip (direction: top để không đè lên icon)
+        // Tạo marker và gán tooltip
         homeMarker = L.marker(coords, { icon: houseIcon }).addTo(map);
         homeMarker.bindTooltip(rawAddr, { permanent: true, direction: 'top', className: 'house-tooltip' }).openTooltip();
 
-        // Bấm vào marker thì mới ra bảng tra cứu
+        // Bấm vào marker thì hiển thị lại bảng tra cứu
         homeMarker.on('click', () => {
-            if (match || priceMatch) {
-                renderPlanningResult(match, rawAddr, coords, priceMatch);
-            } else {
-                const warningAreas = ["mê linh", "lĩnh nam", "hồng hà", "phú thượng", "bát tràng", "bồ đề", "ngọc thụy", "phố huế"];
-                const isWarning = warningAreas.some(area => normAddr.includes(area));
-                if (isWarning) {
-                    renderPlanningWarning(rawAddr, coords);
-                } else {
-                    const formHtml = `
-                        <p style="margin-bottom: 15px; font-size: 0.85rem; color: #64748b;">Hiện chưa có dữ liệu quy hoạch cụ thể cho địa chỉ này. Bạn có thể gửi yêu cầu tra cứu, chúng tôi sẽ cập nhật sớm!</p>
-                        <div style="text-align: left;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Địa chỉ:</label>
-                            <input type="text" id="ask_address" value="${rawAddr}" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; background: #f8fafc;" readonly>
-                            
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Câu hỏi / Ghi chú:</label>
-                            <textarea id="ask_question" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 10px; font-family: inherit;" rows="3" placeholder="Ví dụ: Đất nhà tôi có nằm trong ranh giới dự án X không?"></textarea>
-                            
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #1e293b;">Email hoặc SĐT để nhận phản hồi:</label>
-                            <input type="text" id="ask_contact" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; margin-bottom: 15px;" placeholder="Ví dụ: 0912345678">
-                            
-                            <button onclick="submitQuestion()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">GỬI YÊU CẦU</button>
-                            <a href="tai-ban-do-quy-hoach.html" style="display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px;"><i class="fa-solid fa-file-invoice-dollar"></i> TRA CỨU BẢNG GIÁ ĐẤT</a>
-                        </div>
-                    `;
-                    showModal("Gửi yêu cầu tra cứu", formHtml, "fa-file-signature");
-                }
-            }
+            renderPlanningResult(match, rawAddr, coords, priceMatch);
         });
+
+        // Tự động kích hoạt hiển thị kết quả lập tức (Wow UX!)
+        renderPlanningResult(match, rawAddr, coords, priceMatch);
 
         // Bay tới khu vực đó
         map.flyTo(coords, 17);
         closeModal(); // Đóng modal "Đang phân tích"
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error(e); 
+        closeModal();
+    }
 }
 
 async function handleAreaLookup(normAddr, rawAddr) {
@@ -458,21 +439,64 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
         priceVt4 = match.gia_dat_o_vt4 || Math.round(priceVt1 * 0.4);
     }
 
+    // Thực hiện đối soát GIS không gian tại tọa độ tìm được (P1)
+    const relatedPlannings = findIntersectingPlanning(coords[0], coords[1]);
+    let gisHtml = "";
+    if (relatedPlannings.length > 0) {
+        gisHtml = `
+        <div style="background:#fff7ed; border:1px solid #ffedd5; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:#c2410c; font-weight:800; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-family:'Outfit', sans-serif;">
+                <i class="fa-solid fa-satellite-dish fa-fade"></i> Đối soát không gian GIS bản đồ
+            </p>
+            ${relatedPlannings.map(item => {
+                const props = item.feature.properties;
+                let badgeColor = "#2563eb"; // default blue
+                if (props.category === 'vandai4') badgeColor = "#ef4444"; // red
+                else if (props.category === 'taidinhcu') badgeColor = "#00cc66"; // green
+                else if (props.category === 'giapranh') badgeColor = "#ff8800"; // orange
+                
+                return `
+                <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #fed7aa; last-child { border: none; margin-bottom:0; padding-bottom:0; }">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom: 4px;">
+                        <strong style="font-size:0.75rem; color:#1e293b; line-height:1.2;">${props.tenKhu}</strong>
+                        <span style="font-size:0.6rem; padding: 2px 6px; border-radius: 4px; background:${badgeColor}; color:white; font-weight:800; white-space:nowrap;">${item.relation}</span>
+                    </div>
+                    <p style="font-size:0.68rem; color:#475569; margin:0 0 4px 0; line-height:1.3;">${props.description}</p>
+                    <div style="font-size:0.62rem; color:#94a3b8; margin-top:4px;">Diện tích: <b>${props.dienTich}</b> | Nguồn: <b>${props.nguon}</b></div>
+                </div>
+                `;
+            }).join('')}
+        </div>
+        `;
+    } else {
+        gisHtml = `
+        <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:#0369a1; font-weight:800; text-transform:uppercase; margin-bottom:5px; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-circle-check"></i> Đối soát không gian GIS bản đồ
+            </p>
+            <p style="font-size:0.72rem; color:#0369a1; margin:0; line-height:1.4;">Tọa độ của bạn nằm ngoài phạm vi ảnh hưởng trực tiếp của các đại dự án đang theo dõi (Vành đai 4, Quy hoạch Sông Hồng, v.v.).</p>
+        </div>
+        `;
+    }
+
     document.getElementById('detail-title').innerText = match ? "KẾT QUẢ TRA CỨU" : "BẢNG GIÁ ĐẤT KHU VỰC";
     document.getElementById('detail-body').innerHTML = `
         ${match ? `
         <div style="background:#fff1f2; border:1px solid #fecaca; padding:15px; border-radius:12px; margin-bottom:15px;">
             <p style="font-size:0.7rem; color:#be123c; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
-            <p style="font-size:0.85rem; font-weight:700;">${addr}</p>
+            <p style="font-size:0.85rem; font-weight:700; margin:0;">${addr}</p>
             <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#be123c; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">⚠️ NẰM TRONG DIỆN GIẢI TỎA</div>
         </div>
         ` : `
-        <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:15px; border-radius:12px; margin-bottom:15px;">
-            <p style="font-size:0.7rem; color:#0369a1; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
-            <p style="font-size:0.85rem; font-weight:700;">${addr}</p>
-            <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#10b981; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">ℹ️ CHƯA CÓ THÔNG TIN QUY HOẠCH CỤ THỂ</div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:#475569; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
+            <p style="font-size:0.85rem; font-weight:700; margin:0;">${addr}</p>
+            <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#475569; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">ℹ️ TRA CỨU THÔNG TIN KHU VỰC</div>
         </div>
         `}
+
+        <!-- Hiển thị kết quả đối soát GIS -->
+        ${gisHtml}
 
         ${match ? `
         <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:15px; border-radius:12px; margin-bottom:15px;">
@@ -548,6 +572,7 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
     panel.classList.add('open');
     map.flyTo(coords, 17);
     closeModal();
+}
 }
 
 function renderPlanningWarning(addr, coords) {
@@ -927,25 +952,77 @@ function closeModal() { document.getElementById('custom-modal').classList.remove
 function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); }
 
 function loadPlanningGIS() {
-    // URL dẫn tới file GeoJSON chứa ranh giới các dự án (Vành đai 4, cầu Tứ Liên...)
+    // URL dẫn tới file GeoJSON chứa ranh giới các dự án (Vành đai 4, Quy hoạch Sông Hồng...)
     const GIS_URL = "data/map.geojson"; 
     
     fetch(GIS_URL)
         .then(res => res.json())
         .then(geojsonData => {
+            // Lưu trữ features để đối soát GIS không gian (P1)
+            planningPolygons = geojsonData.features || [];
+
             L.geoJSON(geojsonData, {
                 style: function(feature) {
-                    return {
-                        color: "#ef4444",
-                        weight: 2,
-                        fillColor: "#ef4444",
-                        fillOpacity: 0.1
-                    };
+                    const cat = feature.properties ? feature.properties.category : '';
+                    switch (cat) {
+                        case 'vandai4':
+                            return {
+                                color: "#ff0000",       // Đỏ
+                                weight: 4,
+                                fillColor: "#ff0000",
+                                fillOpacity: 0.1
+                            };
+                        case 'taidinhcu':
+                            return {
+                                color: "#00cc66",       // Xanh lá
+                                weight: 3,
+                                fillColor: "#00cc66",
+                                fillOpacity: 0.2
+                            };
+                        case 'songhong':
+                            return {
+                                color: "#0044cc",       // Xanh dương đậm
+                                weight: 2,
+                                fillColor: "#0044cc",
+                                fillOpacity: 0.05,
+                                dashArray: '5, 5'       // Nét đứt
+                            };
+                        case 'giapranh':
+                            return {
+                                color: "#ff8800",       // Cam
+                                weight: 2,
+                                fillColor: "#ff8800",
+                                fillOpacity: 0.1
+                            };
+                        default:
+                            return {
+                                color: "#ef4444",
+                                weight: 2,
+                                fillColor: "#ef4444",
+                                fillOpacity: 0.1
+                            };
+                    }
                 },
                 onEachFeature: function(feature, layer) {
-                    if (feature.properties && feature.properties.name) {
-                        layer.bindPopup(`<b>VÙNG QUY HOẠCH:</b><br>${feature.properties.name}`);
-                    }
+                    const props = feature.properties || {};
+                    const name = props.tenKhu || props.name || "Khu vực quy hoạch";
+                    const loai = props.loai || "Đang cập nhật";
+                    const description = props.description || "Chưa có mô tả chi tiết.";
+                    const area = props.dienTich || "Đang cập nhật";
+                    const source = props.nguon || "UBND TP Hà Nội";
+
+                    // Gán popup chi tiết, trực quan hóa đúng mục đích sử dụng đất
+                    layer.bindPopup(`
+                        <div style="font-family: 'Inter', sans-serif; padding: 5px; max-width: 250px;">
+                            <span style="display: inline-block; padding: 2px 6px; background: #f1f5f9; border-radius: 4px; font-size: 0.62rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 5px;">🏗️ ${loai}</span>
+                            <h4 style="margin: 0 0 5px 0; color: #1e293b; font-weight: 800; font-size: 0.85rem;">${name}</h4>
+                            <p style="margin: 0 0 8px 0; font-size: 0.72rem; color: #475569; line-height: 1.4;">${description}</p>
+                            <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.65rem; color: #64748b;">
+                                <div>Diện tích: <b>${area}</b></div>
+                                <div>Nguồn: <b>${source}</b></div>
+                            </div>
+                        </div>
+                    `, { closeButton: true });
                 }
             }).addTo(map);
             console.log("Đã tải ranh giới GIS quy hoạch.");
@@ -1021,8 +1098,9 @@ window.showInfo = function(type) {
     }
 };
 
-// --- LOGIC CHO BỘ CHỌN RANH GIỚI HÀNH CHÍNH ---
+// --- LOGIC CHO BỘ CHỌN RANH GIỚI HÀNH CHÍNH & TỔNG QUAN HÀ NỘI ---
 let activeBoundaryLayer = null;
+let overviewDistrictsLayer = null;
 let hanoiBoundaryData = null;
 
 const districtsList = [
@@ -1036,11 +1114,113 @@ const districtsList = [
     'Huyện Thường Tín', 'Huyện Ứng Hòa'
 ];
 
+// Số lượng dự án quy hoạch/đất đai mô phỏng cho từng quận/huyện phục vụ heat map (P2)
+const districtProjectCounts = {
+    'Quận Tây Hồ': 5,
+    'Huyện Đông Anh': 6,
+    'Huyện Mê Linh': 4,
+    'Quận Long Biên': 3,
+    'Huyện Hoài Đức': 5,
+    'Huyện Đan Phượng': 3,
+    'Quận Hoàng Mai': 4,
+    'Huyện Gia Lâm': 3,
+    'Quận Ba Đình': 2,
+    'Quận Cầu Giấy': 2,
+    'Quận Đống Đa': 1,
+    'Quận Hai Bà Trưng': 1,
+    'Quận Hoàn Kiếm': 1,
+    'Quận Thanh Xuân': 2,
+    'Huyện Sóc Sơn': 3,
+    'Huyện Thanh Trì': 2,
+    'Huyện Thường Tín': 3
+};
+
+function getDistrictProjectCount(name) {
+    return districtProjectCounts[name] || 1;
+}
+
+// 1. Vẽ heatmap tổng quan mật độ dự án của toàn bộ 30 quận huyện (P2)
+async function loadDistrictOverview() {
+    if (!hanoiBoundaryData) return;
+    
+    // Xóa layer tổng quan cũ nếu có
+    if (overviewDistrictsLayer) {
+        map.removeLayer(overviewDistrictsLayer);
+    }
+    
+    const features = hanoiBoundaryData.level2s.map(district => {
+        return {
+            "type": "Feature",
+            "properties": {
+                "name": district.name,
+                "level2_id": district.level2_id,
+                "projectCount": getDistrictProjectCount(district.name)
+            },
+            "geometry": {
+                "type": district.type,
+                "coordinates": district.coordinates
+            }
+        };
+    });
+
+    const geojsonCollection = {
+        "type": "FeatureCollection",
+        "features": features
+    };
+
+    overviewDistrictsLayer = L.geoJSON(geojsonCollection, {
+        style: function(feature) {
+            const count = feature.properties.projectCount;
+            let fillColor = "#94a3b8"; // Mặc định: xám nhạt
+            
+            // Phân cấp màu sắc chuyên nghiệp dựa trên số lượng dự án
+            if (count >= 5) fillColor = "#7c3aed";      // Tím đậm (Rất nóng)
+            else if (count >= 3) fillColor = "#2563eb"; // Xanh dương (Nóng)
+            else if (count >= 2) fillColor = "#0ea5e9"; // Xanh trời (Trung bình)
+            else fillColor = "#94a3b8";                 // Xám (Ít biến động)
+            
+            return {
+                color: "#ffffff",
+                weight: 1.5,
+                fillColor: fillColor,
+                fillOpacity: 0.25
+            };
+        },
+        onEachFeature: function(feature, layer) {
+            const props = feature.properties;
+            
+            // Tooltip hiển thị nhanh mật độ tin tức/dự án khi di chuột qua
+            layer.bindTooltip(`
+                <div style="font-family: 'Inter', sans-serif; font-size: 0.72rem; padding: 2px 4px;">
+                    <b style="color: #1e293b;">${props.name}</b><br>
+                    🔥 Quy hoạch: <b>${props.projectCount} đại dự án</b>
+                </div>
+            `, { sticky: true, opacity: 0.95 });
+
+            // Khi click vào polygon quận/huyện trên tổng quan
+            layer.on('click', () => {
+                const selectEl = document.getElementById('district-select');
+                if (selectEl) {
+                    selectEl.value = props.name;
+                    // Kích hoạt sự kiện thay đổi để zoom và vẽ ranh giới chi tiết
+                    const event = new Event('change');
+                    selectEl.dispatchEvent(event);
+                }
+            });
+        }
+    }).addTo(map);
+
+    // Zoom toàn thành phố
+    map.setView([21.0285, 105.8542], 10);
+}
+
+// 2. Khởi tạo bộ chọn ranh giới quận/huyện
 async function initDistrictSelector() {
     const selectEl = document.getElementById('district-select');
+    const clearBtn = document.getElementById('clear-boundary-btn');
     if (!selectEl) return;
 
-    // Populate dropdown options dynamically
+    // Chèn danh sách quận huyện
     districtsList.forEach(d => {
         const opt = document.createElement('option');
         opt.value = d;
@@ -1048,40 +1228,54 @@ async function initDistrictSelector() {
         selectEl.appendChild(opt);
     });
 
-    // Load Hanoi Boundary Data (with localStorage Cache)
+    // Tải dữ liệu ranh giới Hà Nội (CORS trực tiếp + localStorage Cache)
     try {
         const cachedBoundary = localStorage.getItem('hanoi_boundary_cache');
         if (cachedBoundary) {
             hanoiBoundaryData = JSON.parse(cachedBoundary);
             console.log("Đã tải ranh giới Hà Nội từ localStorage cache.");
+            loadDistrictOverview(); // Kích hoạt vẽ tổng quan (P2)
         } else {
-            // Fetch directly from github raw (CORS allowed)
             const res = await fetch('https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/gis/01.json');
             if (res.ok) {
                 hanoiBoundaryData = await res.json();
                 localStorage.setItem('hanoi_boundary_cache', JSON.stringify(hanoiBoundaryData));
                 console.log("Đã tải và lưu cache ranh giới Hà Nội từ GitHub.");
+                loadDistrictOverview(); // Kích hoạt vẽ tổng quan (P2)
             }
         }
     } catch (e) {
         console.error("Lỗi khi tải dữ liệu ranh giới hành chính:", e);
     }
 
-    // Set up change event handler
+    // Xử lý khi người dùng chọn Quận/Huyện cụ thể
     selectEl.addEventListener('change', async (e) => {
         const selected = e.target.value;
         
-        // Clear active boundary layer if exists
+        // Ẩn ranh giới đơn lẻ cũ
         if (activeBoundaryLayer) {
             map.removeLayer(activeBoundaryLayer);
             activeBoundaryLayer = null;
         }
 
-        if (!selected) return;
+        if (!selected) {
+            if (clearBtn) clearBtn.style.display = 'none';
+            // Hiện lại bản đồ tổng quan
+            if (overviewDistrictsLayer) overviewDistrictsLayer.addTo(map);
+            map.setView([21.0285, 105.8542], 10);
+            return;
+        }
+
+        // Hiển thị nút "Xóa ranh giới"
+        if (clearBtn) clearBtn.style.display = 'flex';
+
+        // Ẩn lớp tổng quan để tránh đè lấp mất nét vẽ kĩ thuật chi tiết
+        if (overviewDistrictsLayer) {
+            map.removeLayer(overviewDistrictsLayer);
+        }
 
         if (!hanoiBoundaryData) {
-            showModal("Đang tải dữ liệu", "Hệ thống đang tải dữ liệu ranh giới hành chính. Vui lòng thử lại sau vài giây.", "fa-spinner fa-spin");
-            // Retry loading
+            showModal("Đang tải dữ liệu", "Hệ thống đang tải dữ liệu ranh giới. Vui lòng thử lại sau vài giây.", "fa-spinner fa-spin");
             try {
                 const res = await fetch('https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/gis/01.json');
                 if (res.ok) {
@@ -1089,10 +1283,10 @@ async function initDistrictSelector() {
                     localStorage.setItem('hanoi_boundary_cache', JSON.stringify(hanoiBoundaryData));
                     closeModal();
                 } else {
-                    throw new Error("Cannot fetch data");
+                    throw new Error("Fetch error");
                 }
             } catch (err) {
-                showModal("Lỗi kết nối", "Không thể tải dữ liệu ranh giới hành chính từ máy chủ.", "fa-circle-xmark");
+                showModal("Lỗi kết nối", "Không thể tải dữ liệu ranh giới từ máy chủ.", "fa-circle-xmark");
                 return;
             }
         }
@@ -1103,7 +1297,6 @@ async function initDistrictSelector() {
             return;
         }
 
-        // Convert the custom format in dvhcvn to standard GeoJSON Feature
         const geojsonFeature = {
             "type": "Feature",
             "properties": {
@@ -1116,35 +1309,145 @@ async function initDistrictSelector() {
             }
         };
 
-        // Render GeoJSON boundary layer on map
+        // Vẽ ranh giới xanh Blueprint cao cấp
         activeBoundaryLayer = L.geoJSON(geojsonFeature, {
             style: {
-                color: '#2563eb',       // Royal Blue border
+                color: '#2563eb',       // Xanh hoàng gia
                 weight: 3,
-                fillColor: '#3b82f6',   // High-tech blue fill
+                fillColor: '#3b82f6',   // Xanh công nghệ
                 fillOpacity: 0.15,
-                dashArray: '5, 8'       // Dashed border for a premium blueprint style
+                dashArray: '5, 8'       // Nét đứt kĩ thuật
             },
             onEachFeature: function(feature, layer) {
+                // Chỉ dẫn thông báo lưu ý ranh giới để người dùng nắm rõ (suggestion 1)
                 layer.bindPopup(`
-                    <div style="font-family: 'Inter', sans-serif; padding: 5px;">
+                    <div style="font-family: 'Inter', sans-serif; padding: 5px; max-width: 220px;">
                         <h4 style="margin: 0 0 5px 0; color: #1e40af; font-weight: 800; font-size: 0.85rem;"><i class="fa-solid fa-map-location-dot"></i> ${district.name}</h4>
-                        <p style="margin: 0; font-size: 0.72rem; color: #64748b;">Mã hành chính: <b>${district.level2_id}</b></p>
-                        <p style="margin: 5px 0 0 0; font-size: 0.72rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Đang hiển thị ranh giới</p>
+                        <p style="margin: 0 0 8px 0; font-size: 0.72rem; color: #64748b;">Mã hành chính: <b>${district.level2_id}</b></p>
+                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; font-size: 0.65rem; color: #f59e0b; line-height: 1.4; font-weight: 500;">
+                            ⚠️ Dữ liệu hiển thị là ranh giới hành chính (để tham khảo vị trí). Dữ liệu quy hoạch chi tiết đang được cập nhật...
+                        </div>
                     </div>
                 `, { closeButton: false, offset: L.point(0, -10) });
             }
         }).addTo(map);
 
-        // Fit map bounds to show the selected district
         const bounds = activeBoundaryLayer.getBounds();
         map.fitBounds(bounds, { padding: [30, 30] });
         
-        // Open the popup automatically at district center
         activeBoundaryLayer.eachLayer(layer => {
             layer.openPopup(bounds.getCenter());
         });
     });
+
+    // Nút "Xóa ranh giới" quay lại tổng quan (suggestion 2)
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            selectEl.value = "";
+            clearBtn.style.display = 'none';
+            
+            if (activeBoundaryLayer) {
+                map.removeLayer(activeBoundaryLayer);
+                activeBoundaryLayer = null;
+            }
+            
+            // Nạp lại heatmap tổng quan và zoom ra xa toàn Hà Nội
+            loadDistrictOverview();
+        });
+    }
+}
+
+// 3. THUẬT TOÁN ĐỐI SOÁT KHÔNG GIAN BẢN ĐỒ GIS (P1)
+function findIntersectingPlanning(lat, lon) {
+    const point = [lat, lon];
+    const results = [];
+
+    planningPolygons.forEach(feature => {
+        if (!feature.geometry) return;
+        
+        let isInside = false;
+        
+        if (feature.geometry.type === "Polygon") {
+            const rings = feature.geometry.coordinates;
+            if (rings.length > 0) {
+                isInside = isPointInPolygon(point, rings[0]);
+            }
+        } else if (feature.geometry.type === "MultiPolygon") {
+            const polygons = feature.geometry.coordinates;
+            for (let p = 0; p < polygons.length; p++) {
+                if (polygons[p].length > 0 && isPointInPolygon(point, polygons[p][0])) {
+                    isInside = true;
+                    break;
+                }
+            }
+        }
+        
+        // Tính khoảng cách giữa tọa độ tra cứu tới tâm của Polygon (Proximity Buffer)
+        const center = getPolygonCenter(feature.geometry);
+        const dist = getCoordinatesDistance(lat, lon, center[0], center[1]); // km
+
+        if (isInside) {
+            results.push({ feature, relation: "Nằm trong diện ảnh hưởng", distance: 0, order: 1 });
+        } else if (dist < 1.2) { // Vùng buffer giáp ranh trong bán kính 1.2km
+            results.push({ feature, relation: "Giáp ranh (bán kính " + Math.round(dist * 1000) + "m)", distance: dist, order: 2 });
+        }
+    });
+
+    results.sort((a, b) => a.order - b.order);
+    return results;
+}
+
+// Thuật toán Ray-Casting xác định điểm trong đa giác (Point-in-Polygon)
+function isPointInPolygon(point, vs) {
+    const x = point[1]; // Kinh độ
+    const y = point[0]; // Vĩ độ
+    
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        const xi = vs[i][0], yi = vs[i][1];
+        const xj = vs[j][0], yj = vs[j][1];
+        
+        const intersect = ((yi > y) !== (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+function getPolygonCenter(geometry) {
+    let sumLat = 0, sumLon = 0, count = 0;
+    
+    const addCoords = (coords) => {
+        coords.forEach(pt => {
+            sumLon += pt[0];
+            sumLat += pt[1];
+            count++;
+        });
+    };
+
+    if (geometry.type === "Polygon") {
+        if (geometry.coordinates.length > 0) addCoords(geometry.coordinates[0]);
+    } else if (geometry.type === "MultiPolygon") {
+        geometry.coordinates.forEach(poly => {
+            if (poly.length > 0) addCoords(poly[0]);
+        });
+    }
+
+    if (count === 0) return [21.0285, 105.8542];
+    return [sumLat / count, sumLon / count];
+}
+
+// Công thức toán Haversine tính khoảng cách địa giới
+function getCoordinatesDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Bán kính Trái Đất (km)
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
 }
 
 document.addEventListener('DOMContentLoaded', init);
