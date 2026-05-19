@@ -1178,47 +1178,198 @@ window.runGlobalCalc = () => {
     // Chức năng đã bị loại bỏ theo yêu cầu
 };
 
+// ═══════════════════════════════════════════════════════
+// HỆ THỐNG KIỂM CHỨNG THÔNG TIN (Verification System)
+// ═══════════════════════════════════════════════════════
+
+const SOURCE_TIERS = {
+    tier1: ['vnexpress.net','tuoitre.vn','laodong.vn','nhandan.vn','thanhnien.vn',
+            'dantri.com.vn','tienphong.vn','gov.vn','hanoi.gov.vn','mpi.gov.vn',
+            'monre.gov.vn','xaydung.gov.vn'],
+    tier2: ['vietnamnet.vn','baomoi.com','zingnews.vn','cafef.vn','cafeland.vn',
+            'batdongsan.com.vn','reatimes.vn','nhadatmoi.com.vn','thoibaokinhdoanh.vn']
+};
+
+const PR_BRANDS = ['vingroup','vinhomes','t&t city','bim land','mik group','nam cường',
+    'sunshine','novaland','the sunset','charmora','ecopark','phát đạt','capitaland',
+    'masterise','gamuda','hud','loong','pcc1','vincom collection'];
+
+const PR_KEYWORDS = ['hứa hẹn','sức hút','chiếm sóng','đón sóng','kiến tạo',
+    'cú hích kép','nổi lên như','đẳng cấp quốc tế','an cư','đầu tư bền vững',
+    'tăng tốc','lực đẩy mới','cực tăng trưởng','tiềm năng tăng trưởng'];
+
+function getSourceCredibility(url) {
+    if (!url) return { tier: 3, label: 'Chưa xác minh', color: '#94a3b8', bg: '#f8fafc' };
+    try {
+        const host = new URL(url).hostname.replace('www.', '');
+        if (SOURCE_TIERS.tier1.some(d => host.includes(d)))
+            return { tier: 1, label: '✓ Chính thống', color: '#059669', bg: '#ecfdf5' };
+        if (SOURCE_TIERS.tier2.some(d => host.includes(d)))
+            return { tier: 2, label: '✓ Báo chí', color: '#2563eb', bg: '#eff6ff' };
+    } catch(e) {}
+    return { tier: 3, label: '? Cần kiểm chứng', color: '#d97706', bg: '#fffbeb' };
+}
+
+function detectContentType(item) {
+    const text = ((item.tenKhu || '') + ' ' + (item.moTa || '')).toLowerCase();
+    const hasBrand = PR_BRANDS.some(b => text.includes(b));
+    const prHits  = PR_KEYWORDS.filter(k => text.includes(k)).length;
+    if (hasBrand || prHits >= 2)
+        return { type: 'pr', label: '📢 QC/PR', color: '#7c3aed', bg: '#f5f3ff' };
+    return { type: 'news' };
+}
+
+function getRelativeTime(dateStr) {
+    if (!dateStr) return '';
+    try {
+        const d = new Date(dateStr), now = new Date();
+        const h = Math.floor((now - d) / 3600000);
+        if (h < 1)  return 'Vừa xong';
+        if (h < 24) return `${h} giờ trước`;
+        const days = Math.floor(h / 24);
+        if (days === 1) return 'Hôm qua';
+        if (days < 7)  return `${days} ngày trước`;
+        return d.toLocaleDateString('vi-VN');
+    } catch(e) { return ''; }
+}
+
+// Bộ lọc hiện tại
+let activeFilter = 'all';
+let filteredNews  = [];
+
+window.filterNews = (filter, btn) => {
+    activeFilter = filter;
+    document.querySelectorAll('.nf-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    if (filter === 'official') {
+        filteredNews = allNews.filter(i => getSourceCredibility(i.nguonTin || i.link).tier <= 2);
+    } else if (filter === 'news_only') {
+        filteredNews = allNews.filter(i => detectContentType(i).type === 'news');
+    } else if (filter === 'pr') {
+        filteredNews = allNews.filter(i => detectContentType(i).type === 'pr');
+    } else {
+        filteredNews = [...allNews];
+    }
+    displayedNewsCount = 30;
+    renderNews(filteredNews.slice(0, displayedNewsCount));
+};
+
+window.reportNews = (e, idx) => {
+    e.stopPropagation();
+    const item = (filteredNews.length ? filteredNews : allNews)[idx];
+    if (!item) return;
+
+    const reasons = ['Thông tin sai sự thật','Nguồn không đáng tin cậy',
+                     'Tin cũ / đã lỗi thời','Nội dung quảng cáo ẩn','Lý do khác'];
+    const overlay = document.createElement('div');
+    overlay.id = 'report-modal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `
+        <div style="background:white;padding:28px;border-radius:20px;max-width:360px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,0.25);">
+            <div style="font-size:1.5rem;margin-bottom:8px;">⚑</div>
+            <h3 style="font-size:0.95rem;font-weight:800;color:#1e293b;margin-bottom:4px;">Báo cáo thông tin sai lệch</h3>
+            <p style="font-size:0.72rem;color:#64748b;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #f1f5f9;line-height:1.4;">${(item.tenKhu||'').substring(0,70)}...</p>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:18px;">
+                ${reasons.map(r => `<label style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:9px 12px;border-radius:10px;border:1px solid #e2e8f0;font-size:0.78rem;font-weight:600;color:#334155;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'"><input type="radio" name="report-reason" value="${r}" style="accent-color:#2563eb;"> ${r}</label>`).join('')}
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button onclick="document.getElementById('report-modal').remove()" style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:white;cursor:pointer;font-size:0.78rem;font-weight:600;color:#64748b;">Hủy</button>
+                <button onclick="submitReport(${idx})" style="flex:2;padding:10px;background:#2563eb;border:none;border-radius:10px;color:white;cursor:pointer;font-size:0.78rem;font-weight:700;">Gửi báo cáo</button>
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+};
+
+window.submitReport = async (idx) => {
+    const reason = document.querySelector('input[name="report-reason"]:checked')?.value;
+    if (!reason) { alert('Vui lòng chọn lý do báo cáo'); return; }
+    const item = (filteredNews.length ? filteredNews : allNews)[idx];
+    document.getElementById('report-modal')?.remove();
+    try {
+        await fetch(GAS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ type: 'report', title: item?.tenKhu, source: item?.nguonTin, reason })
+        });
+    } catch(e) {}
+    showModal('Cảm ơn bạn!', 'Báo cáo đã được ghi nhận. Chúng tôi sẽ xem xét và cập nhật thông tin sớm nhất.', 'fa-circle-check');
+};
+
+// ═══════════════════════════════════════════════════════
+// RENDER TIN TỨC (đã tích hợp verification badges)
+// ═══════════════════════════════════════════════════════
 function renderNews(data, append = false) {
     const list = document.getElementById('projectList');
-    if (!append) list.innerHTML = '';
-    
+    if (!append) {
+        list.innerHTML = '';
+        // Filter bar cố định trên đầu
+        const fb = document.createElement('div');
+        fb.className = 'news-filter-bar';
+        const officialCount = allNews.filter(i => getSourceCredibility(i.nguonTin||i.link).tier <= 2).length;
+        const newsCount     = allNews.filter(i => detectContentType(i).type === 'news').length;
+        const prCount       = allNews.filter(i => detectContentType(i).type === 'pr').length;
+        fb.innerHTML = `
+            <button class="nf-chip ${activeFilter==='all'?'active':''}"       onclick="filterNews('all',this)">Tất cả (${allNews.length})</button>
+            <button class="nf-chip ${activeFilter==='official'?'active':''}"  onclick="filterNews('official',this)">✓ Chính thống (${officialCount})</button>
+            <button class="nf-chip ${activeFilter==='news_only'?'active':''}" onclick="filterNews('news_only',this)">📰 Tin tức (${newsCount})</button>
+            <button class="nf-chip ${activeFilter==='pr'?'active':''}"        onclick="filterNews('pr',this)">📢 QC/PR (${prCount})</button>`;
+        list.appendChild(fb);
+    }
+
     data.forEach((item, index) => {
         const actualIndex = append ? (displayedNewsCount - data.length + index) : index;
-        
+        const cred    = getSourceCredibility(item.nguonTin || item.link);
+        const content = detectContentType(item);
+        const timeStr = getRelativeTime(item['Ngày Cập Nhật'] || item.ngayCapNhat);
+        const moTaText = item.moTa || 'Chưa có mô tả chi tiết.';
+
         let marker = null;
         if (item.viDo && item.kinhDo) {
             marker = L.marker([item.viDo, item.kinhDo]).addTo(map);
             marker.bindPopup(`<h4>${item.tenKhu}</h4><a href="javascript:void(0)" onclick="openNewsDetail(${actualIndex})">Xem chi tiết</a>`);
         }
-        
+
         const div = document.createElement('div');
         div.className = 'project-item';
-        const tagClass = item.loai === "Tái định cư" ? "tag-tdc" : "tag-qh";
-        const moTaText = item.moTa || "Chưa có mô tả chi tiết cho dự án này.";
+
+        // Badge nội dung (PR override)
+        const contentBadge = content.type === 'pr'
+            ? `<span style="background:${content.bg};color:${content.color};padding:2px 7px;border-radius:4px;font-size:0.58rem;font-weight:800;">${content.label}</span>`
+            : '';
+
         div.innerHTML = `
-            <span class="tag ${tagClass}">${item.loai}</span>
-            <h4 style="font-family:'Inter'">${item.tenKhu}</h4>
-            <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">${moTaText.substring(0, 50)}...</p>
-        `;
-        
-        div.onclick = () => { 
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:4px;flex-wrap:wrap;">
+                <span style="background:${cred.bg};color:${cred.color};padding:2px 8px;border-radius:5px;font-size:0.58rem;font-weight:800;letter-spacing:0.02em;">${cred.label}</span>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    ${contentBadge}
+                    ${timeStr ? `<span style="font-size:0.6rem;color:#94a3b8;">${timeStr}</span>` : ''}
+                    <button class="report-flag-btn" onclick="reportNews(event,${actualIndex})" title="Báo cáo sai lệch"><i class="fa-solid fa-flag"></i></button>
+                </div>
+            </div>
+            <h4 style="font-family:'Inter';font-size:0.8rem;font-weight:700;color:#1e293b;margin-bottom:5px;line-height:1.4;">${item.tenKhu || ''}</h4>
+            <p style="font-size:0.72rem;color:#64748b;line-height:1.5;font-family:'Inter';">${moTaText.substring(0, 80)}...</p>`;
+
+        div.onclick = () => {
             if (item.viDo && item.kinhDo) {
-                map.flyTo([item.viDo, item.kinhDo], 15); 
-                if (marker) marker.openPopup(); 
+                map.flyTo([item.viDo, item.kinhDo], 15);
+                if (marker) marker.openPopup();
             } else {
-                showModal("Thông báo", "Vị trí của khu vực này chưa được xác định trên bản đồ.<br><br><a href='tai-ban-do-quy-hoach.html' style='display: block; text-align: center; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;'><i class='fa-solid fa-file-invoice-dollar'></i> TRA CỨU BẢNG GIÁ ĐẤT</a>", "fa-location-dot");
+                showModal('Thông báo', `Vị trí chưa được xác định.<br><br><a href='tai-ban-do-quy-hoach.html' style='display:block;text-align:center;background:#10b981;color:white;text-decoration:none;padding:12px;border-radius:10px;font-weight:700;'><i class='fa-solid fa-file-invoice-dollar'></i> TRA CỨU BẢNG GIÁ ĐẤT</a>`, 'fa-location-dot');
             }
         };
         list.appendChild(div);
     });
 }
 
+
 function setupLazyLoad() {
     const list = document.getElementById('projectList');
     list.addEventListener('scroll', () => {
         if (list.scrollTop + list.clientHeight >= list.scrollHeight - 20) {
-            if (displayedNewsCount < allNews.length) {
-                const nextBatch = allNews.slice(displayedNewsCount, displayedNewsCount + 10);
+            const source = (filteredNews.length > 0) ? filteredNews : allNews;
+            if (displayedNewsCount < source.length) {
+                const nextBatch = source.slice(displayedNewsCount, displayedNewsCount + 10);
                 displayedNewsCount += nextBatch.length;
                 renderNews(nextBatch, true);
             }
