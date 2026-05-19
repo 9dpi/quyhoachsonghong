@@ -235,6 +235,9 @@ async function init() {
         // TẢI RĂNH GIỚI QUY HOẠCH (GIS)
         loadPlanningGIS();
         
+        // Tự động căn chỉnh bản đồ tập trung vào khu vực có nhiều pins nhất
+        setTimeout(fitMapToPins, 400);
+        
         // Tải ranh giới hành chính Hà Nội
         initDistrictSelector();
 
@@ -668,43 +671,40 @@ function renderPlanningResult(match, addr, coords, priceMatch, selectedFeature =
 
     // MODULE 1: ĐỊNH DANH QUY HOẠCH & MÀU SẮC (🔴🟠🟡🟢)
     let qhStatusClass = "green";
-    let qhStatusText = "🟢 An toàn";
-    let qhDetailText = "Không nằm trong phạm vi ảnh hưởng của các đại dự án đang theo dõi.";
-    
+    let qhStatusText  = "🟢 An toàn";
+    let qhDetailText  = "Không nằm trong phạm vi ảnh hưởng của các đại dự án đang theo dõi.";
+
     if (relatedPlannings.length > 0) {
-        const firstPlanning = relatedPlannings[0].feature.properties;
-        const category = firstPlanning.category;
-        
+        const firstItem    = relatedPlannings[0];
+        const category     = firstItem.feature.properties.category;
+        const isInside     = firstItem.order === 1; // order 1 = nằm bên trong polygon
+        const distanceText = isInside ? "" : ` (cách ranh khoảng ${Math.round(firstItem.distance * 1000)}m)`;
+
         if (category === "vandai4") {
-            qhStatusClass = "red";
-            qhStatusText = "🔴 Giải tỏa toàn bộ";
-            qhDetailText = `Nằm trong hành lang thu hồi đất dự án Vành đai 4.`;
+            if (isInside) {
+                qhStatusClass = "red";
+                qhStatusText  = "🔴 Giải tỏa toàn bộ";
+                qhDetailText  = "Nằm trong hành lang thu hồi đất dự án Vành đai 4 - Vùng thủ đô.";
+            } else {
+                qhStatusClass = "yellow";
+                qhStatusText  = "🟡 Giáp ranh Vành đai 4";
+                qhDetailText  = `Nằm sát ranh giới hành lang Vành đai 4${distanceText}. Không trong diện thu hồi nhưng nên theo dõi.`;
+            }
         } else if (category === "giapranh" || category === "songhong") {
-            qhStatusClass = "orange";
-            qhStatusText = "🟠 Một phần";
-            qhDetailText = `Thuộc vùng ranh giới ảnh hưởng của Quy hoạch phân khu Sông Hồng.`;
+            if (isInside) {
+                qhStatusClass = "orange";
+                qhStatusText  = "🟠 Một phần";
+                qhDetailText  = "Nằm trong vùng quy hoạch phân khu Sông Hồng. Có thể bị ảnh hưởng khi triển khai dự án.";
+            } else {
+                // Chỉ gần ranh giới, KHÔNG nằm trong → An toàn
+                qhStatusClass = "green";
+                qhStatusText  = "🟢 An toàn (gần ranh)";
+                qhDetailText  = `Không nằm trong vùng quy hoạch Sông Hồng${distanceText}. Vị trí này được xếp loại AN TOÀN theo dữ liệu GIS hiện tại.`;
+            }
         } else if (category === "taidinhcu") {
             qhStatusClass = "green";
-            qhStatusText = "🟢 Khu Tái định cư";
-            qhDetailText = `Khu vực quy hoạch mới hiện đại, an toàn pháp lý.`;
-        }
-    } else {
-        // Kiểm tra vùng giáp ranh buffer < 1.2km
-        let minDistance = 999;
-        let nearProjectName = "";
-        planningPolygons.forEach(p => {
-            const center = getPolygonCenter(p.geometry);
-            const d = calculateDistance(coords[0], coords[1], center[0], center[1]);
-            if (d < minDistance) {
-                minDistance = d;
-                nearProjectName = p.properties.tenKhu;
-            }
-        });
-        
-        if (minDistance <= 1.2) {
-            qhStatusClass = "yellow";
-            qhStatusText = "🟡 Giáp ranh";
-            qhDetailText = `Giáp ranh dự án ${nearProjectName} (cách khoảng ${Math.round(minDistance*1000)}m).`;
+            qhStatusText  = "🟢 Khu Tái định cư";
+            qhDetailText  = "Khu vực quy hoạch mới hiện đại, an toàn pháp lý.";
         }
     }
 
@@ -883,12 +883,19 @@ function renderPlanningResult(match, addr, coords, priceMatch, selectedFeature =
         </div>
         
         <!-- BUTTON GROUP -->
-        <div class="actions-group">
-            <button class="btn-action primary" onclick="exportPDFReport('${addr}', ${compUnitPrice}, ${marketResult.avg}, '${qhStatusText}')"><i class="fa-solid fa-file-pdf"></i> Xuất Báo Cáo</button>
-            <button class="btn-action" onclick="shareResults()"><i class="fa-solid fa-share-nodes"></i> Chia sẻ</button>
+        <div class="actions-group" style="display:flex; flex-direction:column; gap:8px; margin-top:15px;">
+            <div style="display:flex; gap:8px; width:100%;">
+                <button class="btn-action primary" style="flex:1;" onclick="exportPDFReport('${addr}', ${compUnitPrice}, ${marketResult.avg}, '${qhStatusText}')"><i class="fa-solid fa-file-pdf"></i> Xuất Báo Cáo</button>
+                <button class="btn-action" style="flex:1;" onclick="shareResults()"><i class="fa-solid fa-share-nodes"></i> Chia sẻ</button>
+            </div>
+            <button class="btn-action warning-outline" style="width:100%; border: 1px dashed #ef4444; color: #ef4444; background: #fff5f5; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; border-radius:10px; cursor:pointer;" onclick="reportPlanningIncorrect('${addr.replace(/'/g, "\\'")}', [${coords[0]}, ${coords[1]}], '${qhStatusText}')">
+                <i class="fa-solid fa-circle-exclamation"></i> Báo cáo kết quả sai lệch / Cần kiểm chứng
+            </button>
         </div>
         
-        <p style="font-size:0.6rem; color:#94a3b8; margin-top:15px; text-align:center;">* Báo cáo tổng hợp tự động dựa trên dữ liệu không gian GIS.</p>
+        <p style="font-size:0.65rem; color:#64748b; margin-top:15px; text-align:justify; line-height:1.4; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-family:'Inter';">
+            <b>* Miễn trừ trách nhiệm:</b> Kết quả đối soát tự động từ cơ sở dữ liệu không gian GIS. Để đảm bảo tính pháp lý tuyệt đối cho các giao dịch, vui lòng đối chiếu trực tiếp với Bản đồ Quy hoạch gốc tại UBND Phường/Quận sở tại.
+        </p>
     `;
     
     const panel = document.getElementById('detail-panel');
@@ -1054,6 +1061,83 @@ window.exportPDFReport = (addr, compPrice, marketPrice, qhStatus) => {
 
 window.shareResults = () => {
     showModal("Chia sẻ kết quả", "Liên kết chia sẻ kết quả đối soát quy hoạch và so sánh giá đã được sao chép vào bộ nhớ tạm của bạn!<br><br><i>https://dulieuquyhoach.com/?search=" + encodeURIComponent(document.getElementById('addrInput').value) + "</i>", "fa-share-nodes");
+};
+
+window.reportPlanningIncorrect = (addr, coords, currentStatus) => {
+    const reasons = [
+        'Địa chỉ này thực chất AN TOÀN (Không bị quy hoạch)',
+        'Địa chỉ này thực chất bị GIẢI TỎA TOÀN BỘ / MỘT PHẦN',
+        'Vị trí trên bản đồ bị sai lệch so với thực tế',
+        'Đơn giá đất đền bù / Giá thị trường chưa chính xác',
+        'Lý do khác (cần ghi chú thêm)'
+    ];
+
+    const overlay = document.createElement('div');
+    overlay.id = 'report-planning-modal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;';
+    overlay.innerHTML = `
+        <div style="background:white; padding:30px; border-radius:24px; max-width:440px; width:92%; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); border: 1px solid #f1f5f9;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
+                <span style="background:#fee2e2; color:#ef4444; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                <div>
+                    <h3 style="font-size:1.05rem; font-weight:800; color:#0f172a; margin:0;">Báo cáo dữ liệu sai lệch</h3>
+                    <p style="font-size:0.75rem; color:#64748b; margin:2px 0 0 0;">Giúp chúng tôi cải thiện độ chính xác bản đồ số</p>
+                </div>
+            </div>
+            
+            <div style="background:#f8fafc; padding:12px 16px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:20px; font-size:0.78rem; color:#334155; line-height:1.5;">
+                <div><b>Địa chỉ:</b> ${addr}</div>
+                <div style="margin-top:4px;"><b>Hệ thống báo:</b> <span style="font-weight:700; color:#ef4444;">${currentStatus}</span></div>
+            </div>
+
+            <h4 style="font-size:0.8rem; font-weight:700; color:#334155; margin:0 0 10px 0;">Chọn vấn đề bạn phát hiện:</h4>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+                ${reasons.map((r, i) => `
+                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px 12px; border-radius:10px; border:1px solid #e2e8f0; font-size:0.78rem; font-weight:600; color:#334155; transition:all 0.2s;" onmouseover="this.style.borderColor='#ef4444'; this.style.background='#fff5f5';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='white';">
+                        <input type="radio" name="planning-report-reason" value="${r}" style="accent-color:#ef4444; margin-top:2px;">
+                        <span>${r}</span>
+                    </label>
+                `).join('')}
+            </div>
+
+            <label style="font-size:0.8rem; font-weight:700; color:#334155; display:block; margin-bottom:8px;">Ghi chú hoặc thông tin bổ sung (nếu có):</label>
+            <textarea id="planning-report-desc" placeholder="Ví dụ: Khu vực này tôi đã kiểm tra tại Phường hoàn toàn an toàn, ranh sông chỉ tới đê..." style="width:100%; height:80px; padding:12px; border:1px solid #e2e8f0; border-radius:10px; font-size:0.78rem; font-family:inherit; resize:none; margin-bottom:20px; box-sizing:border-box; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#ef4444'"></textarea>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="document.getElementById('report-planning-modal').remove()" style="flex:1; padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:white; cursor:pointer; font-size:0.8rem; font-weight:700; color:#64748b;">Hủy bỏ</button>
+                <button onclick="submitPlanningReport('${addr.replace(/'/g, "\\'")}', [${coords[0]}, ${coords[1]}], '${currentStatus}')" style="flex:2; padding:12px; background:#ef4444; border:none; border-radius:12px; color:white; cursor:pointer; font-size:0.8rem; font-weight:800; transition:background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Gửi Báo Cáo</button>
+            </div>
+        </div>`;
+    
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+};
+
+window.submitPlanningReport = async (addr, coords, currentStatus) => {
+    const reason = document.querySelector('input[name="planning-report-reason"]:checked')?.value;
+    if (!reason) { alert('Vui lòng chọn vấn đề bạn phát hiện'); return; }
+    
+    const desc = document.getElementById('planning-report-desc').value;
+    document.getElementById('report-planning-modal')?.remove();
+    
+    try {
+        await fetch(GAS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                type: 'planning_report',
+                address: addr,
+                coordinates: coords,
+                reported_status: currentStatus,
+                reason: reason,
+                description: desc,
+                timestamp: new Date().toISOString()
+            })
+        });
+    } catch(e) {
+        console.error("Lỗi khi gửi báo cáo quy hoạch:", e);
+    }
+    
+    showModal('Cảm ơn đóng góp của bạn!', 'Ý kiến của bạn đã được ghi nhận hệ thống kiểm chứng. Đội ngũ kỹ thuật sẽ tiến hành đối soát GIS thủ công và cập nhật ranh giới sớm nhất nếu có sai sót.', 'fa-circle-check');
 };
 
 function renderPlanningWarning(addr, coords) {
@@ -1253,6 +1337,9 @@ window.filterNews = (filter, btn) => {
     }
     displayedNewsCount = 30;
     renderNews(filteredNews.slice(0, displayedNewsCount));
+    
+    // Tự động căn chỉnh bản đồ theo các pins đã lọc
+    setTimeout(fitMapToPins, 200);
 };
 
 window.reportNews = (e, idx) => {
@@ -1375,6 +1462,25 @@ function setupLazyLoad() {
             }
         }
     });
+}
+
+function fitMapToPins() {
+    if (!allNews || allNews.length === 0) return;
+    const points = [];
+    allNews.forEach(item => {
+        if (item.viDo && item.kinhDo) {
+            points.push([item.viDo, item.kinhDo]);
+        }
+    });
+    if (points.length > 0) {
+        const bounds = L.latLngBounds(points);
+        // fitBounds tự động tính toán viewport tối ưu cho các pins
+        map.fitBounds(bounds, { 
+            padding: [40, 40], 
+            maxZoom: 13 
+        });
+        console.log(`[Map] Auto-centered and fitted bounds to ${points.length} news/planning pins.`);
+    }
 }
 
 function renderProgress(data) {
