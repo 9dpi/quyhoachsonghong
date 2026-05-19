@@ -17,6 +17,7 @@ let landPriceData = [];
 let progressData = [];
 let homeMarker = null;
 let fuse = null;
+let landPriceFuse = null;
 
 const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
@@ -150,6 +151,9 @@ async function init() {
         
         // TẢI RĂNH GIỚI QUY HOẠCH (GIS)
         loadPlanningGIS();
+        
+        // Tải ranh giới hành chính Hà Nội
+        initDistrictSelector();
 
         // Khởi tạo Fuse.js cho tìm kiếm mờ
         if (planningData.length > 0) {
@@ -168,6 +172,23 @@ async function init() {
             };
             fuse = new Fuse(processedData, options);
             console.log("Đã khởi tạo Fuse.js cho tra cứu địa chỉ.");
+        }
+
+        if (landPriceData.length > 0) {
+            const processedLandData = landPriceData.map(item => ({
+                ...item,
+                cleanStreet: normalizeAddress(item["Tuyến đường"] || item.streetType || "")
+            }));
+
+            const options = {
+                keys: ['Tuyến đường', 'cleanStreet', 'Quận/Huyện', 'region'],
+                threshold: 0.4,
+                distance: 100,
+                includeScore: true,
+                ignoreLocation: true
+            };
+            landPriceFuse = new Fuse(processedLandData, options);
+            console.log("Đã khởi tạo Fuse.js cho tra cứu bảng giá đất.");
         }
     } catch (e) {
         console.error("Data Load Error:", e);
@@ -248,6 +269,19 @@ async function handleAddressLookup(normAddr, rawAddr) {
         );
     }
 
+    let priceMatch = null;
+    if (landPriceFuse) {
+        const priceResults = landPriceFuse.search(rawAddr);
+        const priceResultsNoAccent = landPriceFuse.search(normAddr);
+        const allPriceResults = [...priceResults, ...priceResultsNoAccent];
+        allPriceResults.sort((a, b) => a.score - b.score);
+        
+        if (allPriceResults.length > 0 && allPriceResults[0].score < 0.5) {
+            priceMatch = allPriceResults[0].item;
+            console.log("Fuse.js land price match score:", allPriceResults[0].score);
+        }
+    }
+
     try {
         if (homeMarker) map.removeLayer(homeMarker);
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(rawAddr + ", Hanoi")}`);
@@ -270,8 +304,8 @@ async function handleAddressLookup(normAddr, rawAddr) {
 
         // Bấm vào marker thì mới ra bảng tra cứu
         homeMarker.on('click', () => {
-            if (match) {
-                renderPlanningResult(match, rawAddr, coords);
+            if (match || priceMatch) {
+                renderPlanningResult(match, rawAddr, coords, priceMatch);
             } else {
                 const warningAreas = ["mê linh", "lĩnh nam", "hồng hà", "phú thượng", "bát tràng", "bồ đề", "ngọc thụy", "phố huế"];
                 const isWarning = warningAreas.some(area => normAddr.includes(area));
@@ -404,25 +438,43 @@ window.searchFromCTA = (baseArea) => {
     checkMyHome();
 };
 
-function renderPlanningResult(match, addr, coords) {
-    const project = projectsData.find(p => p.projectName === match.project) || {};
-    const timeline = progressData.filter(p => p.project === match.project).slice(0, 2);
-    const k = match.kFactor || 1.0;
+function renderPlanningResult(match, addr, coords, priceMatch) {
+    const project = match ? (projectsData.find(p => p.projectName === match.project) || {}) : {};
+    const timeline = match ? progressData.filter(p => p.project === match.project).slice(0, 2) : [];
+    const k = match ? (match.kFactor || 1.0) : 1.0;
     
-    // Lấy giá cho 4 vị trí (nếu có, nếu không tự tính theo tỷ lệ)
-    const priceVt1 = match.gia_dat_o_vt1 || match.landPrice || 0;
-    const priceVt2 = match.gia_dat_o_vt2 || Math.round(priceVt1 * 0.8);
-    const priceVt3 = match.gia_dat_o_vt3 || Math.round(priceVt1 * 0.6);
-    const priceVt4 = match.gia_dat_o_vt4 || Math.round(priceVt1 * 0.4);
+    // Lấy giá cho 4 vị trí
+    let priceVt1 = 0, priceVt2 = 0, priceVt3 = 0, priceVt4 = 0;
+    
+    if (priceMatch) {
+        priceVt1 = priceMatch["Vị trí 1"] || priceMatch.gia_dat_o_vt1 || 0;
+        priceVt2 = priceMatch["Vị trí 2"] || priceMatch.gia_dat_o_vt2 || Math.round(priceVt1 * 0.8);
+        priceVt3 = priceMatch["Vị trí 3"] || priceMatch.gia_dat_o_vt3 || Math.round(priceVt1 * 0.6);
+        priceVt4 = priceMatch["Vị trí 4"] || priceMatch.gia_dat_o_vt4 || Math.round(priceVt1 * 0.4);
+    } else if (match) {
+        priceVt1 = match.gia_dat_o_vt1 || match.landPrice || 0;
+        priceVt2 = match.gia_dat_o_vt2 || Math.round(priceVt1 * 0.8);
+        priceVt3 = match.gia_dat_o_vt3 || Math.round(priceVt1 * 0.6);
+        priceVt4 = match.gia_dat_o_vt4 || Math.round(priceVt1 * 0.4);
+    }
 
-    document.getElementById('detail-title').innerText = "KẾT QUẢ TRA CỨU";
+    document.getElementById('detail-title').innerText = match ? "KẾT QUẢ TRA CỨU" : "BẢNG GIÁ ĐẤT KHU VỰC";
     document.getElementById('detail-body').innerHTML = `
+        ${match ? `
         <div style="background:#fff1f2; border:1px solid #fecaca; padding:15px; border-radius:12px; margin-bottom:15px;">
             <p style="font-size:0.7rem; color:#be123c; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
             <p style="font-size:0.85rem; font-weight:700;">${addr}</p>
             <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#be123c; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">⚠️ NẰM TRONG DIỆN GIẢI TỎA</div>
         </div>
+        ` : `
+        <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:#0369a1; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
+            <p style="font-size:0.85rem; font-weight:700;">${addr}</p>
+            <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#10b981; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">ℹ️ CHƯA CÓ THÔNG TIN QUY HOẠCH CỤ THỂ</div>
+        </div>
+        `}
 
+        ${match ? `
         <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:15px; border-radius:12px; margin-bottom:15px;">
             <h4 style="font-size:0.8rem; margin-bottom:10px; color:#1e40af;">🏗️ THÔNG TIN DỰ ÁN</h4>
             <p style="font-size:0.75rem;"><b>Dự án:</b> ${match.project}</p>
@@ -434,6 +486,7 @@ function renderPlanningResult(match, addr, coords) {
             <h4 style="font-size:0.8rem; margin-bottom:10px; color:#0369a1;">📊 TIẾN ĐỘ MỚI NHẤT</h4>
             ${timeline.length > 0 ? timeline.map(t => `<p style="font-size:0.7rem; margin-bottom:4px;">• <b>${t.date}:</b> ${t.milestone}</p>`).join('') : '<p style="font-size:0.7rem;">Đang cập nhật...</p>'}
         </div>
+        ` : ''}
 
         <div style="background:#fffbeb; border:1px solid #fef3c7; padding:15px; border-radius:12px;">
             <h4 style="font-size:0.8rem; margin-bottom:10px; color:#92400e;">💰 BẢNG GIÁ ĐẤT ĐỀN BÙ DỰ KIẾN</h4>
@@ -967,5 +1020,131 @@ window.showInfo = function(type) {
         showModal("Điều khoản sử dụng", html, "fa-file-contract");
     }
 };
+
+// --- LOGIC CHO BỘ CHỌN RANH GIỚI HÀNH CHÍNH ---
+let activeBoundaryLayer = null;
+let hanoiBoundaryData = null;
+
+const districtsList = [
+    'Quận Ba Đình', 'Quận Cầu Giấy', 'Quận Bắc Từ Liêm', 'Quận Nam Từ Liêm',
+    'Quận Đống Đa', 'Quận Hà Đông', 'Quận Hai Bà Trưng', 'Quận Hoàn Kiếm',
+    'Quận Hoàng Mai', 'Quận Long Biên', 'Quận Tây Hồ', 'Quận Thanh Xuân',
+    'Thị xã Sơn Tây', 'Huyện Ba Vì', 'Huyện Chương Mỹ', 'Huyện Đan Phượng',
+    'Huyện Đông Anh', 'Huyện Gia Lâm', 'Huyện Hoài Đức', 'Huyện Mê Linh',
+    'Huyện Mỹ Đức', 'Huyện Phú Xuyên', 'Huyện Phúc Thọ', 'Huyện Quốc Oai',
+    'Huyện Sóc Sơn', 'Huyện Thạch Thất', 'Huyện Thanh Oai', 'Huyện Thanh Trì',
+    'Huyện Thường Tín', 'Huyện Ứng Hòa'
+];
+
+async function initDistrictSelector() {
+    const selectEl = document.getElementById('district-select');
+    if (!selectEl) return;
+
+    // Populate dropdown options dynamically
+    districtsList.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        selectEl.appendChild(opt);
+    });
+
+    // Load Hanoi Boundary Data (with localStorage Cache)
+    try {
+        const cachedBoundary = localStorage.getItem('hanoi_boundary_cache');
+        if (cachedBoundary) {
+            hanoiBoundaryData = JSON.parse(cachedBoundary);
+            console.log("Đã tải ranh giới Hà Nội từ localStorage cache.");
+        } else {
+            // Fetch directly from github raw (CORS allowed)
+            const res = await fetch('https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/gis/01.json');
+            if (res.ok) {
+                hanoiBoundaryData = await res.json();
+                localStorage.setItem('hanoi_boundary_cache', JSON.stringify(hanoiBoundaryData));
+                console.log("Đã tải và lưu cache ranh giới Hà Nội từ GitHub.");
+            }
+        }
+    } catch (e) {
+        console.error("Lỗi khi tải dữ liệu ranh giới hành chính:", e);
+    }
+
+    // Set up change event handler
+    selectEl.addEventListener('change', async (e) => {
+        const selected = e.target.value;
+        
+        // Clear active boundary layer if exists
+        if (activeBoundaryLayer) {
+            map.removeLayer(activeBoundaryLayer);
+            activeBoundaryLayer = null;
+        }
+
+        if (!selected) return;
+
+        if (!hanoiBoundaryData) {
+            showModal("Đang tải dữ liệu", "Hệ thống đang tải dữ liệu ranh giới hành chính. Vui lòng thử lại sau vài giây.", "fa-spinner fa-spin");
+            // Retry loading
+            try {
+                const res = await fetch('https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/gis/01.json');
+                if (res.ok) {
+                    hanoiBoundaryData = await res.json();
+                    localStorage.setItem('hanoi_boundary_cache', JSON.stringify(hanoiBoundaryData));
+                    closeModal();
+                } else {
+                    throw new Error("Cannot fetch data");
+                }
+            } catch (err) {
+                showModal("Lỗi kết nối", "Không thể tải dữ liệu ranh giới hành chính từ máy chủ.", "fa-circle-xmark");
+                return;
+            }
+        }
+
+        const district = hanoiBoundaryData.level2s.find(d => d.name === selected);
+        if (!district) {
+            showModal("Thông báo", `Không tìm thấy dữ liệu ranh giới cho ${selected}`, "fa-circle-exclamation");
+            return;
+        }
+
+        // Convert the custom format in dvhcvn to standard GeoJSON Feature
+        const geojsonFeature = {
+            "type": "Feature",
+            "properties": {
+                "name": district.name,
+                "level2_id": district.level2_id
+            },
+            "geometry": {
+                "type": district.type,
+                "coordinates": district.coordinates
+            }
+        };
+
+        // Render GeoJSON boundary layer on map
+        activeBoundaryLayer = L.geoJSON(geojsonFeature, {
+            style: {
+                color: '#2563eb',       // Royal Blue border
+                weight: 3,
+                fillColor: '#3b82f6',   // High-tech blue fill
+                fillOpacity: 0.15,
+                dashArray: '5, 8'       // Dashed border for a premium blueprint style
+            },
+            onEachFeature: function(feature, layer) {
+                layer.bindPopup(`
+                    <div style="font-family: 'Inter', sans-serif; padding: 5px;">
+                        <h4 style="margin: 0 0 5px 0; color: #1e40af; font-weight: 800; font-size: 0.85rem;"><i class="fa-solid fa-map-location-dot"></i> ${district.name}</h4>
+                        <p style="margin: 0; font-size: 0.72rem; color: #64748b;">Mã hành chính: <b>${district.level2_id}</b></p>
+                        <p style="margin: 5px 0 0 0; font-size: 0.72rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Đang hiển thị ranh giới</p>
+                    </div>
+                `, { closeButton: false, offset: L.point(0, -10) });
+            }
+        }).addTo(map);
+
+        // Fit map bounds to show the selected district
+        const bounds = activeBoundaryLayer.getBounds();
+        map.fitBounds(bounds, { padding: [30, 30] });
+        
+        // Open the popup automatically at district center
+        activeBoundaryLayer.eachLayer(layer => {
+            layer.openPopup(bounds.getCenter());
+        });
+    });
+}
 
 document.addEventListener('DOMContentLoaded', init);

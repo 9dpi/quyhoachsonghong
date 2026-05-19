@@ -759,6 +759,67 @@
             border: 1px solid #bfdbfe;
         }
 
+        /* Map Overlay Control styling for District Boundary Selector */
+        .map-overlay-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .map-overlay-control:hover {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-1px);
+        }
+
+        .map-overlay-control .control-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .map-overlay-control select {
+            border: 1px solid #e2e8f0;
+            padding: 6px 30px 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1e293b;
+            background: #ffffff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 8px center/16px;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: all 0.2s ease;
+            min-width: 160px;
+        }
+
+        .map-overlay-control select:hover {
+            border-color: var(--primary);
+        }
+
+        .map-overlay-control select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
         /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
             header {
@@ -955,6 +1016,13 @@
 
         <main id="main-content">
             <div id="map"></div>
+            <!-- Bộ chọn Ranh giới Hành chính -->
+            <div class="map-overlay-control">
+                <span class="control-label"><i class="fa-solid fa-map-location-dot"></i> Ranh giới:</span>
+                <select id="district-select">
+                    <option value="">-- Chọn Quận/Huyện --</option>
+                </select>
+            </div>
             <div id="detail-panel">
                 <div
                     style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
