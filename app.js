@@ -73,48 +73,63 @@ async function init() {
             }
         }
 
-        // 2. FETCH DỮ LIỆU MỚI TỪ MẠNG TRONG NỀN
-        try {
-            const cacheRes = await fetch("data/sheet_data.json?t=" + Date.now());
-            if (cacheRes.ok) {
-                const fullData = await cacheRes.json();
-                newsData = fullData.news || [];
-                progressData = fullData.progress || [];
-                faqData = fullData.faq || [];
-                planningData = fullData.planning || [];
-                projectsData = fullData.projects || [];
-                landPriceData = fullData.landPrice || [];
-                console.log("Loaded data from static cache.");
-            } else {
-                throw new Error("Cache file not found or empty.");
-            }
-        } catch (cacheError) {
-            console.log("Static cache failed, falling back to GAS API or defaults.", cacheError);
-            
+        // 2. SỬ DỤNG DỮ LIỆU PRE-LOADED (tránh CORS khi mở bằng file://)
+        if (window.sheetDataInlined) {
+            const fullData = window.sheetDataInlined;
+            newsData = fullData.news || [];
+            progressData = fullData.progress || [];
+            faqData = fullData.faq || [];
+            planningData = fullData.planning || [];
+            projectsData = fullData.projects || [];
+            landPriceData = fullData.landPrice || [];
+            console.log("Loaded data from pre-loaded sheetDataInlined.");
+        } else {
+            // 3. FETCH DỮ LIỆU TỪ MẠNG
             try {
-                // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
-                if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
-                    const gasRes = await fetch(GAS_API_URL);
-                    const fullData = await gasRes.json();
+                const cacheRes = await fetch("data/sheet_data.json?t=" + Date.now());
+                if (cacheRes.ok) {
+                    const fullData = await cacheRes.json();
                     newsData = fullData.news || [];
                     progressData = fullData.progress || [];
                     faqData = fullData.faq || [];
                     planningData = fullData.planning || [];
                     projectsData = fullData.projects || [];
                     landPriceData = fullData.landPrice || [];
+                    console.log("Loaded data from static cache.");
                 } else {
-                    // Fallback lấy từ file JSON local (GitHub Pages)
-                    const [newsRes, extraRes] = await Promise.all([
-                        fetch(NEWS_URL + "?t=" + Date.now()),
-                        fetch(EXTRA_URL + "?t=" + Date.now())
-                    ]);
-                    newsData = await newsRes.json();
-                    const extraData = await extraRes.json();
-                    progressData = extraData.progress || [];
-                    faqData = extraData.faq || [];
+                    throw new Error("Cache file not found or empty.");
                 }
-            } catch (fallbackError) {
-                console.log("Fallback fetch also failed (likely due to file:// protocol CORS). Using mock data.", fallbackError);
+            } catch (cacheError) {
+                console.log("Static cache failed, falling back to GAS API or defaults.", cacheError);
+                
+                try {
+                    // Ưu tiên lấy từ Google Sheets (GAS API) nếu có URL
+                    if (GAS_API_URL && !GAS_API_URL.includes("YOUR_GAS")) {
+                        const controller = new AbortController();
+                        const timeout = setTimeout(() => controller.abort(), 8000); // Timeout 8s
+                        const gasRes = await fetch(GAS_API_URL, { signal: controller.signal });
+                        clearTimeout(timeout);
+                        const fullData = await gasRes.json();
+                        newsData = fullData.news || [];
+                        progressData = fullData.progress || [];
+                        faqData = fullData.faq || [];
+                        planningData = fullData.planning || [];
+                        projectsData = fullData.projects || [];
+                        landPriceData = fullData.landPrice || [];
+                    } else {
+                        // Fallback lấy từ file JSON local (GitHub Pages)
+                        const [newsRes, extraRes] = await Promise.all([
+                            fetch(NEWS_URL + "?t=" + Date.now()),
+                            fetch(EXTRA_URL + "?t=" + Date.now())
+                        ]);
+                        newsData = await newsRes.json();
+                        const extraData = await extraRes.json();
+                        progressData = extraData.progress || [];
+                        faqData = extraData.faq || [];
+                    }
+                } catch (fallbackError) {
+                    console.log("Fallback fetch also failed (likely due to file:// protocol CORS). Using mock data.", fallbackError);
+                }
             }
         }
         
@@ -1152,93 +1167,97 @@ function closeModal() { document.getElementById('custom-modal').classList.remove
 function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); }
 
 function loadPlanningGIS() {
-    // URL dẫn tới file GeoJSON chứa ranh giới các dự án (Vành đai 4, Quy hoạch Sông Hồng...)
-    const GIS_URL = "data/map.geojson"; 
-    
-    fetch(GIS_URL)
-        .then(res => res.json())
-        .then(geojsonData => {
-            // Lưu trữ features để đối soát GIS không gian (P1)
-            planningPolygons = geojsonData.features || [];
+    const drawGeojson = (geojsonData) => {
+        planningPolygons = geojsonData.features || [];
 
-            L.geoJSON(geojsonData, {
-                style: function(feature) {
-                    const cat = feature.properties ? feature.properties.category : '';
-                    switch (cat) {
-                        case 'vandai4':
-                            return {
-                                color: "#ff0000",       // Đỏ
-                                weight: 4,
-                                fillColor: "#ff0000",
-                                fillOpacity: 0.1
-                            };
-                        case 'taidinhcu':
-                            return {
-                                color: "#00cc66",       // Xanh lá
-                                weight: 3,
-                                fillColor: "#00cc66",
-                                fillOpacity: 0.2
-                            };
-                        case 'songhong':
-                            return {
-                                color: "#0044cc",       // Xanh dương đậm
-                                weight: 2,
-                                fillColor: "#0044cc",
-                                fillOpacity: 0.05,
-                                dashArray: '5, 5'       // Nét đứt
-                            };
-                        case 'giapranh':
-                            return {
-                                color: "#ff8800",       // Cam
-                                weight: 2,
-                                fillColor: "#ff8800",
-                                fillOpacity: 0.1
-                            };
-                        default:
-                            return {
-                                color: "#ef4444",
-                                weight: 2,
-                                fillColor: "#ef4444",
-                                fillOpacity: 0.1
-                            };
-                    }
-                },
-                onEachFeature: function(feature, layer) {
-                    const props = feature.properties || {};
-                    const name = props.tenKhu || props.name || "Khu vực quy hoạch";
-                    const loai = props.loai || "Đang cập nhật";
-                    const description = props.description || "Chưa có mô tả chi tiết.";
-                    const area = props.dienTich || "Đang cập nhật";
-                    const source = props.nguon || "UBND TP Hà Nội";
-
-                    const docs = contextualDocuments[props.id] || [];
-                    let docsHtml = "";
-                    if (docs.length > 0) {
-                        docsHtml = `
-                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: 6px;">
-                            <span style="font-size: 0.62rem; font-weight: 800; color: #1e40af; display: block; margin-bottom: 2px;"><i class="fa-solid fa-folder-open"></i> Tài liệu liên quan:</span>
-                            ${docs.map(d => `<a href="${d.url}" target="_blank" style="display: block; font-size: 0.6rem; color: #2563eb; text-decoration: none; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><i class="fa-solid fa-file-pdf" style="color:#ef4444;"></i> ${d.name}</a>`).join('')}
-                        </div>`;
-                    }
-
-                    // Gán popup chi tiết, trực quan hóa đúng mục đích sử dụng đất
-                    layer.bindPopup(`
-                        <div style="font-family: 'Inter', sans-serif; padding: 5px; max-width: 250px;">
-                            <span style="display: inline-block; padding: 2px 6px; background: #f1f5f9; border-radius: 4px; font-size: 0.62rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 5px;">🏗️ ${loai}</span>
-                            <h4 style="margin: 0 0 5px 0; color: #1e293b; font-weight: 800; font-size: 0.85rem;">${name}</h4>
-                            <p style="margin: 0 0 8px 0; font-size: 0.72rem; color: #475569; line-height: 1.4;">${description}</p>
-                            <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.65rem; color: #64748b;">
-                                <div>Diện tích: <b>${area}</b></div>
-                                <div>Nguồn: <b>${source}</b></div>
-                            </div>
-                            ${docsHtml}
-                        </div>
-                    `, { closeButton: true });
+        L.geoJSON(geojsonData, {
+            style: function(feature) {
+                const cat = feature.properties ? feature.properties.category : '';
+                switch (cat) {
+                    case 'vandai4':
+                        return {
+                            color: "#ff0000",       // Đỏ
+                            weight: 4,
+                            fillColor: "#ff0000",
+                            fillOpacity: 0.1
+                        };
+                    case 'taidinhcu':
+                        return {
+                            color: "#00cc66",       // Xanh lá
+                            weight: 3,
+                            fillColor: "#00cc66",
+                            fillOpacity: 0.2
+                        };
+                    case 'songhong':
+                        return {
+                            color: "#0044cc",       // Xanh dương đậm
+                            weight: 2,
+                            fillColor: "#0044cc",
+                            fillOpacity: 0.05,
+                            dashArray: '5, 5'       // Nét đứt
+                        };
+                    case 'giapranh':
+                        return {
+                            color: "#ff8800",       // Cam
+                            weight: 2,
+                            fillColor: "#ff8800",
+                            fillOpacity: 0.1
+                        };
+                    default:
+                        return {
+                            color: "#ef4444",
+                            weight: 2,
+                            fillColor: "#ef4444",
+                            fillOpacity: 0.1
+                        };
                 }
-            }).addTo(map);
-            console.log("Đã tải ranh giới GIS quy hoạch.");
-        })
-        .catch(err => console.log("Chưa có file map.geojson để hiển thị ranh giới."));
+            },
+            onEachFeature: function(feature, layer) {
+                const props = feature.properties || {};
+                const name = props.tenKhu || props.name || "Khu vực quy hoạch";
+                const loai = props.loai || "Đang cập nhật";
+                const description = props.description || "Chưa có mô tả chi tiết.";
+                const area = props.dienTich || "Đang cập nhật";
+                const source = props.nguon || "UBND TP Hà Nội";
+
+                const docs = contextualDocuments[props.id] || [];
+                let docsHtml = "";
+                if (docs.length > 0) {
+                    docsHtml = `
+                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: 6px;">
+                        <span style="font-size: 0.62rem; font-weight: 800; color: #1e40af; display: block; margin-bottom: 2px;"><i class="fa-solid fa-folder-open"></i> Tài liệu liên quan:</span>
+                        ${docs.map(d => `<a href="${d.url}" target="_blank" style="display: block; font-size: 0.6rem; color: #2563eb; text-decoration: none; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><i class="fa-solid fa-file-pdf" style="color:#ef4444;"></i> ${d.name}</a>`).join('')}
+                    </div>`;
+                }
+
+                // Gán popup chi tiết, trực quan hóa đúng mục đích sử dụng đất
+                layer.bindPopup(`
+                    <div style="font-family: 'Inter', sans-serif; padding: 5px; max-width: 250px;">
+                        <span style="display: inline-block; padding: 2px 6px; background: #f1f5f9; border-radius: 4px; font-size: 0.62rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 5px;">🏗️ ${loai}</span>
+                        <h4 style="margin: 0 0 5px 0; color: #1e293b; font-weight: 800; font-size: 0.85rem;">${name}</h4>
+                        <p style="margin: 0 0 8px 0; font-size: 0.72rem; color: #475569; line-height: 1.4;">${description}</p>
+                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.65rem; color: #64748b;">
+                            <div>Diện tích: <b>${area}</b></div>
+                            <div>Nguồn: <b>${source}</b></div>
+                        </div>
+                        ${docsHtml}
+                    </div>
+                `, { closeButton: true });
+            }
+        }).addTo(map);
+        console.log("Đã tải ranh giới GIS quy hoạch.");
+    };
+
+    if (typeof mapGeojsonData !== 'undefined') {
+        console.log("Sử dụng dữ liệu GeoJSON inlined (tránh lỗi CORS file://).");
+        drawGeojson(mapGeojsonData);
+    } else {
+        const GIS_URL = "data/map.geojson"; 
+        fetch(GIS_URL)
+            .then(res => res.json())
+            .then(geojsonData => drawGeojson(geojsonData))
+            .catch(err => console.log("Không thể tải ranh giới GIS quy hoạch qua fetch:", err));
+    }
 }
 
 window.showInfo = function(type) {

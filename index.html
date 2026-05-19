@@ -1071,6 +1071,23 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data/map.geojson.js"></script>
+    <script>
+        // Pre-load sheet_data.json synchronously to bypass CORS restrictions on file:// protocol
+        (function() {
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'data/sheet_data.json', false); // synchronous
+                xhr.send();
+                if (xhr.status === 200 || xhr.status === 0) { // status 0 is valid for file://
+                    window.sheetDataInlined = JSON.parse(xhr.responseText);
+                    console.log("Pre-loaded sheet_data.json via sync XHR.");
+                }
+            } catch(e) {
+                console.log("Sync XHR for sheet_data.json failed, will use fetch/GAS API.", e);
+            }
+        })();
+    </script>
     <script src="app.js"></script>
 </body>
 
