@@ -421,6 +421,13 @@ async function handleAreaLookup(normAddr, rawAddr) {
 }
 
 function renderAreaResult(points, rawQuery, coords) {
+    // Tự động chuyển sang tab Bản đồ trên mobile để hiển thị popup chi tiết địa chỉ đó
+    if (window.innerWidth <= 768) {
+        const mapTabBtn = document.getElementById('tab-realmap');
+        if (mapTabBtn) {
+            switchTab('realmap', mapTabBtn);
+        }
+    }
     const projectNames = [...new Set(points.map(p => p.project))];
     const mainProject = projectNames[0];
     const project = projectsData.find(p => p.projectName === mainProject) || {};
@@ -566,6 +573,13 @@ function findNearbyMarketPrices(coords, rawAddr) {
 }
 
 function renderPlanningResult(match, addr, coords, priceMatch, selectedFeature = null) {
+    // Tự động chuyển sang tab Bản đồ trên mobile để hiển thị popup chi tiết địa chỉ đó
+    if (window.innerWidth <= 768) {
+        const mapTabBtn = document.getElementById('tab-realmap');
+        if (mapTabBtn) {
+            switchTab('realmap', mapTabBtn);
+        }
+    }
     const project = match ? (projectsData.find(p => p.projectName === match.project) || {}) : {};
     const timeline = match ? progressData.filter(p => p.project === match.project).slice(0, 2) : [];
     const k = match ? (match.kFactor || 1.0) : 1.0;
