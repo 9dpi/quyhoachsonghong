@@ -788,7 +788,6 @@ function renderHistoricalChart(basePrice) {
         console.error("Lỗi khi vẽ biểu đồ lịch sử giá đền bù:", e);
     }
 }
-}
 
 function renderPlanningWarning(addr, coords) {
     document.getElementById('detail-title').innerText = "CẢNH BÁO QUY HOẠCH";
