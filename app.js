@@ -1282,19 +1282,66 @@ function renderProjectsInMapTab(data) {
 }
 
 window.zoomToProject = async (projectName) => {
+    // 1. Tìm trong ranh giới GIS nội bộ trước (Wow GIS Integration!)
+    const matchedPolygon = planningPolygons.find(p => {
+        const name = (p.properties.tenKhu || "").toLowerCase();
+        const loai = (p.properties.loai || "").toLowerCase();
+        const query = projectName.toLowerCase();
+        return name.includes(query) || query.includes(name) ||
+               loai.includes(query) || query.includes(loai);
+    });
+
+    if (matchedPolygon) {
+        console.log("zoomToProject - GIS Polygon Match:", matchedPolygon.properties.tenKhu);
+        const center = getPolygonCenter(matchedPolygon.geometry);
+        
+        // Tự động chuyển tab Bản đồ trên mobile để hiển thị
+        if (window.innerWidth <= 768) {
+            const mapTabBtn = document.getElementById('tab-realmap');
+            if (mapTabBtn) {
+                switchTab('realmap', mapTabBtn);
+            }
+        }
+
+        // Bay tới dự án quy hoạch với độ zoom lớn
+        map.flyTo(center, 15);
+        
+        // Hiển thị trực tiếp bảng kết quả quy hoạch định dạng V6.0 cho dự án này
+        let priceMatch = null;
+        if (landPriceFuse) {
+            const results = landPriceFuse.search(projectName);
+            if (results.length > 0 && results[0].score < 0.6) {
+                priceMatch = results[0].item;
+            }
+        }
+        
+        setTimeout(() => {
+            renderPlanningResult(null, matchedPolygon.properties.tenKhu, center, priceMatch, matchedPolygon);
+        }, 800);
+        return;
+    }
+
+    // 2. Nếu không có polygon, fallback sang Nominatim
     try {
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(projectName + ", Hanoi")}`);
         const data = await res.json();
         if (data && data.length > 0) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
+            
+            if (window.innerWidth <= 768) {
+                const mapTabBtn = document.getElementById('tab-realmap');
+                if (mapTabBtn) {
+                    switchTab('realmap', mapTabBtn);
+                }
+            }
             map.flyTo([lat, lon], 15);
         } else {
-            alert("Không tìm thấy vị trí của dự án này trên bản đồ.");
+            showModal("Thông báo", "Không tìm thấy vị trí của dự án này trên bản đồ.", "fa-circle-exclamation");
         }
     } catch (e) {
         console.error(e);
-        alert("Lỗi khi tìm kiếm vị trí.");
+        showModal("Thông báo", "Lỗi khi kết nối hệ thống tìm kiếm vị trí.", "fa-triangle-exclamation");
     }
 };
 
