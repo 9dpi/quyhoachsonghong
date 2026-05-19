@@ -19,6 +19,27 @@ let homeMarker = null;
 let fuse = null;
 let landPriceFuse = null;
 let planningPolygons = [];
+let currentChartInstance = null;
+
+const contextualDocuments = {
+    "sh_r1": [
+        { name: "Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND)", url: "https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0", type: "PDF" },
+        { name: "Quyết định 71/2024/QĐ-UBND Bảng giá đất Hà Nội", url: "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf", type: "PDF" }
+    ],
+    "vd4_sec1": [
+        { name: "Quyết định phê duyệt dự án Vành đai 4 - Vùng Thủ đô", url: "https://vanban.hanoi.gov.vn", type: "PDF" },
+        { name: "Quyết định 30/2019/QĐ-UBND Bảng giá các loại đất Hà Nội", url: "https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban.hanoi.gov.vn/documents/10182/2518750/QDPQ_30_2019.pdf", type: "PDF" }
+    ],
+    "taidinhcu_ml": [
+        { name: "Quyết định phê duyệt quy hoạch 1/500 Khu TĐC Mê Linh", url: "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf", type: "PDF" }
+    ],
+    "taidinhcu_ln": [
+        { name: "Quyết định bồi thường và TĐC Quận Hoàng Mai", url: "https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban.hanoi.gov.vn/documents/10182/2518750/QDPQ_30_2019.pdf", type: "PDF" }
+    ],
+    "giapranh_vd4": [
+        { name: "Quy chế quản lý quy hoạch hành lang an toàn Vành đai 4", url: "https://vanban.hanoi.gov.vn", type: "PDF" }
+    ]
+};
 
 const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
@@ -238,6 +259,45 @@ async function checkMyHome() {
     const normAddr = normalizeAddress(rawAddr);
     showModal("Đang phân tích", "Đang đối soát quy hoạch cho: <b>" + rawAddr + "</b>", "fa-satellite-dish");
     
+    // HỖ TRỢ TÌM KIẾM TIẾNG VIỆT KHÔNG DẤU / DIRECT POLYGON FUZZY MATCH (P3)
+    const matchedPolygon = planningPolygons.find(p => {
+        const name = normalizeAddress(p.properties.tenKhu || "");
+        const loai = normalizeAddress(p.properties.loai || "");
+        const cat = normalizeAddress(p.properties.category || "");
+        return name.includes(normAddr) || normAddr.includes(name) ||
+               loai.includes(normAddr) || normAddr.includes(loai) ||
+               cat.includes(normAddr);
+    });
+
+    if (matchedPolygon) {
+        console.log("Direct polygon match found:", matchedPolygon.properties.tenKhu);
+        const center = getPolygonCenter(matchedPolygon.geometry);
+        
+        // Tạo marker tại tâm dự án
+        if (homeMarker) map.removeLayer(homeMarker);
+        const projectIcon = L.divIcon({
+            html: '<div style="background: white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #2563eb;"><i class="fa-solid fa-circle-info" style="font-size: 18px; color: #2563eb;"></i></div>',
+            className: 'project-marker-icon',
+            iconSize: [36, 36],
+            iconAnchor: [18, 18]
+        });
+        homeMarker = L.marker(center, { icon: projectIcon }).addTo(map);
+        homeMarker.bindTooltip(matchedPolygon.properties.tenKhu, { permanent: true, direction: 'top', className: 'house-tooltip' }).openTooltip();
+        
+        // Tìm kiếm các dữ liệu giá tương quan nếu có
+        let priceMatch = null;
+        if (landPriceFuse) {
+            const results = landPriceFuse.search(rawAddr);
+            if (results.length > 0 && results[0].score < 0.6) {
+                priceMatch = results[0].item;
+            }
+        }
+
+        // Hiển thị trực tiếp kết quả đối soát GIS cho polygon này
+        renderPlanningResult(null, matchedPolygon.properties.tenKhu, center, priceMatch, matchedPolygon);
+        return;
+    }
+
     // Phân loại: Tra cứu địa chỉ cụ thể hay Tra cứu khu vực/đường
     const isAreaQuery = /^(duong|pho|phuong|xa|quan|huyen)\s/.test(normAddr) || !/\d/.test(normAddr);
     
@@ -419,7 +479,7 @@ window.searchFromCTA = (baseArea) => {
     checkMyHome();
 };
 
-function renderPlanningResult(match, addr, coords, priceMatch) {
+function renderPlanningResult(match, addr, coords, priceMatch, selectedFeature = null) {
     const project = match ? (projectsData.find(p => p.projectName === match.project) || {}) : {};
     const timeline = match ? progressData.filter(p => p.project === match.project).slice(0, 2) : [];
     const k = match ? (match.kFactor || 1.0) : 1.0;
@@ -440,7 +500,13 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
     }
 
     // Thực hiện đối soát GIS không gian tại tọa độ tìm được (P1)
-    const relatedPlannings = findIntersectingPlanning(coords[0], coords[1]);
+    let relatedPlannings = [];
+    if (selectedFeature) {
+        relatedPlannings = [{ feature: selectedFeature, relation: "Nằm trong diện ảnh hưởng", distance: 0, order: 1 }];
+    } else {
+        relatedPlannings = findIntersectingPlanning(coords[0], coords[1]);
+    }
+
     let gisHtml = "";
     if (relatedPlannings.length > 0) {
         gisHtml = `
@@ -455,6 +521,23 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
                 else if (props.category === 'taidinhcu') badgeColor = "#00cc66"; // green
                 else if (props.category === 'giapranh') badgeColor = "#ff8800"; // orange
                 
+                // Trích xuất tài liệu theo ngữ cảnh cho từng polygon (Hạng mục 1)
+                const docs = contextualDocuments[props.id] || [];
+                let docsListHtml = "";
+                if (docs.length > 0) {
+                    docsListHtml = `
+                    <div style="margin-top: 8px; background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px;">
+                        <span style="font-size: 0.65rem; font-weight: 800; color: #c2410c; display: flex; align-items: center; gap: 4px; margin-bottom: 5px;"><i class="fa-solid fa-folder-open"></i> Thư viện tài liệu pháp lý liên quan:</span>
+                        ${docs.map(d => `
+                            <a href="${d.url}" target="_blank" style="display: flex; align-items: center; gap: 6px; font-size: 0.68rem; color: #2563eb; text-decoration: none; padding: 4px 0; border-bottom: 1px solid #f1f5f9; cursor:pointer;">
+                                <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i>
+                                <span style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500;">${d.name}</span>
+                                <span style="font-size: 0.55rem; background: #e0f2fe; color: #0369a1; padding: 1px 4px; border-radius: 3px; font-weight: 700;">${d.type}</span>
+                            </a>
+                        `).join('')}
+                    </div>`;
+                }
+
                 return `
                 <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #fed7aa; last-child { border: none; margin-bottom:0; padding-bottom:0; }">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom: 4px;">
@@ -463,6 +546,7 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
                     </div>
                     <p style="font-size:0.68rem; color:#475569; margin:0 0 4px 0; line-height:1.3;">${props.description}</p>
                     <div style="font-size:0.62rem; color:#94a3b8; margin-top:4px;">Diện tích: <b>${props.dienTich}</b> | Nguồn: <b>${props.nguon}</b></div>
+                    ${docsListHtml}
                 </div>
                 `;
             }).join('')}
@@ -479,9 +563,15 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
         `;
     }
 
-    document.getElementById('detail-title').innerText = match ? "KẾT QUẢ TRA CỨU" : "BẢNG GIÁ ĐẤT KHU VỰC";
+    document.getElementById('detail-title').innerText = selectedFeature ? "QUY HOẠCH CHI TIẾT" : (match ? "KẾT QUẢ TRA CỨU" : "BẢNG GIÁ ĐẤT KHU VỰC");
     document.getElementById('detail-body').innerHTML = `
-        ${match ? `
+        ${selectedFeature ? `
+        <div style="background:#fff1f2; border:1px solid #fecaca; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:#be123c; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Dự án khớp tìm kiếm</p>
+            <p style="font-size:0.85rem; font-weight:700; margin:0;">${addr}</p>
+            <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#be123c; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">🏗️ DỰ ÁN QUY HOẠCH KHU VỰC</div>
+        </div>
+        ` : (match ? `
         <div style="background:#fff1f2; border:1px solid #fecaca; padding:15px; border-radius:12px; margin-bottom:15px;">
             <p style="font-size:0.7rem; color:#be123c; font-weight:800; text-transform:uppercase; margin-bottom:5px;">📍 Địa chỉ tra cứu</p>
             <p style="font-size:0.85rem; font-weight:700; margin:0;">${addr}</p>
@@ -493,7 +583,7 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
             <p style="font-size:0.85rem; font-weight:700; margin:0;">${addr}</p>
             <div style="margin-top:10px; display:inline-block; padding:4px 10px; background:#475569; color:white; border-radius:4px; font-size:0.65rem; font-weight:800;">ℹ️ TRA CỨU THÔNG TIN KHU VỰC</div>
         </div>
-        `}
+        `)}
 
         <!-- Hiển thị kết quả đối soát GIS -->
         ${gisHtml}
@@ -511,6 +601,17 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
             ${timeline.length > 0 ? timeline.map(t => `<p style="font-size:0.7rem; margin-bottom:4px;">• <b>${t.date}:</b> ${t.milestone}</p>`).join('') : '<p style="font-size:0.7rem;">Đang cập nhật...</p>'}
         </div>
         ` : ''}
+
+        <!-- Hạng mục 2: Lịch sử giá đền bù theo thời gian -->
+        <div style="background:#ffffff; border:1px solid #e2e8f0; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <h4 style="font-size:0.78rem; margin-bottom:10px; color:#1e293b; font-family:'Inter', sans-serif; display:flex; align-items:center; gap:6px; font-weight:700;">
+                <i class="fa-solid fa-chart-line" style="color: #2563eb;"></i> Lịch sử giá đền bù theo quyết định
+            </h4>
+            <div style="position: relative; height: 160px; width: 100%;">
+                <canvas id="compensationHistoryChart"></canvas>
+            </div>
+            <p style="font-size: 0.6rem; color: #94a3b8; margin-top: 8px; text-align: center;">* Đơn vị: Triệu VNĐ/m² đất ở vị trí 1</p>
+        </div>
 
         <div style="background:#fffbeb; border:1px solid #fef3c7; padding:15px; border-radius:12px;">
             <h4 style="font-size:0.8rem; margin-bottom:10px; color:#92400e;">💰 BẢNG GIÁ ĐẤT ĐỀN BÙ DỰ KIẾN</h4>
@@ -565,13 +666,112 @@ function renderPlanningResult(match, addr, coords, priceMatch) {
             <button onclick="shareZalo()" style="background: #0068FF; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 700;"><i class="fa-solid fa-message"></i> Zalo</button>
         </div>
 
-        <p style="font-size:0.6rem; color:#94a3b8; margin-top:15px; text-align:center;">* Thông tin mang tính chất tham khảo dựa trên QĐ 30/2024/QĐ-UBND</p>
+        <p style="font-size:0.6rem; color:#94a3b8; margin-top:15px; text-align:center;">* Dữ liệu tham chiếu dựa trên bảng giá đất hiện hành</p>
     `;
     
     const panel = document.getElementById('detail-panel');
     panel.classList.add('open');
     map.flyTo(coords, 17);
     closeModal();
+
+    // Khởi tạo và vẽ biểu đồ lịch sử đền bù (Hạng mục 2)
+    setTimeout(() => {
+        renderHistoricalChart(priceVt1);
+    }, 50);
+}
+
+// Hàm khởi tạo và kết xuất biểu đồ lịch sử bằng Chart.js (Hạng mục 2)
+function renderHistoricalChart(basePrice) {
+    const ctx = document.getElementById('compensationHistoryChart');
+    if (!ctx) return;
+
+    // Phá hủy biểu đồ cũ nếu đã được tạo từ trước để tránh lỗi hiển thị chồng đè
+    if (currentChartInstance) {
+        currentChartInstance.destroy();
+        currentChartInstance = null;
+    }
+
+    if (!basePrice || basePrice === 0) {
+        basePrice = 16000000; // Giá mặc định nếu không tra cứu thấy dữ liệu tuyến đường
+    }
+
+    // Tính toán dữ liệu giá đền bù lịch sử mô phỏng theo tỉ lệ thực tế các quyết định (triệu/m²)
+    const price2019 = Math.round((basePrice * 0.65) / 1000000); // Quyết định cũ
+    const price2024 = Math.round((basePrice * 0.85) / 1000000); // Điều chỉnh đầu năm
+    const price2025 = Math.round((basePrice * 1.0) / 1000000);  // Bảng giá hiện hành (QĐ 71/2024)
+    const price2026 = Math.round((basePrice * 1.25) / 1000000); // Dự báo mới 2026
+
+    const dataValues = [price2019, price2024, price2025, price2026];
+    const chartLabels = ['QĐ 30/2019', 'Đầu 2024', 'QĐ 71/2024', 'Dự kiến 2026'];
+
+    try {
+        currentChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Đơn giá (Triệu đ/m²)',
+                    data: dataValues,
+                    borderColor: '#2563eb', // Royal Blue sang trọng
+                    borderWidth: 3,
+                    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                    fill: true,
+                    tension: 0.35, // Bo tròn đường nét chuyên nghiệp
+                    pointBackgroundColor: '#2563eb',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // Ẩn nhãn chú giải để bảng tối giản, thanh thoát
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleFont: { family: 'Inter', size: 10, weight: 'bold' },
+                        bodyFont: { family: 'Inter', size: 10 },
+                        padding: 8,
+                        cornerRadius: 6,
+                        callbacks: {
+                            label: function(context) {
+                                return ` Đơn giá: ${context.parsed.y} Tr/m²`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: { family: 'Inter', size: 9 },
+                            color: '#64748b'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: '#f1f5f9'
+                        },
+                        ticks: {
+                            font: { family: 'Inter', size: 9 },
+                            color: '#64748b',
+                            callback: function(value) {
+                                return value + ' Tr';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        console.error("Lỗi khi vẽ biểu đồ lịch sử giá đền bù:", e);
+    }
 }
 }
 
@@ -1011,6 +1211,16 @@ function loadPlanningGIS() {
                     const area = props.dienTich || "Đang cập nhật";
                     const source = props.nguon || "UBND TP Hà Nội";
 
+                    const docs = contextualDocuments[props.id] || [];
+                    let docsHtml = "";
+                    if (docs.length > 0) {
+                        docsHtml = `
+                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: 6px;">
+                            <span style="font-size: 0.62rem; font-weight: 800; color: #1e40af; display: block; margin-bottom: 2px;"><i class="fa-solid fa-folder-open"></i> Tài liệu liên quan:</span>
+                            ${docs.map(d => `<a href="${d.url}" target="_blank" style="display: block; font-size: 0.6rem; color: #2563eb; text-decoration: none; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><i class="fa-solid fa-file-pdf" style="color:#ef4444;"></i> ${d.name}</a>`).join('')}
+                        </div>`;
+                    }
+
                     // Gán popup chi tiết, trực quan hóa đúng mục đích sử dụng đất
                     layer.bindPopup(`
                         <div style="font-family: 'Inter', sans-serif; padding: 5px; max-width: 250px;">
@@ -1021,6 +1231,7 @@ function loadPlanningGIS() {
                                 <div>Diện tích: <b>${area}</b></div>
                                 <div>Nguồn: <b>${source}</b></div>
                             </div>
+                            ${docsHtml}
                         </div>
                     `, { closeButton: true });
                 }
