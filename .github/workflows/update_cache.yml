@@ -26,15 +26,7 @@ jobs:
           # Kiểm tra HTTP status và JSON hợp lệ
           if [ "$HTTP_STATUS" = "200" ]; then
             # Kiểm tra có phải JSON hợp lệ không (có trường "news")
-            if python3 -c "
-import json, sys
-with open('/tmp/sheet_data_new.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
-assert 'news' in data, 'Missing news key'
-assert len(data['news']) > 0, 'Empty news array'
-assert 'tenKhu' in data['news'][0], 'Missing tenKhu field - invalid structure'
-print(f'Valid JSON: {len(data[\"news\"])} news items, {len(data.get(\"faq\",[]))} FAQs')
-"; then
+            if python3 -c "import json; data = json.load(open('/tmp/sheet_data_new.json', encoding='utf-8')); assert 'news' in data, 'Missing news key'; assert len(data['news']) > 0, 'Empty news array'; assert 'tenKhu' in data['news'][0], 'Missing tenKhu field - invalid structure'; print(f'Valid JSON: {len(data[\"news\"])} news items, {len(data.get(\"faq\",[]))} FAQs')"; then
               cp /tmp/sheet_data_new.json data/sheet_data.json
               echo "sheet_data.json updated successfully."
             else
