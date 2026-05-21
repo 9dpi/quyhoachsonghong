@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛰️ GIS Verifier — Kiểm chứng Đối soát Vị trí Quy hoạch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../data/map.geojson.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0f1e;
+            --surface: #111827;
+            --surface2: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --accent: #2563eb;
+            --accent2: #7c3aed;
+            --green: #10b981;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --text: #f1f5f9;
+            --muted: #64748b;
+            --font: 'Inter', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ─── HEADER ─── */
+        header {
+            background: linear-gradient(135deg, var(--surface) 0%, #0d1b3e 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+            backdrop-filter: blur(12px);
+        }
+        .header-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+            flex-shrink: 0;
+        }
+        .header-title { font-size: 1rem; font-weight: 800; color: var(--text); }
+        .header-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+        .header-badge {
+            margin-left: auto;
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: var(--green);
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        .main {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ─── LEFT PANEL ─── */
+        .panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-scroll { overflow-y: auto; flex: 1; padding: 16px; }
+        .panel-scroll::-webkit-scrollbar { width: 4px; }
+        .panel-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        /* ─── SECTION ─── */
+        .section {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--muted);
+            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .section-title i { color: var(--accent); }
+
+        /* ─── INPUT ─── */
+        .input-group { margin-bottom: 10px; }
+        .input-group label { font-size: 0.68rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+        input::placeholder, textarea::placeholder { color: var(--muted); font-family: var(--mono); }
+        textarea { resize: vertical; min-height: 80px; font-size: 0.75rem; line-height: 1.6; }
+
+        /* ─── BUTTONS ─── */
+        .btn {
+            width: 100%; padding: 10px 16px; border: none; border-radius: 8px;
+            font-family: var(--font); font-size: 0.82rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s; display: flex;
+            align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,0.5); }
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            margin-top: 8px;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+        .btn-green {
+            background: linear-gradient(135deg, var(--green), #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.35);
+        }
+        .btn-green:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(16,185,129,0.5); }
+        .btn-sm { font-size: 0.72rem; padding: 7px 12px; width: auto; }
+
+        /* ─── DIVIDER ─── */
+        .or-divider { text-align: center; font-size: 0.65rem; color: var(--muted); margin: 10px 0; letter-spacing: 2px; }
+
+        /* ─── RESULT CARDS ─── */
+        #results { margin-top: 4px; }
+        .result-empty {
+            text-align: center; padding: 30px 10px;
+            color: var(--muted); font-size: 0.78rem; line-height: 1.8;
+        }
+        .result-card {
+            border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+            border: 1px solid transparent; animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .result-card.inside {
+            background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3);
+        }
+        .result-card.nearby {
+            background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3);
+        }
+        .result-card.safe {
+            background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.2);
+        }
+        .result-card-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+        }
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+        }
+        .dot-red { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.6); }
+        .dot-orange { background: var(--orange); box-shadow: 0 0 8px rgba(245,158,11,0.6); }
+        .dot-green { background: var(--green); box-shadow: 0 0 8px rgba(16,185,129,0.6); }
+        .result-name { font-size: 0.8rem; font-weight: 700; }
+        .result-relation {
+            font-size: 0.7rem; color: var(--muted);
+            font-family: var(--mono); margin-top: 2px;
+        }
+        .result-category {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+            margin-top: 4px; letter-spacing: 0.5px;
+        }
+        .cat-vandai4 { background: rgba(239,68,68,0.2); color: #fca5a5; }
+        .cat-songhong { background: rgba(37,99,235,0.2); color: #93c5fd; }
+        .cat-taidinhcu { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .cat-giapranh { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .cat-default { background: rgba(255,255,255,0.1); color: var(--muted); }
+
+        /* ─── BATCH RESULT ─── */
+        .batch-result {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px;
+            font-family: var(--mono); font-size: 0.68rem; color: #94a3b8;
+            max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+            line-height: 1.8; margin-top: 8px;
+        }
+        .batch-result .b-red { color: #fca5a5; }
+        .batch-result .b-orange { color: #fcd34d; }
+        .batch-result .b-green { color: #6ee7b7; }
+
+        /* ─── INFO BOX ─── */
+        .info-box {
+            background: rgba(37,99,235,0.08);
+            border: 1px solid rgba(37,99,235,0.25);
+            border-radius: 8px; padding: 10px 12px;
+            font-size: 0.7rem; color: #93c5fd; line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        .info-box i { margin-right: 4px; }
+
+        /* ─── STATS BAR ─── */
+        .stats-bar {
+            background: var(--surface2);
+            border-top: 1px solid var(--border);
+            padding: 8px 16px;
+            display: flex; gap: 20px; flex-shrink: 0;
+        }
+        .stat-item { font-size: 0.68rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+        .stat-val { font-weight: 700; color: var(--text); font-family: var(--mono); }
+
+        /* ─── MAP ─── */
+        #map { flex: 1; }
+        .leaflet-container { background: #0a0f1e !important; }
+
+        /* ─── POLYGON COUNT BADGE ─── */
+        .polygon-count {
+            font-family: var(--mono); font-size: 0.68rem;
+            color: var(--green); font-weight: 600;
+        }
+
+        /* ─── LOADING ─── */
+        .loading-pulse {
+            display: inline-block; width: 8px; height: 8px;
+            background: var(--accent); border-radius: 50%;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+        /* ─── LEAFLET CUSTOM ─── */
+        .custom-tooltip {
+            background: rgba(15,23,42,0.95) !important;
+            border: 1px solid rgba(37,99,235,0.5) !important;
+            color: #e2e8f0 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.72rem !important;
+            padding: 6px 10px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important;
+        }
+        .leaflet-tooltip-top:before { border-top-color: rgba(37,99,235,0.5) !important; }
+
+        .verify-marker-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-radius: 50%; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: white;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.6);
+            border: 2px solid white;
+            animation: markerPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .verify-marker-icon.safe-marker {
+            background: linear-gradient(135deg, var(--green), #059669);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.6);
+        }
+        @keyframes markerPop { from{transform:scale(0) translateY(16px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .main { grid-template-columns: 1fr; }
+            #map { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-icon">🛰️</div>
+    <div>
+        <div class="header-title">GIS Verifier — Kiểm chứng Đối soát Quy hoạch</div>
+        <div class="header-sub">Thuật toán Ray-Casting + Haversine Edge Distance • Buffer 100m</div>
+    </div>
+    <div class="header-badge" id="polygonBadge"><span class="loading-pulse"></span> Đang tải...</div>
+</header>
+
+<div class="main">
+
+    <!-- ─── LEFT PANEL ─── -->
+    <div class="panel">
+        <div class="panel-scroll">
+
+            <!-- Thông tin buffer -->
+            <div class="info-box">
+                <i class="fa-solid fa-circle-info"></i>
+                Vùng ven dự án được xác định khi điểm tra cứu cách <b>biên ngoài gần nhất</b> của polygon ≤ <b>100m</b> (không phải tính từ tâm).
+            </div>
+
+            <!-- Nhập tọa độ -->
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-crosshairs"></i> Kiểm tra theo Tọa độ</div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Vĩ độ (Latitude)</label>
+                        <input type="number" id="inputLat" placeholder="21.0285" step="0.000001" value="">
+                    </div>
+                    <div class="input-group">
+                        <label>Kinh độ (Longitude)</label>
+                        <input type="number" id="inputLon" placeholder="105.8542" step="0.000001" value="">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btnVerifyCoords" onclick="verifyByCoords()">
+                    <i class="fa-solid fa-satellite-dish"></i> Kiểm chứng tọa độ
+                </button>
+            </div>
+
+            <div class="or-divider">— HOẶC —</div>
+
+            <!-- Nhập địa chỉ -->
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-map-location-dot"></i> Kiểm tra theo Địa chỉ</div>
+                <div class="input-group">
+                    <label>Địa chỉ (Nominatim sẽ geocode)</label>
+                    <input type="text" id="inputAddr" placeholder="Số 5, Lĩnh Nam, Hoàng Mai, Hà Nội" onkeydown="if(event.key==='Enter') verifyByAddress()">
+                </div>
+                <button class="btn btn-primary" id="btnVerifyAddr" onclick="verifyByAddress()">
+                    <i class="fa-solid fa-location-arrow"></i> Geocode & Kiểm chứng
+                </button>
+            </div>
+
+            <!-- Kết quả -->
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-circle-check"></i> Kết quả Đối soát</div>
+                <div id="results">
+                    <div class="result-empty">
+                        <i class="fa-solid fa-radar" style="font-size:2rem; opacity:0.3; display:block; margin-bottom:10px;"></i>
+                        Nhập tọa độ hoặc địa chỉ<br>để bắt đầu kiểm chứng GIS
+                    </div>
+                </div>
+            </div>
+
+            <div class="or-divider">— KIỂM TRA HÀNG LOẠT —</div>
+
+            <!-- Batch kiểm tra -->
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-list-check"></i> Batch Verification (CSV)</div>
+                <div class="input-group">
+                    <label>Danh sách tọa độ (mỗi dòng: lat,lon hoặc lat,lon,label)</label>
+                    <textarea id="batchInput" placeholder="21.0285,105.8542,Trung tâm Hà Nội&#10;21.0700,105.6850,Test VĐ4&#10;21.1850,105.7150,Mê Linh"></textarea>
+                </div>
+                <button class="btn btn-green" onclick="runBatch()">
+                    <i class="fa-solid fa-play"></i> Chạy kiểm tra hàng loạt
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btnExport" onclick="exportBatchCSV()" style="display:none; margin-top:6px; width:100%;">
+                    <i class="fa-solid fa-download"></i> Tải về CSV
+                </button>
+                <div id="batchResult" class="batch-result" style="display:none;"></div>
+            </div>
+
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <i class="fa-solid fa-shapes" style="color:var(--accent)"></i>
+                <span>Polygons: <span class="stat-val" id="statPolygons">—</span></span>
+            </div>
+            <div class="stat-item">
+                <i class="fa-solid fa-ruler" style="color:var(--orange)"></i>
+                <span>Buffer: <span class="stat-val">100m</span></span>
+            </div>
+            <div class="stat-item">
+                <i class="fa-solid fa-clock" style="color:var(--green)"></i>
+                <span>Thời gian: <span class="stat-val" id="statTime">—</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── MAP ─── -->
+    <div id="map"></div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+const BUFFER_KM = 0.1; // 100m
+let planningPolygons = [];
+let verifyMarker = null;
+let bufferCircle = null;
+let batchMarkers = [];
+let batchResults = [];
+
+// ═══════════════════════════════════════════════════════════════
+// MAP INIT
+// ═══════════════════════════════════════════════════════════════
+const map = L.map('map', {
+    center: [21.0285, 105.8542],
+    zoom: 11,
+    zoomControl: true
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    maxZoom: 19
+}).addTo(map);
+
+// ═══════════════════════════════════════════════════════════════
+// LOAD GIS POLYGONS
+// ═══════════════════════════════════════════════════════════════
+function loadPolygons() {
+    const data = (typeof mapGeojsonData !== 'undefined') ? mapGeojsonData : null;
+    if (!data) {
+        document.getElementById('polygonBadge').textContent = '❌ Không tải được GeoJSON';
+        return;
+    }
+    planningPolygons = data.features || [];
+
+    const categoryStyles = {
+        vandai4:   { color: '#ef4444', weight: 3, fillColor: '#ef4444', fillOpacity: 0.12 },
+        songhong:  { color: '#3b82f6', weight: 2, fillColor: '#3b82f6', fillOpacity: 0.06, dashArray: '6,5' },
+        taidinhcu: { color: '#10b981', weight: 2.5, fillColor: '#10b981', fillOpacity: 0.15 },
+        giapranh:  { color: '#f59e0b', weight: 2, fillColor: '#f59e0b', fillOpacity: 0.10 }
+    };
+
+    L.geoJSON(data, {
+        style: f => categoryStyles[f.properties?.category] || { color: '#94a3b8', weight: 2, fillOpacity: 0.1 },
+        onEachFeature: (feature, layer) => {
+            const p = feature.properties || {};
+            layer.bindTooltip(
+                `<b>${p.tenKhu || 'Khu vực quy hoạch'}</b><br><span style="opacity:0.7">${p.loai || ''}</span>`,
+                { className: 'custom-tooltip', sticky: true }
+            );
+        }
+    }).addTo(map);
+
+    const count = planningPolygons.length;
+    document.getElementById('polygonBadge').textContent = `✅ ${count} Polygons sẵn sàng`;
+    document.getElementById('statPolygons').textContent = count;
+}
+
+loadPolygons();
+
+// ═══════════════════════════════════════════════════════════════
+// CORE GIS ALGORITHMS
+// ═══════════════════════════════════════════════════════════════
+
+// Ray-Casting Point-in-Polygon
+function isPointInPolygon(point, vs) {
+    const [lat, lon] = point;
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        const xi = vs[i][0], yi = vs[i][1]; // lon, lat
+        const xj = vs[j][0], yj = vs[j][1];
+        const intersect = ((yi > lat) !== (yj > lat))
+            && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+// Haversine distance (km)
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// Khoảng cách tới biên gần nhất của polygon
+function distanceToEdge(lat, lon, rings) {
+    let minDist = Infinity;
+    rings.forEach(ring => {
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+            const aLon = ring[j][0], aLat = ring[j][1];
+            const bLon = ring[i][0], bLat = ring[i][1];
+            const dx = bLon - aLon, dy = bLat - aLat;
+            const lenSq = dx*dx + dy*dy;
+            let t = lenSq > 0 ? ((lon-aLon)*dx + (lat-aLat)*dy) / lenSq : 0;
+            t = Math.max(0, Math.min(1, t));
+            const d = haversine(lat, lon, aLat + t*dy, aLon + t*dx);
+            if (d < minDist) minDist = d;
+        }
+    });
+    return minDist === Infinity ? 999 : minDist;
+}
+
+// Main verification function
+function verifyPoint(lat, lon) {
+    const t0 = performance.now();
+    const results = [];
+
+    planningPolygons.forEach(feature => {
+        if (!feature.geometry) return;
+        const props = feature.properties || {};
+        let isInside = false;
+        let rings = [];
+
+        if (feature.geometry.type === 'Polygon') {
+            rings = feature.geometry.coordinates;
+            isInside = rings.length > 0 && isPointInPolygon([lat, lon], rings[0]);
+        } else if (feature.geometry.type === 'MultiPolygon') {
+            feature.geometry.coordinates.forEach(poly => {
+                if (poly.length > 0) {
+                    rings.push(poly[0]);
+                    if (!isInside && isPointInPolygon([lat, lon], poly[0])) isInside = true;
+                }
+            });
+        }
+
+        if (isInside) {
+            results.push({ feature, props, status: 'inside', distM: 0, relation: 'Nằm trong vùng quy hoạch' });
+            return;
+        }
+
+        const distKm = distanceToEdge(lat, lon, rings);
+        const distM = Math.round(distKm * 1000);
+
+        if (distKm < BUFFER_KM) {
+            results.push({ feature, props, status: 'nearby', distM, relation: `Vùng ven dự án (biên gần: ${distM}m)` });
+        }
+    });
+
+    results.sort((a, b) => a.distM - b.distM);
+
+    const elapsed = (performance.now() - t0).toFixed(1);
+    document.getElementById('statTime').textContent = elapsed + 'ms';
+
+    return results;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════════════════════════════
+function renderResults(lat, lon, results) {
+    const container = document.getElementById('results');
+
+    // Xóa marker cũ
+    if (verifyMarker) { map.removeLayer(verifyMarker); verifyMarker = null; }
+    if (bufferCircle) { map.removeLayer(bufferCircle); bufferCircle = null; }
+
+    const hasIssue = results.length > 0;
+    const markerColor = hasIssue ? 'red' : 'green';
+
+    // Vẽ marker
+    const icon = L.divIcon({
+        html: `<div class="verify-marker-icon ${hasIssue ? '' : 'safe-marker'}"><i class="fa-solid fa-${hasIssue ? 'house-circle-exclamation' : 'house-circle-check'}"></i></div>`,
+        className: '', iconSize: [32,32], iconAnchor: [16,16]
+    });
+    verifyMarker = L.marker([lat, lon], { icon }).addTo(map);
+    verifyMarker.bindTooltip(`📍 ${lat.toFixed(6)}, ${lon.toFixed(6)}`, { className: 'custom-tooltip', permanent: false });
+
+    // Vẽ vòng tròn buffer 100m
+    bufferCircle = L.circle([lat, lon], {
+        radius: 100, // mét
+        color: hasIssue ? '#f59e0b' : '#10b981',
+        weight: 2,
+        fillColor: hasIssue ? '#f59e0b' : '#10b981',
+        fillOpacity: 0.08,
+        dashArray: '6,4'
+    }).addTo(map);
+
+    // Render cards
+    if (results.length === 0) {
+        container.innerHTML = `
+            <div class="result-card safe">
+                <div class="result-card-header">
+                    <div class="status-dot dot-green"></div>
+                    <div class="result-name">✅ AN TOÀN — Không dính quy hoạch</div>
+                </div>
+                <div class="result-relation">Tọa độ này nằm ngoài tất cả ${planningPolygons.length} vùng quy hoạch<br>và cách biên gần nhất > 100m.</div>
+            </div>`;
+        map.flyTo([lat, lon], 16);
+        return;
+    }
+
+    let html = '';
+    results.forEach(r => {
+        const catClass = 'cat-' + (r.props.category || 'default');
+        const isInside = r.status === 'inside';
+        html += `
+            <div class="result-card ${isInside ? 'inside' : 'nearby'}">
+                <div class="result-card-header">
+                    <div class="status-dot ${isInside ? 'dot-red' : 'dot-orange'}"></div>
+                    <div class="result-name">${isInside ? '🔴' : '🟠'} ${r.props.tenKhu || 'Khu vực quy hoạch'}</div>
+                </div>
+                <div class="result-relation">${r.relation}</div>
+                <span class="result-category ${catClass}">${r.props.loai || r.props.category || 'Quy hoạch'}</span>
+                ${r.props.description ? `<div style="font-size:0.65rem; color:var(--muted); margin-top:6px; line-height:1.5;">${r.props.description.substring(0,100)}...</div>` : ''}
+            </div>`;
+    });
+
+    // Nếu không có kết quả inside/nearby → không hiển thị card an toàn (đã handle ở trên)
+    container.innerHTML = html;
+
+    map.flyTo([lat, lon], 16);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VERIFY BY COORDS
+// ═══════════════════════════════════════════════════════════════
+function verifyByCoords() {
+    const lat = parseFloat(document.getElementById('inputLat').value);
+    const lon = parseFloat(document.getElementById('inputLon').value);
+
+    if (isNaN(lat) || isNaN(lon)) {
+        alert('⚠️ Vui lòng nhập tọa độ hợp lệ!');
+        return;
+    }
+    if (lat < 10 || lat > 25 || lon < 100 || lon > 115) {
+        alert('⚠️ Tọa độ nằm ngoài phạm vi Việt Nam. Vui lòng kiểm tra lại.');
+        return;
+    }
+
+    const btn = document.getElementById('btnVerifyCoords');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        const results = verifyPoint(lat, lon);
+        renderResults(lat, lon, results);
+        btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Kiểm chứng tọa độ';
+        btn.disabled = false;
+    }, 50);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VERIFY BY ADDRESS (Nominatim)
+// ═══════════════════════════════════════════════════════════════
+async function verifyByAddress() {
+    const addr = document.getElementById('inputAddr').value.trim();
+    if (!addr) { alert('⚠️ Vui lòng nhập địa chỉ!'); return; }
+
+    const btn = document.getElementById('btnVerifyAddr');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang geocode...';
+    btn.disabled = true;
+
+    try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&countrycodes=vn&limit=1`;
+        const res = await fetch(url, { headers: { 'Accept-Language': 'vi' } });
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+            alert('❌ Không tìm thấy địa chỉ này trên bản đồ. Thử nhập rõ hơn (thêm quận/huyện, Hà Nội).');
+            return;
+        }
+
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+
+        document.getElementById('inputLat').value = lat.toFixed(6);
+        document.getElementById('inputLon').value = lon.toFixed(6);
+
+        const results = verifyPoint(lat, lon);
+        renderResults(lat, lon, results);
+
+    } catch(e) {
+        alert('❌ Lỗi khi kết nối Nominatim. Kiểm tra kết nối mạng và thử lại.');
+        console.error(e);
+    } finally {
+        btn.innerHTML = '<i class="fa-solid fa-location-arrow"></i> Geocode & Kiểm chứng';
+        btn.disabled = false;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BATCH VERIFICATION
+// ═══════════════════════════════════════════════════════════════
+function runBatch() {
+    const raw = document.getElementById('batchInput').value.trim();
+    if (!raw) { alert('⚠️ Vui lòng nhập danh sách tọa độ!'); return; }
+
+    // Xóa markers cũ
+    batchMarkers.forEach(m => map.removeLayer(m));
+    batchMarkers = [];
+    batchResults = [];
+
+    const lines = raw.split('\n').filter(l => l.trim());
+    const resultEl = document.getElementById('batchResult');
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = '';
+
+    let output = '';
+    const boundsArr = [];
+
+    lines.forEach((line, idx) => {
+        const parts = line.trim().split(',');
+        if (parts.length < 2) {
+            output += `<span class="b-orange">[${idx+1}] BỎ QUA: Định dạng không hợp lệ — "${line}"</span>\n`;
+            return;
+        }
+        const lat = parseFloat(parts[0]);
+        const lon = parseFloat(parts[1]);
+        const label = parts[2] ? parts[2].trim() : `Điểm ${idx+1}`;
+
+        if (isNaN(lat) || isNaN(lon)) {
+            output += `<span class="b-orange">[${idx+1}] BỎQUA: Tọa độ không hợp lệ — "${line}"</span>\n`;
+            return;
+        }
+
+        const results = verifyPoint(lat, lon);
+        boundsArr.push([lat, lon]);
+
+        // Lưu vào batchResults để export
+        batchResults.push({ lat, lon, label, results });
+
+        // Vẽ marker batch
+        const hasIssue = results.length > 0;
+        const bIcon = L.divIcon({
+            html: `<div style="background:${hasIssue ? '#ef4444' : '#10b981'};border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;border:2px solid white;font-size:9px;color:white;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,0.4)">${idx+1}</div>`,
+            className: '', iconSize: [20,20], iconAnchor: [10,10]
+        });
+        const marker = L.marker([lat, lon], { icon: bIcon }).addTo(map);
+        marker.bindTooltip(`<b>${label}</b>`, { className: 'custom-tooltip' });
+        batchMarkers.push(marker);
+
+        // Output text
+        if (hasIssue) {
+            const insideCount = results.filter(r => r.status === 'inside').length;
+            const nearbyCount = results.filter(r => r.status === 'nearby').length;
+            const cls = insideCount > 0 ? 'b-red' : 'b-orange';
+            const icon = insideCount > 0 ? '🔴' : '🟠';
+            output += `<span class="${cls}">[${idx+1}] ${icon} ${label} (${lat.toFixed(5)}, ${lon.toFixed(5)})\n`;
+            results.forEach(r => {
+                output += `    └─ ${r.relation} [${r.props.tenKhu || r.props.category}]</span>\n`;
+            });
+        } else {
+            output += `<span class="b-green">[${idx+1}] ✅ AN TOÀN — ${label} (${lat.toFixed(5)}, ${lon.toFixed(5)})</span>\n`;
+        }
+    });
+
+    const total = batchResults.length;
+    const affected = batchResults.filter(r => r.results.length > 0).length;
+    const safe = total - affected;
+
+    output += `\n─────────────────────────────────\n`;
+    output += `<span class="b-green">TỔNG KẾT: ${total} điểm | 🔴/🟠 Bị ảnh hưởng: ${affected} | ✅ An toàn: ${safe}</span>`;
+
+    resultEl.innerHTML = output;
+    if (batchResults.length > 0) document.getElementById('btnExport').style.display = 'flex';
+
+    // Fit map bounds
+    if (boundsArr.length > 0) {
+        const bounds = L.latLngBounds(boundsArr);
+        map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 });
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════════════════════
+function exportBatchCSV() {
+    if (batchResults.length === 0) return;
+
+    const rows = ['lat,lon,label,status,polygon,relation,distanceM'];
+    batchResults.forEach(item => {
+        if (item.results.length === 0) {
+            rows.push(`${item.lat},${item.lon},"${item.label}",AN_TOAN,,,`);
+        } else {
+            item.results.forEach(r => {
+                const status = r.status === 'inside' ? 'NAM_TRONG' : 'VUNG_VEN';
+                rows.push(`${item.lat},${item.lon},"${item.label}",${status},"${r.props.tenKhu || ''}","${r.relation}",${r.distM}`);
+            });
+        }
+    });
+
+    const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `gis_verify_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAP CLICK: Click trực tiếp trên bản đồ để kiểm tra
+// ═══════════════════════════════════════════════════════════════
+map.on('click', function(e) {
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
+
+    document.getElementById('inputLat').value = lat.toFixed(6);
+    document.getElementById('inputLon').value = lon.toFixed(6);
+
+    const results = verifyPoint(lat, lon);
+    renderResults(lat, lon, results);
+});
+
+// Hướng dẫn click map
+L.control.scale({ metric: true, imperial: false }).addTo(map);
+</script>
+</body>
+</html>

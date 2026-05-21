@@ -2158,17 +2158,21 @@ async function initDistrictSelector() {
 }
 
 // 3. THUẬT TOÁN ĐỐI SOÁT KHÔNG GIAN BẢN ĐỒ GIS (P1)
+// Buffer 100m tính tới BIÊN NGOÀI GẦN NHẤT của polygon (không phải tâm)
+const PROXIMITY_BUFFER_KM = 0.1; // 100m — vùng ven sát dự án
+
 function findIntersectingPlanning(lat, lon) {
     const point = [lat, lon];
     const results = [];
 
     planningPolygons.forEach(feature => {
         if (!feature.geometry) return;
-        
+
         let isInside = false;
-        
+        let rings = [];
+
         if (feature.geometry.type === "Polygon") {
-            const rings = feature.geometry.coordinates;
+            rings = feature.geometry.coordinates;
             if (rings.length > 0) {
                 isInside = isPointInPolygon(point, rings[0]);
             }
@@ -2180,16 +2184,26 @@ function findIntersectingPlanning(lat, lon) {
                     break;
                 }
             }
+            // Gộp tất cả outer rings để tính edge distance
+            polygons.forEach(poly => { if (poly.length > 0) rings.push(poly[0]); });
         }
-        
-        // Tính khoảng cách giữa tọa độ tra cứu tới tâm của Polygon (Proximity Buffer)
-        const center = getPolygonCenter(feature.geometry);
-        const dist = getCoordinatesDistance(lat, lon, center[0], center[1]); // km
 
         if (isInside) {
             results.push({ feature, relation: "Nằm trong diện ảnh hưởng", distance: 0, order: 1 });
-        } else if (dist < 1.2) { // Vùng buffer giáp ranh trong bán kính 1.2km
-            results.push({ feature, relation: "Giáp ranh (bán kính " + Math.round(dist * 1000) + "m)", distance: dist, order: 2 });
+            return;
+        }
+
+        // Tính khoảng cách tới BIÊN NGOÀI GẦN NHẤT (chính xác hơn dùng tâm)
+        const distToEdge = getDistanceToPolygonEdge(lat, lon, rings);
+
+        if (distToEdge < PROXIMITY_BUFFER_KM) { // Vùng ven dự án trong bán kính 100m
+            const distM = Math.round(distToEdge * 1000);
+            results.push({
+                feature,
+                relation: "Vùng ven dự án (biên gần nhất: " + distM + "m)",
+                distance: distToEdge,
+                order: 2
+            });
         }
     });
 
@@ -2197,16 +2211,50 @@ function findIntersectingPlanning(lat, lon) {
     return results;
 }
 
+// Tính khoảng cách từ điểm (lat, lon) tới cạnh gần nhất của polygon
+// Input: rings là mảng các outer ring [[lon,lat], ...]
+function getDistanceToPolygonEdge(lat, lon, rings) {
+    let minDist = Infinity;
+
+    rings.forEach(ring => {
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+            // Mỗi cạnh là đoạn thẳng từ ring[j] tới ring[i]
+            const aLon = ring[j][0], aLat = ring[j][1];
+            const bLon = ring[i][0], bLat = ring[i][1];
+
+            // Chiếu điểm vuông góc lên đoạn thẳng (tính theo độ kinh/vĩ)
+            const dx = bLon - aLon;
+            const dy = bLat - aLat;
+            const lenSq = dx * dx + dy * dy;
+
+            let t = 0;
+            if (lenSq > 0) {
+                t = ((lon - aLon) * dx + (lat - aLat) * dy) / lenSq;
+                t = Math.max(0, Math.min(1, t));
+            }
+
+            // Điểm gần nhất trên đoạn thẳng
+            const nearestLon = aLon + t * dx;
+            const nearestLat = aLat + t * dy;
+
+            const d = getCoordinatesDistance(lat, lon, nearestLat, nearestLon);
+            if (d < minDist) minDist = d;
+        }
+    });
+
+    return minDist === Infinity ? 999 : minDist;
+}
+
 // Thuật toán Ray-Casting xác định điểm trong đa giác (Point-in-Polygon)
 function isPointInPolygon(point, vs) {
     const x = point[1]; // Kinh độ
     const y = point[0]; // Vĩ độ
-    
+
     let inside = false;
     for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
         const xi = vs[i][0], yi = vs[i][1];
         const xj = vs[j][0], yj = vs[j][1];
-        
+
         const intersect = ((yi > y) !== (yj > y))
             && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
@@ -2216,7 +2264,7 @@ function isPointInPolygon(point, vs) {
 
 function getPolygonCenter(geometry) {
     let sumLat = 0, sumLon = 0, count = 0;
-    
+
     const addCoords = (coords) => {
         coords.forEach(pt => {
             sumLon += pt[0];
@@ -2242,12 +2290,13 @@ function getCoordinatesDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Bán kính Trái Đất (km)
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
+    const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
