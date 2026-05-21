@@ -1,0 +1,79 @@
+{
+  "timestamp": "\"['tools/gis_verify_engine.py']\"",
+  "total_tests": 6,
+  "passed": 6,
+  "failed": 0,
+  "success_rate_pct": 100.0,
+  "status": "SUCCESS",
+  "results": [
+    {
+      "label": "118 Phố Huế (PHẢI an toàn)",
+      "lat": 21.012,
+      "lng": 105.85,
+      "expected": "SAFE",
+      "polygon_id": null,
+      "status": "PASS",
+      "matched_polygons": [],
+      "details": "Điểm an toàn hoàn toàn (Nằm ngoài tất cả quy hoạch)."
+    },
+    {
+      "label": "Nút giao VĐ4 An Khánh (PHẢI trong quy hoạch)",
+      "lat": 21.01,
+      "lng": 105.68,
+      "expected": "INSIDE",
+      "polygon_id": "vd4_sec1",
+      "status": "PASS",
+      "matched_polygons": [
+        "vd4_sec1",
+        "giapranh_vd4"
+      ],
+      "details": "Khớp chính xác: Nằm trong quy hoạch vd4_sec1."
+    },
+    {
+      "label": "Cầu Long Biên (PHẢI trong sông Hồng)",
+      "lat": 21.0433,
+      "lng": 105.8589,
+      "expected": "INSIDE",
+      "polygon_id": "sh_r1",
+      "status": "PASS",
+      "matched_polygons": [
+        "sh_r1"
+      ],
+      "details": "Khớp chính xác: Nằm trong quy hoạch sh_r1."
+    },
+    {
+      "label": "Trung tâm Đống Đa (PHẢI an toàn)",
+      "lat": 21.0245,
+      "lng": 105.8412,
+      "expected": "SAFE",
+      "polygon_id": null,
+      "status": "PASS",
+      "matched_polygons": [],
+      "details": "Điểm an toàn hoàn toàn (Nằm ngoài tất cả quy hoạch)."
+    },
+    {
+      "label": "Khu TĐC Mê Linh (PHẢI trong quy hoạch)",
+      "lat": 21.187,
+      "lng": 105.722,
+      "expected": "INSIDE",
+      "polygon_id": "taidinhcu_ml",
+      "status": "PASS",
+      "matched_polygons": [
+        "taidinhcu_ml"
+      ],
+      "details": "Khớp chính xác: Nằm trong quy hoạch taidinhcu_ml."
+    },
+    {
+      "label": "Khu TĐC Lĩnh Nam (PHẢI trong quy hoạch)",
+      "lat": 20.973,
+      "lng": 105.884,
+      "expected": "INSIDE",
+      "polygon_id": "taidinhcu_ln",
+      "status": "PASS",
+      "matched_polygons": [
+        "taidinhcu_ln"
+      ],
+      "details": "Khớp chính xác: Nằm trong quy hoạch taidinhcu_ln."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+name: Weekly Planning Auto-Update Pipeline
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Chạy vào lúc 9h sáng thứ Hai hàng tuần (GMT+7)
+  workflow_dispatch: # Cho phép admin chạy thủ công bất cứ lúc nào
+
+jobs:
+  gis-pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' # Sử dụng cache pip nếu có
+
+      - name: 🔍 1. Run Planning Web Scraper
+        run: |
+          python tools/planning_scraper.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: 🔄 2. Run Polygon Diff Engine
+        run: |
+          # So sánh map.geojson với chính nó (hoặc file đề xuất mới) để xuất báo cáo
+          python tools/polygon_diff.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: 🛰️ 3. Run GIS Verify Engine (Đối soát tọa độ chuẩn)
+        id: verify
+        run: |
+          python tools/gis_verify_engine.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: 🚀 4. Commit and Push to Github (Chỉ khi 100% test cases PASS)
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action [GIS Auto-Update]"
+          
+          # Add các dữ liệu JSON, JS và GeoJSON thay đổi
+          git add data/planning_updates.json
+          git add data/diff_report.json
+          git add data/gis_verify_report.json
+          git add data/map.geojson
+          git add data/map.geojson.js
+          
+          # Commit & Push nếu có thay đổi
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update planning boundaries and GIS reports [skip ci]" && git push)
+
+      - name: 🚨 5. Create GitHub Issue if Verification Fails
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let details = "Không thể đọc báo cáo kiểm thử.";
+            try {
+              const report = JSON.parse(fs.readFileSync('data/gis_verify_report.json', 'utf8'));
+              details = `Tỷ lệ thành công: ${report.success_rate_pct}% (${report.passed}/${report.total_tests} đạt).\n\n### Chi tiết thất bại:\n`;
+              report.results.forEach(tc => {
+                if (tc.status === 'FAIL') {
+                  details += `- ❌ **${tc.label}**: ${tc.details} (Tọa độ: ${tc.lat}, ${tc.lng})\n`;
+                }
+              });
+            } catch (e) {
+              console.log("Không thể nạp báo cáo chi tiết: " + e.message);
+            }
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "🚨 KHẨN CẤP: Rà soát Quy hoạch thất bại - Lỗi Đối soát GIS",
+              body: `Hệ thống tự động phát hiện ranh giới quy hoạch có độ lệch lớn và không vượt qua các bộ test cases kiểm chứng bất biến.\n\n${details}\n\n**Hành động yêu cầu:**\n1. Hãy truy cập [GIS Diff Dashboard](tools/gis_diff_dashboard.html) để rà soát ranh giới trước/sau.\n2. Chỉnh sửa thủ công ranh giới bị lệch trong \`data/map.geojson\` để đảm bảo các mốc an toàn (như 118 Phố Huế) không bị dính quy hoạch.`,
+              labels: ["bug", "gis-alert"]
+            });

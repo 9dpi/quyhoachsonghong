@@ -1,0 +1,104 @@
+[
+  {
+    "title": "Điều chỉnh quy hoạch chi tiết dự án tái định cư Mê Linh (Huyện Mê Linh)",
+    "source": "Sở Quy hoạch - Kiến trúc Hà Nội",
+    "date": "Mới cập nhật",
+    "document_id": "Quyết định số 485/QĐ-UBND",
+    "location_keyword": "Mê Linh",
+    "geocoded_coords": {
+      "lat": 21.185,
+      "lng": 105.72
+    },
+    "proposed_polygon": [
+      [
+        105.718,
+        21.183
+      ],
+      [
+        105.722,
+        21.183
+      ],
+      [
+        105.722,
+        21.186999999999998
+      ],
+      [
+        105.718,
+        21.186999999999998
+      ],
+      [
+        105.718,
+        21.183
+      ]
+    ],
+    "original_text": "Theo Quyết định số 485/QĐ-UBND ngày 20/05/2026 về việc điều chỉnh cục bộ quy hoạch 1/500 khu tái định cư Mê Linh phục vụ giải phóng mặt bằng Vành đai 4. Ranh giới đa giác điều chỉnh quanh khu vực xã Văn Khê với tọa độ trung tâm (21.1870, 105.7220), mở rộng thêm 0.5 ha về phía Tây."
+  },
+  {
+    "title": "Thông báo mốc lộ giới ranh giới quy hoạch hành lang an toàn Vành đai 4 đoạn qua Hoài Đức",
+    "source": "Sở Giao thông Vận tải Hà Nội",
+    "date": "Mới cập nhật",
+    "document_id": "Chưa xác định",
+    "location_keyword": "An Khánh",
+    "geocoded_coords": {
+      "lat": 21.01,
+      "lng": 105.68
+    },
+    "proposed_polygon": [
+      [
+        105.67800000000001,
+        21.008000000000003
+      ],
+      [
+        105.682,
+        21.008000000000003
+      ],
+      [
+        105.682,
+        21.012
+      ],
+      [
+        105.67800000000001,
+        21.012
+      ],
+      [
+        105.67800000000001,
+        21.008000000000003
+      ]
+    ],
+    "original_text": "Triển khai cắm mốc lộ giới hành lang an toàn Vành đai 4 đi qua xã An Khánh huyện Hoài Đức. Khoảng cách an toàn tính từ tim đường được điều chỉnh thu hẹp lại 100m so với quy hoạch ban đầu để bảo vệ hành lang sinh thái xanh. Tọa độ nút giao chính tại (21.0100, 105.6800)."
+  },
+  {
+    "title": "Điều chỉnh ranh giới hành lang thoát lũ đê Sông Hồng phân khu R1-R2",
+    "source": "Ủy ban Nhân dân Thành phố Hà Nội",
+    "date": "Mới cập nhật",
+    "document_id": "Chưa xác định",
+    "location_keyword": "phố huế",
+    "geocoded_coords": {
+      "lat": 21.012,
+      "lng": 105.85
+    },
+    "proposed_polygon": [
+      [
+        105.848,
+        21.01
+      ],
+      [
+        105.85199999999999,
+        21.01
+      ],
+      [
+        105.85199999999999,
+        21.014
+      ],
+      [
+        105.848,
+        21.014
+      ],
+      [
+        105.848,
+        21.01
+      ]
+    ],
+    "original_text": "Nhằm đảm bảo an toàn tuyệt đối cho người dân sinh sống tại các phường ngoài đê, UBND TP ban hành hướng dẫn cập nhật ranh giới đê kè thoát lũ. Cầu Long Biên (tọa độ 21.0433, 105.8589) vẫn thuộc hành lang thoát lũ chính, trong khi vùng nội đô cũ như Phố Huế nằm trong vùng an toàn tuyệt đối."
+  }
+]

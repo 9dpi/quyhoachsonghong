@@ -1,0 +1,46 @@
+{
+  "test_cases": [
+    {
+      "label": "118 Phố Huế (PHẢI an toàn)",
+      "lat": 21.0120,
+      "lng": 105.8500,
+      "expected": "SAFE",
+      "reason": "Điểm nội đô, cách đê Hữu Hồng > 500m"
+    },
+    {
+      "label": "Nút giao VĐ4 An Khánh (PHẢI trong quy hoạch)",
+      "lat": 21.0100,
+      "lng": 105.6800,
+      "expected": "INSIDE",
+      "polygon_id": "vd4_sec1"
+    },
+    {
+      "label": "Cầu Long Biên (PHẢI trong sông Hồng)",
+      "lat": 21.0433,
+      "lng": 105.8589,
+      "expected": "INSIDE",
+      "polygon_id": "sh_r1"
+    },
+    {
+      "label": "Trung tâm Đống Đa (PHẢI an toàn)",
+      "lat": 21.0245,
+      "lng": 105.8412,
+      "expected": "SAFE",
+      "reason": "Sâu trong nội đô, không thuộc quy hoạch nào"
+    },
+    {
+      "label": "Khu TĐC Mê Linh (PHẢI trong quy hoạch)",
+      "lat": 21.1870,
+      "lng": 105.7220,
+      "expected": "INSIDE",
+      "polygon_id": "taidinhcu_ml"
+    },
+    {
+      "label": "Khu TĐC Lĩnh Nam (PHẢI trong quy hoạch)",
+      "lat": 20.9730,
+      "lng": 105.8840,
+      "expected": "INSIDE",
+      "polygon_id": "taidinhcu_ln"
+    }
+  ]
+}
