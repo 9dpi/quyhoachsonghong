@@ -21,6 +21,10 @@ let landPriceFuse = null;
 let planningPolygons = [];
 let currentChartInstance = null;
 
+// Raster overlay variables
+const rasterOverlayBounds = [[20.88, 105.71], [21.19, 105.96]];
+let rasterOverlay = null;
+
 const contextualDocuments = {
     "sh_r1": [
         { name: "Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND)", url: "https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0", type: "PDF" },
@@ -276,6 +280,9 @@ async function init() {
             landPriceFuse = new Fuse(processedLandData, options);
             console.log("Đã khởi tạo Fuse.js cho tra cứu bảng giá đất.");
         }
+        
+        // Khởi tạo Lớp phủ Ảnh Scan (Raster Overlay)
+        initRasterOverlay();
     } catch (e) {
         console.error("Data Load Error:", e);
     }
@@ -2295,7 +2302,44 @@ function getCoordinatesDistance(lat1, lon1, lat2, lon2) {
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+// ==================== RASTER OVERLAY LOGIC ====================
+function initRasterOverlay() {
+    try {
+        rasterOverlay = L.imageOverlay('data/hanoi_songhong_planning_map.png', rasterOverlayBounds, {
+            opacity: 0.6,
+            interactive: true,
+            attribution: "Bản đồ Quy hoạch Sông Hồng 2026 (Scan)"
+        });
+        console.log("Đã khởi tạo lớp phủ Raster Overlay thành công.");
+    } catch(e) {
+        console.error("Lỗi khi khởi tạo Raster Overlay:", e);
+    }
+}
+
+function toggleRasterOverlay(visible) {
+    if (!rasterOverlay) return;
+    
+    const sliderContainer = document.getElementById("opacity-slider-container");
+    if (visible) {
+        rasterOverlay.addTo(map);
+        if (sliderContainer) sliderContainer.style.display = "flex";
+        // Di chuyển lớp phủ xuống dưới các đa giác vector
+        rasterOverlay.bringToBack();
+    } else {
+        map.removeLayer(rasterOverlay);
+        if (sliderContainer) sliderContainer.style.display = "none";
+    }
+}
+
+function updateRasterOpacity(value) {
+    if (!rasterOverlay) return;
+    const opacity = value / 100;
+    rasterOverlay.setOpacity(opacity);
+    
+    const opacityVal = document.getElementById("opacity-val");
+    if (opacityVal) {
+        opacityVal.innerText = value + "%";
+    }
 }
 
 document.addEventListener('DOMContentLoaded', init);

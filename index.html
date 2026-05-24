@@ -860,6 +860,96 @@
             transform: scale(1.02);
         }
 
+        /* Raster scan image overlay switch styles */
+        .raster-control {
+            top: 75px !important;
+            min-width: 320px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-switch {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider-switch:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-switch {
+            background-color: var(--primary);
+        }
+
+        input:focus + .slider-switch {
+            box-shadow: 0 0 1px var(--primary);
+        }
+
+        input:checked + .slider-switch:before {
+            transform: translateX(20px);
+        }
+        
+        .opacity-container {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+            border-left: 1px dashed #cbd5e1;
+            padding-left: 10px;
+        }
+        
+        .opacity-slider {
+            width: 70px;
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .opacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .opacity-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
         /* 4 ANSWERS GRID CSS STYLE */
         .address-header {
             background: #f8fafc;
@@ -1372,6 +1462,19 @@
                     <option value="">-- Chọn Quận/Huyện --</option>
                 </select>
                 <button id="clear-boundary-btn" style="display: none;"><i class="fa-solid fa-xmark"></i> Xóa</button>
+            </div>
+            <!-- Bộ điều khiển Lớp phủ Ảnh Scan (Raster Overlay) -->
+            <div class="map-overlay-control raster-control">
+                <span class="control-label"><i class="fa-solid fa-layer-group"></i> Bản đồ gốc (Scan):</span>
+                <label class="switch">
+                    <input type="checkbox" id="raster-toggle" onchange="toggleRasterOverlay(this.checked)">
+                    <span class="slider-switch"></span>
+                </label>
+                <div class="opacity-container" id="opacity-slider-container">
+                    <span style="font-size: 0.65rem; font-weight: 700; color: var(--text-sub);">Độ mờ:</span>
+                    <input type="range" class="opacity-slider" id="raster-opacity" min="0" max="100" value="60" oninput="updateRasterOpacity(this.value)">
+                    <span id="opacity-val" style="font-size: 0.65rem; font-weight: 800; color: var(--primary);">60%</span>
+                </div>
             </div>
             <div id="detail-panel">
                 <div
