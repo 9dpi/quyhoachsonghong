@@ -1,0 +1,79 @@
+{
+  "documents": [
+    {
+      "category": "Văn bản về Bảng giá đất & Đền bù",
+      "icon": "fa-scale-balanced",
+      "items": [
+        {
+          "title": "Quyết định 71/2024/QĐ-UBND Hà Nội",
+          "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
+          "description": "Áp dụng từ 20/12/2024. Điều chỉnh, sửa đổi, bổ sung bảng giá đất theo Quyết định 30/2019/QĐ-UBND.",
+          "format": "PDF",
+          "size": "1.8 MB",
+          "date": "12/2024"
+        },
+        {
+          "title": "Quyết định 30/2019/QĐ-UBND Hà Nội",
+          "url": "https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban.hanoi.gov.vn/documents/10182/2518750/QDPQ_30_2019.pdf",
+          "description": "Văn bản gốc ban hành quy định và bảng giá các loại đất trên địa bàn Hà Nội giai đoạn 2020-2024.",
+          "format": "PDF",
+          "size": "4.5 MB",
+          "date": "12/2019"
+        },
+        {
+          "title": "Văn bản hướng dẫn bồi thường, hỗ trợ tái định cư",
+          "url": "https://vanban.hanoi.gov.vn",
+          "description": "Tra cứu các quy định chi tiết về bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất tại Cổng thông tin Hà Nội.",
+          "format": "Link",
+          "size": "Website",
+          "date": "Mới nhất"
+        }
+      ]
+    },
+    {
+      "category": "Các Quy hoạch sử dụng đất",
+      "icon": "fa-map-location-dot",
+      "items": [
+        {
+          "title": "Quyết định 5162/QĐ-UBND huyện Gia Lâm",
+          "url": "https://www.theonenetwork.vn/post/ph%C3%AA-duy%E1%BB%87t-quy-ho%E1%BA%A1ch-s%E1%BB%AD-d%E1%BB%A5ng-%C4%91%E1%BA%A5t-%C4%91%E1%BA%BFn-n%C4%83m-2030-huy%E1%BB%87n-gia-l%C3%A2m-s%E1%BB%91-5162-q%C4%91-ubnd-ng%C3%A0y-7-12-2021",
+          "description": "Phê duyệt Quy hoạch sử dụng đất đến năm 2030 của huyện Gia Lâm (Bản sao văn bản).",
+          "format": "Web",
+          "size": "Link",
+          "date": "12/2021"
+        },
+        {
+          "title": "Quy hoạch phân khu (Ký hiệu S, N, H...)",
+          "url": "https://vqh.hanoi.gov.vn",
+          "description": "Tra cứu các bản đồ quy hoạch chi tiết phân khu đô thị Hà Nội tại Viện Quy hoạch Xây dựng.",
+          "format": "Web",
+          "size": "Website",
+          "date": "Cập nhật liên tục"
+        }
+      ]
+    },
+    {
+      "category": "Các dự án hạ tầng lớn",
+      "icon": "fa-city",
+      "items": [
+        {
+          "title": "Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND)",
+          "url": "https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0",
+          "description": "Phê duyệt Quy hoạch phân khu đô thị sông Hồng, tỷ lệ 1/5000 (đoạn từ cầu Hồng Hà đến cầu Mễ Sở).",
+          "format": "PDF",
+          "size": "2.4 MB",
+          "date": "05/2026"
+        },
+        {
+          "title": "Dự án Vành đai 4 - Vùng Thủ đô",
+          "url": "https://vanban.hanoi.gov.vn",
+          "description": "Thông tin quy hoạch và giải phóng mặt bằng dự án đường Vành đai 4 tại Cổng thông tin Hà Nội.",
+          "format": "Link",
+          "size": "Website",
+          "date": "Tiến độ thực"
+        }
+      ]
+    }
+  ],
+  "lastCheck": "24/05/2026 22:20:19"
+}

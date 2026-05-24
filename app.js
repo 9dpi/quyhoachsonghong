@@ -166,6 +166,7 @@ async function init() {
         if (usedCache) {
             allNews = newsData;
             renderNews(allNews.slice(0, displayedNewsCount));
+            initTicker();
             renderFAQ(faqData);
             renderProjectsInMapTab(projectsData);
             // Fetch fresh data ở background để cập nhật
@@ -179,6 +180,7 @@ async function init() {
                     landPriceData = freshData.landPrice || [];
                     allNews = newsData;
                     renderNews(allNews.slice(0, displayedNewsCount));
+                    initTicker();
                     renderFAQ(faqData);
                     renderProjectsInMapTab(projectsData);
                     localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data: freshData }));
@@ -225,6 +227,7 @@ async function init() {
         if (!usedCache) {
             allNews = newsData;
             renderNews(allNews.slice(0, displayedNewsCount));
+            initTicker();
             renderFAQ(faqData);
             renderProjectsInMapTab(projectsData);
             // Lưu dữ liệu vào cache mới
@@ -1389,6 +1392,37 @@ window.submitReport = async (idx) => {
     } catch(e) {}
     showModal('Cảm ơn bạn!', 'Báo cáo đã được ghi nhận. Chúng tôi sẽ xem xét và cập nhật thông tin sớm nhất.', 'fa-circle-check');
 };
+
+// ═══════════════════════════════════════════════════════
+// DỰNG TIÊU ĐỀ TICKER DÂN DỤNG (Click được & Dừng khi rê chuột)
+// ═══════════════════════════════════════════════════════
+function initTicker() {
+    const tickerEl = document.getElementById("ticker");
+    if (!tickerEl || !allNews || allNews.length === 0) return;
+    
+    const latestNews = allNews.slice(0, 8);
+    let tickerHtml = "Tin mới nhận: ";
+    latestNews.forEach((item, index) => {
+        const title = item.tenKhu || item.title;
+        const link = item.nguonTin || item.link || "#";
+        
+        tickerHtml += `<a href="${link}" target="_blank" style="color: #1e40af; text-decoration: none; font-weight: 700; margin: 0 15px; transition: color 0.2s;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#1e40af'">${title}</a>`;
+        
+        if (index < latestNews.length - 1) {
+            tickerHtml += " <span style='color: #64748b;'>|</span> ";
+        }
+    });
+    
+    tickerEl.innerHTML = tickerHtml;
+    tickerEl.style.cursor = "pointer";
+    
+    tickerEl.addEventListener("mouseover", () => {
+        tickerEl.style.animationPlayState = "paused";
+    });
+    tickerEl.addEventListener("mouseout", () => {
+        tickerEl.style.animationPlayState = "running";
+    });
+}
 
 // ═══════════════════════════════════════════════════════
 // RENDER TIN TỨC (đã tích hợp verification badges)
