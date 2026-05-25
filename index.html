@@ -1277,44 +1277,124 @@
             background: #fef2f2;
         }
 
+        /* Menu Toggle Button (Desktop hidden) */
+        .menu-toggle {
+            display: none;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .menu-toggle:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+
+        /* Mobile Dropdown Menu (Glassmorphism) */
+        .mobile-dropdown {
+            position: absolute;
+            top: 65px;
+            right: 20px;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+            animation: slideInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-dropdown.open {
+            display: flex;
+        }
+
+        .mobile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .mobile-menu-item:hover {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        /* Social Brand Colors for Menu Icons */
+        .m-fb { color: #1877F2 !important; }
+        .m-tiktok { color: #000000 !important; }
+        .m-zalo { color: #0068FF !important; }
+        .m-yt { color: #FF0000 !important; }
+
         /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
             header {
-                padding: 10px;
-                height: auto;
-                flex-direction: column;
+                padding: 0 16px;
+                height: 65px;
+                flex-direction: row;
                 align-items: center;
-                text-align: center;
+                justify-content: space-between;
             }
 
             .header-left {
-                justify-content: center;
-                width: 100%;
-                margin-bottom: 10px;
+                justify-content: flex-start;
+                width: auto;
+                margin-bottom: 0;
             }
 
             .logo-text {
-                font-size: 1.2rem !important;
+                font-size: 1.15rem !important;
             }
 
             .header-center {
-                max-width: 100%;
-                width: 100%;
-                margin: 5px 0;
+                display: none !important;
             }
 
             .header-right {
-                width: 100%;
+                width: auto;
             }
 
             .header-right ul {
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 15px;
+                justify-content: flex-end;
+                flex-wrap: nowrap;
+                gap: 10px;
             }
             
             .header-right ul li a {
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
                 padding: 8px 12px;
             }
             
@@ -1323,14 +1403,16 @@
             }
             
             .header-right ul li:nth-child(2) a {
-                padding: 8px 16px !important;
+                padding: 8px 12px !important;
             }
 
-            /* Social colors */
-            .header-right ul li:nth-child(3) a { color: #1877F2 !important; font-size: 1.2rem !important; }
-            .header-right ul li:nth-child(4) a { color: #000000 !important; font-size: 1.2rem !important; }
-            .header-right ul li:nth-child(5) a { color: #0068FF !important; font-size: 1.2rem !important; }
-            .header-right ul li:nth-child(6) a { color: #FF0000 !important; font-size: 1.2rem !important; }
+            .social-link {
+                display: none !important;
+            }
+
+            .menu-toggle {
+                display: flex !important;
+            }
 
             .app-container {
                 flex-direction: column;
@@ -1429,7 +1511,7 @@
             <div id="ticker" class="ticker-content">Tin tức: Đông Anh lên Quận 2025 | Vành đai 4 đẩy nhanh tiến độ | Phê
                 duyệt Quy hoạch Sông Hồng R1-R2...</div>
         </div>
-        <div class="header-right">
+        <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
             <ul style="display:flex; gap:15px; list-style:none; align-items:center;">
                 <li><a href="index.html"
                         style="color:var(--text-sub); font-size:0.85rem; font-weight:700; text-decoration:none;">Trang
@@ -1437,18 +1519,28 @@
                 <li><a href="tai-ban-do-quy-hoach.html"
                         style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; font-size:0.85rem; font-weight:700; text-decoration:none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);"><i
                             class="fa-solid fa-download"></i> Bảng giá đất Quy hoạch</a></li>
-                <li><a href="https://www.facebook.com/groups/1694801338541423" target="_blank"
+                <li class="social-link"><a href="https://www.facebook.com/groups/1694801338541423" target="_blank"
                         style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-facebook-f"></i></a></li>
-                <li><a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"
+                <li class="social-link"><a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"
                         style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-tiktok"></i></a></li>
-                <li><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"
+                <li class="social-link"><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"
                         style="color:var(--text-sub); font-size:1.1rem"><i class="fa-solid fa-comment-dots"
                             title="Zalo"></i></a></li>
-                <li><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"
+                <li class="social-link"><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"
                         style="color:var(--text-sub); font-size:1.1rem"><i class="fa-brands fa-youtube"></i></a></li>
             </ul>
+            <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
         </div>
     </header>
+
+    <div class="mobile-dropdown" id="mobile-dropdown">
+        <a href="index.html" class="mobile-menu-item"><i class="fa-solid fa-house" style="color: var(--primary);"></i> Trang chủ</a>
+        <a href="tai-ban-do-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-download" style="color: var(--primary);"></i> Tải bản đồ quy hoạch</a>
+        <a href="https://www.facebook.com/groups/1694801338541423" target="_blank" class="mobile-menu-item"><i class="fa-brands fa-facebook-f m-fb"></i> Facebook Cộng đồng</a>
+        <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i class="fa-brands fa-tiktok m-tiktok"></i> Kênh TikTok</a>
+        <a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank" class="mobile-menu-item"><i class="fa-solid fa-comment-dots m-zalo"></i> Nhóm Zalo Hỗ trợ</a>
+        <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i class="fa-brands fa-youtube m-yt"></i> Kênh YouTube</a>
+    </div>
 
     <div class="app-container">
         <aside id="sidebar">

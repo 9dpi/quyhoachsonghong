@@ -2381,3 +2381,21 @@ function updateRasterOpacity(value) {
 
 document.addEventListener('DOMContentLoaded', init);
 
+// ==================== MOBILE HAMBURGER MENU ====================
+window.toggleMobileMenu = function() {
+    const dropdown = document.getElementById("mobile-dropdown");
+    if (dropdown) {
+        dropdown.classList.toggle("open");
+    }
+};
+
+document.addEventListener("click", (e) => {
+    const dropdown = document.getElementById("mobile-dropdown");
+    const toggleBtn = document.getElementById("menu-toggle");
+    if (dropdown && dropdown.classList.contains("open")) {
+        if (toggleBtn && !toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("open");
+        }
+    }
+});
+
