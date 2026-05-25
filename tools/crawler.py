@@ -11,6 +11,7 @@ trong trường hợp crawler bị chặn bởi Cloudflare/CAPTCHA.
 """
 
 import os
+import sys
 import json
 import random
 import re
@@ -426,6 +427,11 @@ jobs:
 
 # ==================== MAIN EXECUTION ====================
 if __name__ == "__main__":
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8')
+        
     print("=" * 60)
     print("🚀 DULIEUQUYHOACH.COM - CRAWLER & SPATIAL ENGINE START")
     print("=" * 60)
