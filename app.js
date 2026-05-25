@@ -295,7 +295,7 @@ function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    ['projectList', 'faqList', 'mapList'].forEach(id => {
+    ['projectList', 'faqList', 'mapList', 'guideList'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
