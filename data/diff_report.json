@@ -10,28 +10,6 @@
     "max_boundary_shift_m": 0.0,
     "level": "INFO"
   },
-  "taidinhcu_ln": {
-    "id": "taidinhcu_ln",
-    "status": "UNCHANGED",
-    "tenKhu": "Khu tái định cư Lĩnh Nam (Hoàng Mai)",
-    "area_old_ha": 13.84,
-    "area_new_ha": 13.84,
-    "area_change_pct": 0.0,
-    "similarity_pct": 100.0,
-    "max_boundary_shift_m": 0.0,
-    "level": "INFO"
-  },
-  "vd4_sec1": {
-    "id": "vd4_sec1",
-    "status": "UNCHANGED",
-    "tenKhu": "Dự án Đường Vành đai 4 - Phân đoạn Hoài Đức - Đan Phượng",
-    "area_old_ha": 853.36,
-    "area_new_ha": 853.36,
-    "area_change_pct": 0.0,
-    "similarity_pct": 100.0,
-    "max_boundary_shift_m": 0.0,
-    "level": "INFO"
-  },
   "sh_r1": {
     "id": "sh_r1",
     "status": "UNCHANGED",
@@ -49,6 +27,28 @@
     "tenKhu": "Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4",
     "area_old_ha": 2424.59,
     "area_new_ha": 2424.59,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "vd4_sec1": {
+    "id": "vd4_sec1",
+    "status": "UNCHANGED",
+    "tenKhu": "Dự án Đường Vành đai 4 - Phân đoạn Hoài Đức - Đan Phượng",
+    "area_old_ha": 853.36,
+    "area_new_ha": 853.36,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "taidinhcu_ln": {
+    "id": "taidinhcu_ln",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu tái định cư Lĩnh Nam (Hoàng Mai)",
+    "area_old_ha": 13.84,
+    "area_new_ha": 13.84,
     "area_change_pct": 0.0,
     "similarity_pct": 100.0,
     "max_boundary_shift_m": 0.0,
