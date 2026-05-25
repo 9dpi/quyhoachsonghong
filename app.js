@@ -2052,7 +2052,7 @@ async function loadDistrictOverview() {
     }).addTo(map);
 
     // Zoom toàn thành phố
-    map.setView([21.0285, 105.8542], 10);
+    map.setView([21.0285, 105.8542], 12);
 }
 
 // 2. Khởi tạo bộ chọn ranh giới quận/huyện
@@ -2077,7 +2077,7 @@ async function initDistrictSelector() {
             console.log("Đã tải ranh giới Hà Nội từ localStorage cache.");
             loadDistrictOverview(); // Kích hoạt vẽ tổng quan (P2)
         } else {
-            const res = await fetch('https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/gis/01.json');
+            const res = await fetch('https://cdn.jsdelivr.net/gh/daohoangson/dvhcvn@master/data/gis/01.json');
             if (res.ok) {
                 hanoiBoundaryData = await res.json();
                 localStorage.setItem('hanoi_boundary_cache', JSON.stringify(hanoiBoundaryData));
@@ -2103,7 +2103,7 @@ async function initDistrictSelector() {
             if (clearBtn) clearBtn.style.display = 'none';
             // Hiện lại bản đồ tổng quan
             if (overviewDistrictsLayer) overviewDistrictsLayer.addTo(map);
-            map.setView([21.0285, 105.8542], 10);
+            map.setView([21.0285, 105.8542], 12);
             return;
         }
 
@@ -2118,7 +2118,7 @@ async function initDistrictSelector() {
         if (!hanoiBoundaryData) {
             showModal("Đang tải dữ liệu", "Hệ thống đang tải dữ liệu ranh giới. Vui lòng thử lại sau vài giây.", "fa-spinner fa-spin");
             try {
-                const res = await fetch('https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/gis/01.json');
+                const res = await fetch('https://cdn.jsdelivr.net/gh/daohoangson/dvhcvn@master/data/gis/01.json');
                 if (res.ok) {
                     hanoiBoundaryData = await res.json();
                     localStorage.setItem('hanoi_boundary_cache', JSON.stringify(hanoiBoundaryData));
