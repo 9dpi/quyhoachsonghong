@@ -627,10 +627,6 @@
         style.innerHTML = `
             html.page-locked body {
                 overflow: hidden !important;
-                height: 100vh !important;
-            }
-            html.page-locked body > *:not(#passcode-gate) {
-                display: none !important;
             }
             #passcode-gate {
                 position: fixed;
@@ -878,6 +874,8 @@
                     setTimeout(() => {
                         gate.remove();
                         document.documentElement.classList.remove('page-locked');
+                        // Trigger Leaflet map resize so tiles load correctly
+                        setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
                     }, 250);
                 } else {
                     showError('Mã passcode không chính xác!');
