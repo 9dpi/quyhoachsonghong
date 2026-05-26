@@ -535,7 +535,385 @@
         .leaflet-pm-toolbar a { background-color: #1c2230 !important; border-color: rgba(255,255,255,0.1) !important; }
         .leaflet-pm-toolbar a:hover { background-color: #2d3748 !important; }
         .leaflet-pm-toolbar a.active { background-color: rgba(99,102,241,0.3) !important; }
+        /* ─── SCAN SAVE MODAL ─── */
+        .save-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .save-modal-overlay.open {
+            opacity: 1; pointer-events: all;
+        }
+        .save-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-active);
+            border-radius: 16px;
+            padding: 24px;
+            width: 520px;
+            max-width: 92vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.15);
+            transform: translateY(8px);
+            transition: transform 0.25s ease;
+        }
+        .save-modal-overlay.open .save-modal { transform: translateY(0); }
+        .save-modal h3 {
+            font-size: 0.9rem; font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .save-modal textarea {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.67rem;
+            color: #a5d6ff;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 180px;
+            outline: none;
+        }
+        .save-modal-actions {
+            display: flex; gap: 8px; margin-top: 12px;
+        }
+        .autosave-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-left: auto;
+            transition: all 0.3s ease;
+        }
+        .autosave-indicator.saved {
+            background: rgba(16,185,129,0.12);
+            color: var(--accent-emerald);
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .autosave-indicator.saving {
+            background: rgba(245,158,11,0.12);
+            color: var(--accent-amber);
+            border: 1px solid rgba(245,158,11,0.25);
+        }
     </style>
+    <!-- Security Gate: Passcode Protection -->
+    <script>
+    (function() {
+        const PASSCODE = '9899';
+        const STORAGE_KEY = 'security_passcode_verified';
+
+        if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
+            return;
+        }
+
+        // Lock page immediately before body renders
+        document.documentElement.classList.add('page-locked');
+        
+        // Inject lock screen styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            html.page-locked body {
+                overflow: hidden !important;
+                height: 100vh !important;
+            }
+            html.page-locked body > *:not(#passcode-gate) {
+                display: none !important;
+            }
+            #passcode-gate {
+                position: fixed;
+                inset: 0;
+                z-index: 9999999;
+                background: radial-gradient(circle at center, #0b0f19 0%, #030712 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Inter', sans-serif;
+                color: #f8fafc;
+            }
+            .lock-card {
+                background: rgba(17, 24, 39, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                border-radius: 24px;
+                padding: 40px 32px;
+                width: 380px;
+                max-width: 90vw;
+                text-align: center;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 50px rgba(99, 102, 241, 0.15);
+                transform: translateY(0);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .lock-icon-wrap {
+                width: 64px;
+                height: 64px;
+                background: rgba(99, 102, 241, 0.1);
+                border: 1px solid rgba(99, 102, 241, 0.25);
+                color: #818cf8;
+                font-size: 1.6rem;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+            }
+            .lock-card h2 {
+                font-size: 1.25rem;
+                font-weight: 800;
+                margin-bottom: 8px;
+                color: #f8fafc;
+                letter-spacing: -0.02em;
+            }
+            .lock-card p {
+                font-size: 0.76rem;
+                color: #94a3b8;
+                line-height: 1.5;
+                margin-bottom: 28px;
+            }
+            .pin-display {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                margin-bottom: 32px;
+            }
+            .pin-dot {
+                width: 14px;
+                height: 14px;
+                border: 2px solid rgba(148, 163, 184, 0.3);
+                border-radius: 50%;
+                transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .pin-dot.active {
+                background: #6366f1;
+                border-color: #6366f1;
+                box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+                transform: scale(1.15);
+            }
+            .numpad {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+            .numpad button {
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid rgba(255, 255, 255, 0.04);
+                color: #e2e8f0;
+                font-size: 1.25rem;
+                font-weight: 600;
+                height: 56px;
+                width: 56px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.12s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                outline: none;
+                user-select: none;
+            }
+            .numpad button:hover {
+                background: rgba(255, 255, 255, 0.07);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: #ffffff;
+            }
+            .numpad button:active {
+                background: rgba(99, 102, 241, 0.2);
+                border-color: rgba(99, 102, 241, 0.4);
+                color: #a5b4fc;
+                transform: scale(0.92);
+            }
+            .numpad button.btn-clear {
+                color: #f43f5e;
+                font-size: 1.05rem;
+                background: rgba(244, 63, 94, 0.03);
+                border-color: rgba(244, 63, 94, 0.08);
+            }
+            .numpad button.btn-clear:hover {
+                background: rgba(244, 63, 94, 0.1);
+                border-color: rgba(244, 63, 94, 0.25);
+            }
+            .numpad button.btn-ok {
+                color: #10b981;
+                font-size: 1.15rem;
+                background: rgba(16, 185, 129, 0.03);
+                border-color: rgba(16, 185, 129, 0.08);
+            }
+            .numpad button.btn-ok:hover {
+                background: rgba(16, 185, 129, 0.1);
+                border-color: rgba(16, 185, 129, 0.25);
+            }
+            .lock-error {
+                height: 18px;
+                margin-top: 20px;
+                font-size: 0.72rem;
+                font-weight: 600;
+                color: #f43f5e;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+            .lock-error.show {
+                opacity: 1;
+            }
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-6px); }
+                40%, 80% { transform: translateX(6px); }
+            }
+            .lock-card.shake {
+                animation: shake 0.4s ease-in-out;
+                border-color: rgba(244, 63, 94, 0.35);
+                box-shadow: 0 0 40px rgba(244, 63, 94, 0.15);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Lock Screen HTML Injection
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
+                document.documentElement.classList.remove('page-locked');
+                return;
+            }
+
+            const gate = document.createElement('div');
+            gate.id = 'passcode-gate';
+            gate.innerHTML = `
+                <div class="lock-card" id="lock-card">
+                    <div class="lock-icon-wrap">
+                        <i class="fa-solid fa-lock-keyhole"></i>
+                    </div>
+                    <h2>Xác thực Quyền truy cập</h2>
+                    <p>Đây là phân hệ nội bộ của DuLieuQuyHoach.com.<br>Vui lòng nhập passcode để tiếp tục.</p>
+                    <div class="pin-display">
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                    </div>
+                    <div class="numpad">
+                        <button data-val="1">1</button>
+                        <button data-val="2">2</button>
+                        <button data-val="3">3</button>
+                        <button data-val="4">4</button>
+                        <button data-val="5">5</button>
+                        <button data-val="6">6</button>
+                        <button data-val="7">7</button>
+                        <button data-val="8">8</button>
+                        <button data-val="9">9</button>
+                        <button class="btn-clear" id="btn-clear" title="Xóa"><i class="fa-solid fa-delete-left"></i></button>
+                        <button data-val="0">0</button>
+                        <button class="btn-ok" id="btn-ok" title="Xác nhận"><i class="fa-solid fa-circle-check"></i></button>
+                    </div>
+                    <div id="lock-error" class="lock-error"></div>
+                </div>
+            `;
+            document.body.appendChild(gate);
+
+            let pin = '';
+            const dots = gate.querySelectorAll('.pin-dot');
+            const card = gate.querySelector('#lock-card');
+            const errorEl = gate.querySelector('#lock-error');
+
+            function updateDots() {
+                dots.forEach((dot, idx) => {
+                    if (idx < pin.length) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.classList.add('show');
+                card.classList.add('shake');
+                setTimeout(() => {
+                    card.classList.remove('shake');
+                }, 400);
+            }
+
+            function clearError() {
+                errorEl.classList.remove('show');
+            }
+
+            function handleInput(char) {
+                if (pin.length >= 4) return;
+                clearError();
+                pin += char;
+                updateDots();
+                if (pin.length === 4) {
+                    setTimeout(submitPin, 150);
+                }
+            }
+
+            function deleteChar() {
+                if (pin.length === 0) return;
+                clearError();
+                pin = pin.slice(0, -1);
+                updateDots();
+            }
+
+            function submitPin() {
+                if (pin === PASSCODE) {
+                    sessionStorage.setItem(STORAGE_KEY, 'true');
+                    gate.style.transition = 'opacity 0.25s ease';
+                    gate.style.opacity = '0';
+                    setTimeout(() => {
+                        gate.remove();
+                        document.documentElement.classList.remove('page-locked');
+                    }, 250);
+                } else {
+                    showError('Mã passcode không chính xác!');
+                    pin = '';
+                    setTimeout(updateDots, 300);
+                }
+            }
+
+            // Click listeners for numpad
+            gate.querySelectorAll('.numpad button[data-val]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    handleInput(btn.getAttribute('data-val'));
+                });
+            });
+
+            gate.querySelector('#btn-clear').addEventListener('click', deleteChar);
+            gate.querySelector('#btn-ok').addEventListener('click', submitPin);
+
+            // Keyboard support
+            const keydownHandler = (e) => {
+                if (!document.documentElement.classList.contains('page-locked')) {
+                    document.removeEventListener('keydown', keydownHandler);
+                    return;
+                }
+                if (e.key >= '0' && e.key <= '9') {
+                    handleInput(e.key);
+                } else if (e.key === 'Backspace') {
+                    deleteChar();
+                } else if (e.key === 'Enter') {
+                    submitPin();
+                }
+            };
+            document.addEventListener('keydown', keydownHandler);
+        });
+    })();
+    </script>
 </head>
 <body>
 
@@ -714,6 +1092,9 @@
                 <span style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">
                     <i class="fa-solid fa-file-image" style="color:var(--accent-amber);"></i> Hiệu chỉnh bản đồ gốc Scan
                 </span>
+                <span class="autosave-indicator saved" id="autosave-indicator" style="display:none;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Đã lưu
+                </span>
             </div>
             
             <div class="form-group" style="margin-bottom:15px;">
@@ -799,9 +1180,14 @@
                     </div>
                 </div>
                 
-                <button class="header-btn btn-primary prop-save-btn" style="margin-top:14px;" onclick="copyScanCoordinates()">
-                    <i class="fa-solid fa-copy"></i> Sao chép Tọa độ & CSS
-                </button>
+                <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button class="header-btn btn-success" style="flex:1;" onclick="saveScanConfig()">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu cấu hình
+                    </button>
+                    <button class="header-btn btn-ghost" style="flex:1;" onclick="copyScanCoordinates()">
+                        <i class="fa-solid fa-copy"></i> Sao chép CSS
+                    </button>
+                </div>
             </div>
             
             <div class="guide-box">
@@ -815,6 +1201,29 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- Modal: Lưu cấu hình Scan -->
+<div class="save-modal-overlay" id="scan-save-modal-overlay" onclick="closeScanSaveModal(event)">
+    <div class="save-modal">
+        <h3><i class="fa-solid fa-floppy-disk" style="color:var(--accent-emerald);"></i> Lưu cấu hình Scan vào dự án</h3>
+        <p style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:12px;line-height:1.6;">
+            Cấu hình đã được <strong style="color:var(--accent-emerald);">tự động lưu vào bộ nhớ trình duyệt (localStorage)</strong> — sẽ tự động khôi phục khi mở lại trang này.<br>
+            Để áp dụng cố định vào trang chủ, hãy tải file cấu hình hoặc dán đoạn code dưới vào <code>app.js</code>.
+        </p>
+        <textarea id="scan-config-output" spellcheck="false" readonly></textarea>
+        <div class="save-modal-actions">
+            <button class="header-btn btn-success" style="flex:1;" onclick="downloadScanConfig()">
+                <i class="fa-solid fa-download"></i> Tải scan_config.json
+            </button>
+            <button class="header-btn btn-primary" style="flex:1;" onclick="copyScanConfigFromModal()">
+                <i class="fa-solid fa-copy"></i> Sao chép code
+            </button>
+            <button class="header-btn btn-ghost" style="flex:1;" onclick="closeScanSaveModal()">
+                <i class="fa-solid fa-xmark"></i> Đóng
+            </button>
+        </div>
     </div>
 </div>
 
@@ -1340,6 +1749,144 @@ let scanOpacity = 0.6;
 
 const initialScanBounds = [[20.88, 105.71], [21.19, 105.96]];
 let currentScanBounds = JSON.parse(JSON.stringify(initialScanBounds));
+const SCAN_STORAGE_KEY = 'dulieuquyhoach_scan_config_v1';
+
+// ─── Auto-save to localStorage ───
+function scanAutoSave() {
+    const indicator = document.getElementById('autosave-indicator');
+    if (indicator) {
+        indicator.className = 'autosave-indicator saving';
+        indicator.innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> Đang lưu...';
+        indicator.style.display = 'inline-flex';
+    }
+    const config = buildScanConfig();
+    try {
+        localStorage.setItem(SCAN_STORAGE_KEY, JSON.stringify(config));
+    } catch(e) { console.warn('localStorage save failed:', e); }
+    setTimeout(() => {
+        if (indicator) {
+            indicator.className = 'autosave-indicator saved';
+            indicator.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Đã lưu tự động';
+        }
+    }, 600);
+}
+
+function buildScanConfig() {
+    const sw = scanSWMarker ? scanSWMarker.getLatLng() : (currentScanBounds[0] ? { lat: currentScanBounds[0][0], lng: currentScanBounds[0][1] } : { lat: 20.88, lng: 105.71 });
+    const ne = scanNEMarker ? scanNEMarker.getLatLng() : (currentScanBounds[1] ? { lat: currentScanBounds[1][0], lng: currentScanBounds[1][1] } : { lat: 21.19, lng: 105.96 });
+    return {
+        savedAt: new Date().toISOString(),
+        bounds: [[sw.lat, sw.lng], [ne.lat, ne.lng]],
+        rotation: scanRotation,
+        skewX: scanSkewX,
+        skewY: scanSkewY,
+        opacity: scanOpacity
+    };
+}
+
+function restoreScanConfig() {
+    try {
+        const raw = localStorage.getItem(SCAN_STORAGE_KEY);
+        if (!raw) return false;
+        const cfg = JSON.parse(raw);
+        // Restore bounds
+        if (cfg.bounds && cfg.bounds.length === 2) {
+            currentScanBounds = cfg.bounds;
+        }
+        // Restore sliders & values
+        scanRotation = cfg.rotation || 0;
+        scanSkewX = cfg.skewX || 0;
+        scanSkewY = cfg.skewY || 0;
+        scanOpacity = cfg.opacity !== undefined ? cfg.opacity : 0.6;
+        // Sync slider UI
+        const rotSlider = document.getElementById('scan-rotation-slider');
+        const skewXSlider = document.getElementById('scan-skewx-slider');
+        const skewYSlider = document.getElementById('scan-skewy-slider');
+        const opSlider = document.getElementById('scan-opacity-slider');
+        if (rotSlider) rotSlider.value = scanRotation;
+        if (skewXSlider) skewXSlider.value = scanSkewX;
+        if (skewYSlider) skewYSlider.value = scanSkewY;
+        if (opSlider) opSlider.value = Math.round(scanOpacity * 100);
+        // Sync badge labels
+        const rotVal = document.getElementById('scan-rot-val');
+        const skewXVal = document.getElementById('scan-skewx-val');
+        const skewYVal = document.getElementById('scan-skewy-val');
+        const opVal = document.getElementById('scan-opacity-val');
+        if (rotVal) rotVal.textContent = scanRotation + '°';
+        if (skewXVal) skewXVal.textContent = scanSkewX + '°';
+        if (skewYVal) skewYVal.textContent = scanSkewY + '°';
+        if (opVal) opVal.textContent = Math.round(scanOpacity * 100) + '%';
+        // Show indicator
+        const indicator = document.getElementById('autosave-indicator');
+        if (indicator) {
+            indicator.style.display = 'inline-flex';
+            indicator.className = 'autosave-indicator saved';
+            const savedDate = new Date(cfg.savedAt);
+            const timeStr = savedDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = savedDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+            indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu lúc ${timeStr} ${dateStr}`;
+        }
+        return true;
+    } catch(e) {
+        console.warn('localStorage restore failed:', e);
+        return false;
+    }
+}
+
+// ─── Save modal helpers ───
+function saveScanConfig() {
+    scanAutoSave();
+    const config = buildScanConfig();
+    const sw = config.bounds[0];
+    const ne = config.bounds[1];
+    const code = `// ── Cấu hình Bản đồ gốc Scan (đã hiệu chỉnh) ──
+// Dán đoạn này vào app.js thay thế rasterOverlayBounds
+const rasterOverlayBounds = [[${sw[0].toFixed(6)}, ${sw[1].toFixed(6)}], [${ne[0].toFixed(6)}, ${ne[1].toFixed(6)}]];
+
+// Áp dụng CSS transform sau khi initRasterOverlay():
+// Gọi hàm này ngay sau dòng rasterOverlay.addTo(map);
+function applyRasterTransform() {
+    const el = rasterOverlay.getElement();
+    if (!el) return;
+    el.style.opacity = '${config.opacity}';
+    el.style.transformOrigin = 'center center';
+    const base = el.style.transform.replace(/rotate\\([^)]+\\)/g,'').replace(/skew\\([^)]+\\)/g,'');
+    el.style.transform = base + ' rotate(${config.rotation}deg) skew(${config.skewX}deg, ${config.skewY}deg)';
+}
+map.on('zoom viewreset move', applyRasterTransform);
+applyRasterTransform();`;
+    document.getElementById('scan-config-output').value = code;
+    document.getElementById('scan-save-modal-overlay').classList.add('open');
+}
+
+function closeScanSaveModal(event) {
+    if (event && event.target !== document.getElementById('scan-save-modal-overlay')) return;
+    document.getElementById('scan-save-modal-overlay').classList.remove('open');
+}
+
+function downloadScanConfig() {
+    const config = buildScanConfig();
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'scan_config.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Đã tải xuống scan_config.json!', 'success');
+}
+
+function copyScanConfigFromModal() {
+    const text = document.getElementById('scan-config-output').value;
+    navigator.clipboard.writeText(text)
+        .then(() => showToast('Đã sao chép code vào Clipboard!', 'success'))
+        .catch(() => showToast('Không thể sao chép tự động. Hãy bôi đen và Ctrl+C.', 'error'));
+}
+
+// Keyboard close modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') document.getElementById('scan-save-modal-overlay').classList.remove('open');
+});
 
 // Custom Icons for Draggable Markers
 const customIconSW = L.divIcon({
@@ -1359,6 +1906,8 @@ const customIconNE = L.divIcon({
 function toggleScanEditMode(checked) {
     scanEditMode = checked;
     const controls = document.getElementById('scan-alignment-controls');
+    const indicator = document.getElementById('autosave-indicator');
+    if (indicator) indicator.style.display = checked ? 'inline-flex' : 'none';
     
     if (checked) {
         // 1. Add image overlay if not exists
@@ -1398,13 +1947,19 @@ function toggleScanEditMode(checked) {
             scanNEMarker.addTo(editorMap);
         }
         
-        // 3. Show alignment panel & sync form values
+        // 3. Restore saved config (if any) then show alignment panel
+        restoreScanConfig();
         controls.style.display = 'block';
         
         document.getElementById('scan-sw-lat').value = currentScanBounds[0][0].toFixed(6);
         document.getElementById('scan-sw-lng').value = currentScanBounds[0][1].toFixed(6);
         document.getElementById('scan-ne-lat').value = currentScanBounds[1][0].toFixed(6);
         document.getElementById('scan-ne-lng').value = currentScanBounds[1][1].toFixed(6);
+        
+        // Re-position markers to restored bounds
+        if (scanSWMarker) scanSWMarker.setLatLng(currentScanBounds[0]);
+        if (scanNEMarker) scanNEMarker.setLatLng(currentScanBounds[1]);
+        if (scanOverlay) scanOverlay.setBounds(currentScanBounds);
         
         // Trigger CSS transform applying
         applyScanCSS();
@@ -1442,6 +1997,7 @@ function onMarkerDrag() {
     document.getElementById('scan-ne-lng').value = ne.lng.toFixed(6);
     
     applyScanCSS();
+    scanAutoSave();
 }
 
 function updateScanFromForm() {
@@ -1459,6 +2015,7 @@ function updateScanFromForm() {
     if (scanNEMarker) scanNEMarker.setLatLng([neLat, neLng]);
     
     applyScanCSS();
+    scanAutoSave();
 }
 
 function updateScanTransforms() {
@@ -1473,6 +2030,7 @@ function updateScanTransforms() {
     document.getElementById('scan-opacity-val').textContent = Math.round(scanOpacity * 100) + '%';
     
     applyScanCSS();
+    scanAutoSave();
 }
 
 function applyScanCSS() {

@@ -371,6 +371,311 @@
             50%       { opacity: .5; transform: scale(.8); }
         }
     </style>
+    <!-- Security Gate: Passcode Protection -->
+    <script>
+    (function() {
+        const PASSCODE = '9899';
+        const STORAGE_KEY = 'security_passcode_verified';
+
+        if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
+            return;
+        }
+
+        // Lock page immediately before body renders
+        document.documentElement.classList.add('page-locked');
+        
+        // Inject lock screen styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            html.page-locked body {
+                overflow: hidden !important;
+                height: 100vh !important;
+            }
+            html.page-locked body > *:not(#passcode-gate) {
+                display: none !important;
+            }
+            #passcode-gate {
+                position: fixed;
+                inset: 0;
+                z-index: 9999999;
+                background: radial-gradient(circle at center, #0b0f19 0%, #030712 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Inter', sans-serif;
+                color: #f8fafc;
+            }
+            .lock-card {
+                background: rgba(17, 24, 39, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                border-radius: 24px;
+                padding: 40px 32px;
+                width: 380px;
+                max-width: 90vw;
+                text-align: center;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 50px rgba(99, 102, 241, 0.15);
+                transform: translateY(0);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .lock-icon-wrap {
+                width: 64px;
+                height: 64px;
+                background: rgba(99, 102, 241, 0.1);
+                border: 1px solid rgba(99, 102, 241, 0.25);
+                color: #818cf8;
+                font-size: 1.6rem;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+            }
+            .lock-card h2 {
+                font-size: 1.25rem;
+                font-weight: 800;
+                margin-bottom: 8px;
+                color: #f8fafc;
+                letter-spacing: -0.02em;
+            }
+            .lock-card p {
+                font-size: 0.76rem;
+                color: #94a3b8;
+                line-height: 1.5;
+                margin-bottom: 28px;
+            }
+            .pin-display {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                margin-bottom: 32px;
+            }
+            .pin-dot {
+                width: 14px;
+                height: 14px;
+                border: 2px solid rgba(148, 163, 184, 0.3);
+                border-radius: 50%;
+                transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .pin-dot.active {
+                background: #6366f1;
+                border-color: #6366f1;
+                box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+                transform: scale(1.15);
+            }
+            .numpad {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+            .numpad button {
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid rgba(255, 255, 255, 0.04);
+                color: #e2e8f0;
+                font-size: 1.25rem;
+                font-weight: 600;
+                height: 56px;
+                width: 56px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.12s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                outline: none;
+                user-select: none;
+            }
+            .numpad button:hover {
+                background: rgba(255, 255, 255, 0.07);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: #ffffff;
+            }
+            .numpad button:active {
+                background: rgba(99, 102, 241, 0.2);
+                border-color: rgba(99, 102, 241, 0.4);
+                color: #a5b4fc;
+                transform: scale(0.92);
+            }
+            .numpad button.btn-clear {
+                color: #f43f5e;
+                font-size: 1.05rem;
+                background: rgba(244, 63, 94, 0.03);
+                border-color: rgba(244, 63, 94, 0.08);
+            }
+            .numpad button.btn-clear:hover {
+                background: rgba(244, 63, 94, 0.1);
+                border-color: rgba(244, 63, 94, 0.25);
+            }
+            .numpad button.btn-ok {
+                color: #10b981;
+                font-size: 1.15rem;
+                background: rgba(16, 185, 129, 0.03);
+                border-color: rgba(16, 185, 129, 0.08);
+            }
+            .numpad button.btn-ok:hover {
+                background: rgba(16, 185, 129, 0.1);
+                border-color: rgba(16, 185, 129, 0.25);
+            }
+            .lock-error {
+                height: 18px;
+                margin-top: 20px;
+                font-size: 0.72rem;
+                font-weight: 600;
+                color: #f43f5e;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+            .lock-error.show {
+                opacity: 1;
+            }
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-6px); }
+                40%, 80% { transform: translateX(6px); }
+            }
+            .lock-card.shake {
+                animation: shake 0.4s ease-in-out;
+                border-color: rgba(244, 63, 94, 0.35);
+                box-shadow: 0 0 40px rgba(244, 63, 94, 0.15);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Lock Screen HTML Injection
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
+                document.documentElement.classList.remove('page-locked');
+                return;
+            }
+
+            const gate = document.createElement('div');
+            gate.id = 'passcode-gate';
+            gate.innerHTML = `
+                <div class="lock-card" id="lock-card">
+                    <div class="lock-icon-wrap">
+                        <i class="fa-solid fa-lock-keyhole"></i>
+                    </div>
+                    <h2>Xác thực Quyền truy cập</h2>
+                    <p>Đây là phân hệ nội bộ của DuLieuQuyHoach.com.<br>Vui lòng nhập passcode để tiếp tục.</p>
+                    <div class="pin-display">
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                        <div class="pin-dot"></div>
+                    </div>
+                    <div class="numpad">
+                        <button data-val="1">1</button>
+                        <button data-val="2">2</button>
+                        <button data-val="3">3</button>
+                        <button data-val="4">4</button>
+                        <button data-val="5">5</button>
+                        <button data-val="6">6</button>
+                        <button data-val="7">7</button>
+                        <button data-val="8">8</button>
+                        <button data-val="9">9</button>
+                        <button class="btn-clear" id="btn-clear" title="Xóa"><i class="fa-solid fa-delete-left"></i></button>
+                        <button data-val="0">0</button>
+                        <button class="btn-ok" id="btn-ok" title="Xác nhận"><i class="fa-solid fa-circle-check"></i></button>
+                    </div>
+                    <div id="lock-error" class="lock-error"></div>
+                </div>
+            `;
+            document.body.appendChild(gate);
+
+            let pin = '';
+            const dots = gate.querySelectorAll('.pin-dot');
+            const card = gate.querySelector('#lock-card');
+            const errorEl = gate.querySelector('#lock-error');
+
+            function updateDots() {
+                dots.forEach((dot, idx) => {
+                    if (idx < pin.length) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.classList.add('show');
+                card.classList.add('shake');
+                setTimeout(() => {
+                    card.classList.remove('shake');
+                }, 400);
+            }
+
+            function clearError() {
+                errorEl.classList.remove('show');
+            }
+
+            function handleInput(char) {
+                if (pin.length >= 4) return;
+                clearError();
+                pin += char;
+                updateDots();
+                if (pin.length === 4) {
+                    setTimeout(submitPin, 150);
+                }
+            }
+
+            function deleteChar() {
+                if (pin.length === 0) return;
+                clearError();
+                pin = pin.slice(0, -1);
+                updateDots();
+            }
+
+            function submitPin() {
+                if (pin === PASSCODE) {
+                    sessionStorage.setItem(STORAGE_KEY, 'true');
+                    gate.style.transition = 'opacity 0.25s ease';
+                    gate.style.opacity = '0';
+                    setTimeout(() => {
+                        gate.remove();
+                        document.documentElement.classList.remove('page-locked');
+                    }, 250);
+                } else {
+                    showError('Mã passcode không chính xác!');
+                    pin = '';
+                    setTimeout(updateDots, 300);
+                }
+            }
+
+            // Click listeners for numpad
+            gate.querySelectorAll('.numpad button[data-val]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    handleInput(btn.getAttribute('data-val'));
+                });
+            });
+
+            gate.querySelector('#btn-clear').addEventListener('click', deleteChar);
+            gate.querySelector('#btn-ok').addEventListener('click', submitPin);
+
+            // Keyboard support
+            const keydownHandler = (e) => {
+                if (!document.documentElement.classList.contains('page-locked')) {
+                    document.removeEventListener('keydown', keydownHandler);
+                    return;
+                }
+                if (e.key >= '0' && e.key <= '9') {
+                    handleInput(e.key);
+                } else if (e.key === 'Backspace') {
+                    deleteChar();
+                } else if (e.key === 'Enter') {
+                    submitPin();
+                }
+            };
+            document.addEventListener('keydown', keydownHandler);
+        });
+    })();
+    </script>
 </head>
 <body>
 
