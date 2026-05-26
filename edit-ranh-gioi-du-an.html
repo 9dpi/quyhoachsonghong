@@ -600,6 +600,9 @@
             <button class="panel-tab" onclick="switchPanelTab('validate', this)" id="tab-validate">
                 <i class="fa-solid fa-shield-halved"></i> Kiểm chứng
             </button>
+            <button class="panel-tab" onclick="switchPanelTab('scan-align', this)" id="tab-scan-align">
+                <i class="fa-solid fa-compass-drafting"></i> Căn khớp Scan
+            </button>
         </div>
 
         <!-- Tab: Properties -->
@@ -702,6 +705,113 @@
                 <strong>🛰️ 6 điểm kiểm chứng bất biến:</strong><br>
                 Bộ test cases này đối soát xem các điểm tọa độ cố định (Cầu Long Biên, Phố Huế, Mê Linh...) có nằm đúng vị trí trong các polygon quy hoạch tương ứng không.<br>
                 <strong>Cảnh báo đỏ</strong> = Ranh giới đang vẽ sai, cần điều chỉnh!
+            </div>
+        </div>
+
+        <!-- Tab: Căn khớp Scan -->
+        <div class="tab-content" id="tab-content-scan-align">
+            <div class="validation-header">
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">
+                    <i class="fa-solid fa-file-image" style="color:var(--accent-amber);"></i> Hiệu chỉnh bản đồ gốc Scan
+                </span>
+            </div>
+            
+            <div class="form-group" style="margin-bottom:15px;">
+                <label class="switch-container" style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;border:1px solid var(--border);width:100%;">
+                    <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);"><i class="fa-solid fa-pen-ruler" style="color:var(--accent);"></i> Chế độ Hiệu chỉnh Scan</span>
+                    <label class="switch" style="width:42px;height:22px;position:relative;display:inline-block;">
+                        <input type="checkbox" id="scan-edit-mode-toggle" onchange="toggleScanEditMode(this.checked)">
+                        <span class="slider-switch" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#475569;transition:.3s;border-radius:22px;"></span>
+                    </label>
+                </label>
+            </div>
+            
+            <div id="scan-alignment-controls" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-map"></i> Bounding Box (Tây Nam - Đông Bắc)</label>
+                    <div class="form-row" style="margin-bottom:8px;">
+                         <div>
+                             <span style="font-size:0.6rem;color:var(--text-secondary);display:block;margin-bottom:2px;">Tây Nam Lat</span>
+                             <input type="number" step="0.000001" class="form-input mono" id="scan-sw-lat" onchange="updateScanFromForm()">
+                         </div>
+                         <div>
+                             <span style="font-size:0.6rem;color:var(--text-secondary);display:block;margin-bottom:2px;">Tây Nam Lng</span>
+                             <input type="number" step="0.000001" class="form-input mono" id="scan-sw-lng" onchange="updateScanFromForm()">
+                         </div>
+                    </div>
+                    <div class="form-row">
+                         <div>
+                             <span style="font-size:0.6rem;color:var(--text-secondary);display:block;margin-bottom:2px;">Đông Bắc Lat</span>
+                             <input type="number" step="0.000001" class="form-input mono" id="scan-ne-lat" onchange="updateScanFromForm()">
+                         </div>
+                         <div>
+                             <span style="font-size:0.6rem;color:var(--text-secondary);display:block;margin-bottom:2px;">Đông Bắc Lng</span>
+                             <input type="number" step="0.000001" class="form-input mono" id="scan-ne-lng" onchange="updateScanFromForm()">
+                         </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                        <label class="form-label" style="margin:0;"><i class="fa-solid fa-arrows-spin"></i> Góc xoay (Rotation)</label>
+                        <span class="opacity-badge" id="scan-rot-val" style="font-family:monospace;font-size:0.65rem;">0°</span>
+                    </div>
+                    <input type="range" class="opacity-slider" id="scan-rotation-slider" min="-180" max="180" value="0" style="width:100%;" oninput="updateScanTransforms()">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                            <label class="form-label" style="margin:0;"><i class="fa-solid fa-arrows-left-right"></i> Nghiêng X</label>
+                            <span class="opacity-badge" id="scan-skewx-val" style="font-family:monospace;font-size:0.65rem;">0°</span>
+                        </div>
+                        <input type="range" class="opacity-slider" id="scan-skewx-slider" min="-45" max="45" value="0" style="width:100%;" oninput="updateScanTransforms()">
+                    </div>
+                    <div class="form-group">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                            <label class="form-label" style="margin:0;"><i class="fa-solid fa-arrows-up-down"></i> Nghiêng Y</label>
+                            <span class="opacity-badge" id="scan-skewy-val" style="font-family:monospace;font-size:0.65rem;">0°</span>
+                        </div>
+                        <input type="range" class="opacity-slider" id="scan-skewy-slider" min="-45" max="45" value="0" style="width:100%;" oninput="updateScanTransforms()">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                        <label class="form-label" style="margin:0;"><i class="fa-solid fa-eye"></i> Độ mờ (Opacity)</label>
+                        <span class="opacity-badge" id="scan-opacity-val" style="font-family:monospace;font-size:0.65rem;">60%</span>
+                    </div>
+                    <input type="range" class="opacity-slider" id="scan-opacity-slider" min="0" max="100" value="60" style="width:100%;" oninput="updateScanTransforms()">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" style="text-align:center;display:block;"><i class="fa-solid fa-keyboard"></i> Phím dịch chuyển tinh vi (0.0001°)</label>
+                    <div style="display:grid;grid-template-columns: repeat(3, 1fr);gap:6px;width:130px;margin:10px auto 0;">
+                        <div></div>
+                        <button class="header-btn btn-ghost" style="padding:4px;justify-content:center;" onclick="nudgeScan('up')" title="Dịch chuyển lên"><i class="fa-solid fa-chevron-up"></i></button>
+                        <div></div>
+                        <button class="header-btn btn-ghost" style="padding:4px;justify-content:center;" onclick="nudgeScan('left')" title="Dịch chuyển sang trái"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="header-btn btn-ghost" style="padding:4px;justify-content:center;background:rgba(255,255,255,0.05);" onclick="nudgeScan('reset')" title="Đặt lại dịch chuyển"><i class="fa-solid fa-arrows-to-dot"></i></button>
+                        <button class="header-btn btn-ghost" style="padding:4px;justify-content:center;" onclick="nudgeScan('right')" title="Dịch chuyển sang phải"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div></div>
+                        <button class="header-btn btn-ghost" style="padding:4px;justify-content:center;" onclick="nudgeScan('down')" title="Dịch chuyển xuống"><i class="fa-solid fa-chevron-down"></i></button>
+                        <div></div>
+                    </div>
+                </div>
+                
+                <button class="header-btn btn-primary prop-save-btn" style="margin-top:14px;" onclick="copyScanCoordinates()">
+                    <i class="fa-solid fa-copy"></i> Sao chép Tọa độ & CSS
+                </button>
+            </div>
+            
+            <div class="guide-box">
+                <strong>📐 Hướng dẫn Căn khớp Scan thủ công:</strong><br>
+                1. Bật **Chế độ Hiệu chỉnh Scan** để hiển thị ảnh quy hoạch sông Hồng.<br>
+                2. Bản đồ sẽ xuất hiện **2 Marker kéo thả lớn (màu vàng và màu xanh)** ở góc Tây Nam và Đông Bắc.<br>
+                3. Kéo thả 2 Marker này để di chuyển vị trí hoặc kéo giãn ảnh khớp với bản đồ vệ tinh bên dưới.<br>
+                4. Sử dụng slider để **Xoay (Rotate)** hoặc **Nghiêng (Skew X, Y)** ảnh nếu ảnh bị lệch hoặc nghiêng so với thực địa.<br>
+                5. Dùng cụm phím dịch chuyển để vi chỉnh siêu tinh vi.<br>
+                6. Nhấn **Sao chép Tọa độ & CSS** để cấu hình cố định cho trang chủ.
             </div>
         </div>
 
@@ -1215,6 +1325,244 @@ function renderTestCasesUI() {
 // ─── Boot ───
 loadInitialData();
 renderTestCasesUI();
+
+// ================================================================
+//  SCAN OVERLAY ALIGNMENT — Core Logic
+// ================================================================
+let scanOverlay = null;
+let scanSWMarker = null;
+let scanNEMarker = null;
+let scanEditMode = false;
+let scanRotation = 0;
+let scanSkewX = 0;
+let scanSkewY = 0;
+let scanOpacity = 0.6;
+
+const initialScanBounds = [[20.88, 105.71], [21.19, 105.96]];
+let currentScanBounds = JSON.parse(JSON.stringify(initialScanBounds));
+
+// Custom Icons for Draggable Markers
+const customIconSW = L.divIcon({
+    className: 'scan-marker-sw',
+    html: '<div style="width:18px;height:18px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 0 10px rgba(0,0,0,0.5);cursor:move;transform:translate(-1px,-1px);" title="Góc Tây Nam (Kéo thả)"></div>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+});
+
+const customIconNE = L.divIcon({
+    className: 'scan-marker-ne',
+    html: '<div style="width:18px;height:18px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 0 10px rgba(0,0,0,0.5);cursor:move;transform:translate(-1px,-1px);" title="Góc Đông Bắc (Kéo thả)"></div>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+});
+
+function toggleScanEditMode(checked) {
+    scanEditMode = checked;
+    const controls = document.getElementById('scan-alignment-controls');
+    
+    if (checked) {
+        // 1. Add image overlay if not exists
+        if (!scanOverlay) {
+            scanOverlay = L.imageOverlay('data/hanoi_songhong_planning_map.png', currentScanBounds, {
+                opacity: scanOpacity,
+                interactive: true
+            });
+        }
+        scanOverlay.addTo(editorMap);
+        
+        // Ensure image layer is behind vector drawings
+        scanOverlay.bringToBack();
+        
+        // 2. Create interactive markers for SW and NE bounds
+        if (!scanSWMarker) {
+            scanSWMarker = L.marker(currentScanBounds[0], {
+                draggable: true,
+                icon: customIconSW
+            }).addTo(editorMap);
+            
+            scanSWMarker.on('drag', onMarkerDrag);
+            scanSWMarker.on('dragend', () => showToast('Đã di chuyển góc Tây Nam.', 'info'));
+        } else {
+            scanSWMarker.addTo(editorMap);
+        }
+        
+        if (!scanNEMarker) {
+            scanNEMarker = L.marker(currentScanBounds[1], {
+                draggable: true,
+                icon: customIconNE
+            }).addTo(editorMap);
+            
+            scanNEMarker.on('drag', onMarkerDrag);
+            scanNEMarker.on('dragend', () => showToast('Đã di chuyển góc Đông Bắc.', 'info'));
+        } else {
+            scanNEMarker.addTo(editorMap);
+        }
+        
+        // 3. Show alignment panel & sync form values
+        controls.style.display = 'block';
+        
+        document.getElementById('scan-sw-lat').value = currentScanBounds[0][0].toFixed(6);
+        document.getElementById('scan-sw-lng').value = currentScanBounds[0][1].toFixed(6);
+        document.getElementById('scan-ne-lat').value = currentScanBounds[1][0].toFixed(6);
+        document.getElementById('scan-ne-lng').value = currentScanBounds[1][1].toFixed(6);
+        
+        // Trigger CSS transform applying
+        applyScanCSS();
+        
+        // Listen to map events to constantly re-apply CSS transform
+        editorMap.on('zoom animateroute drag viewreset move', applyScanCSS);
+        
+        // Fit map bounds to show scan overlay
+        editorMap.fitBounds(currentScanBounds, { padding: [50, 50] });
+        showToast('Chế độ Hiệu chỉnh Scan đã BẬT! Kéo thả các marker để căn khớp.', 'success');
+    } else {
+        // Remove layers and markers
+        if (scanOverlay) editorMap.removeLayer(scanOverlay);
+        if (scanSWMarker) editorMap.removeLayer(scanSWMarker);
+        if (scanNEMarker) editorMap.removeLayer(scanNEMarker);
+        
+        controls.style.display = 'none';
+        
+        editorMap.off('zoom animateroute drag viewreset move', applyScanCSS);
+        showToast('Chế độ Hiệu chỉnh Scan đã TẮT.', 'info');
+    }
+}
+
+function onMarkerDrag() {
+    const sw = scanSWMarker.getLatLng();
+    const ne = scanNEMarker.getLatLng();
+    
+    currentScanBounds = [[sw.lat, sw.lng], [ne.lat, ne.lng]];
+    
+    if (scanOverlay) scanOverlay.setBounds(currentScanBounds);
+    
+    document.getElementById('scan-sw-lat').value = sw.lat.toFixed(6);
+    document.getElementById('scan-sw-lng').value = sw.lng.toFixed(6);
+    document.getElementById('scan-ne-lat').value = ne.lat.toFixed(6);
+    document.getElementById('scan-ne-lng').value = ne.lng.toFixed(6);
+    
+    applyScanCSS();
+}
+
+function updateScanFromForm() {
+    const swLat = parseFloat(document.getElementById('scan-sw-lat').value);
+    const swLng = parseFloat(document.getElementById('scan-sw-lng').value);
+    const neLat = parseFloat(document.getElementById('scan-ne-lat').value);
+    const neLng = parseFloat(document.getElementById('scan-ne-lng').value);
+    
+    if (isNaN(swLat) || isNaN(swLng) || isNaN(neLat) || isNaN(neLng)) return;
+    
+    currentScanBounds = [[swLat, swLng], [neLat, neLng]];
+    
+    if (scanOverlay) scanOverlay.setBounds(currentScanBounds);
+    if (scanSWMarker) scanSWMarker.setLatLng([swLat, swLng]);
+    if (scanNEMarker) scanNEMarker.setLatLng([neLat, neLng]);
+    
+    applyScanCSS();
+}
+
+function updateScanTransforms() {
+    scanRotation = parseInt(document.getElementById('scan-rotation-slider').value);
+    scanSkewX = parseInt(document.getElementById('scan-skewx-slider').value);
+    scanSkewY = parseInt(document.getElementById('scan-skewy-slider').value);
+    scanOpacity = parseFloat(document.getElementById('scan-opacity-slider').value) / 100;
+    
+    document.getElementById('scan-rot-val').textContent = scanRotation + '°';
+    document.getElementById('scan-skewx-val').textContent = scanSkewX + '°';
+    document.getElementById('scan-skewy-val').textContent = scanSkewY + '°';
+    document.getElementById('scan-opacity-val').textContent = Math.round(scanOpacity * 100) + '%';
+    
+    applyScanCSS();
+}
+
+function applyScanCSS() {
+    if (!scanOverlay || !scanEditMode) return;
+    const imgEl = scanOverlay.getElement();
+    if (!imgEl) return;
+    
+    // Set opacity
+    imgEl.style.opacity = scanOpacity;
+    
+    // Read Leaflet base transform (contains translation)
+    let currentTransform = imgEl.style.transform || "";
+    
+    // Remove previous rotates/skews to prevent nesting/stacking
+    currentTransform = currentTransform.replace(/rotate\([^)]+\)/g, "").replace(/skew\([^)]+\)/g, "");
+    
+    // Apply new transform
+    imgEl.style.transform = `${currentTransform} rotate(${scanRotation}deg) skew(${scanSkewX}deg, ${scanSkewY}deg)`;
+    imgEl.style.transformOrigin = "center center";
+}
+
+function nudgeScan(direction) {
+    const step = 0.0001; // nudge precision
+    let sw = scanSWMarker ? scanSWMarker.getLatLng() : L.latLng(currentScanBounds[0]);
+    let ne = scanNEMarker ? scanNEMarker.getLatLng() : L.latLng(currentScanBounds[1]);
+    
+    if (direction === 'up') {
+        sw.lat += step; ne.lat += step;
+    } else if (direction === 'down') {
+        sw.lat -= step; ne.lat -= step;
+    } else if (direction === 'left') {
+        sw.lng -= step; ne.lng -= step;
+    } else if (direction === 'right') {
+        sw.lng += step; ne.lng += step;
+    } else if (direction === 'reset') {
+        sw = L.latLng(initialScanBounds[0]);
+        ne = L.latLng(initialScanBounds[1]);
+        
+        // Reset inputs/sliders
+        document.getElementById('scan-rotation-slider').value = 0;
+        document.getElementById('scan-skewx-slider').value = 0;
+        document.getElementById('scan-skewy-slider').value = 0;
+        document.getElementById('scan-opacity-slider').value = 60;
+        
+        scanRotation = 0;
+        scanSkewX = 0;
+        scanSkewY = 0;
+        scanOpacity = 0.6;
+        
+        document.getElementById('scan-rot-val').textContent = '0°';
+        document.getElementById('scan-skewx-val').textContent = '0°';
+        document.getElementById('scan-skewy-val').textContent = '0°';
+        document.getElementById('scan-opacity-val').textContent = '60%';
+    }
+    
+    currentScanBounds = [[sw.lat, sw.lng], [ne.lat, ne.lng]];
+    
+    if (scanOverlay) scanOverlay.setBounds(currentScanBounds);
+    if (scanSWMarker) scanSWMarker.setLatLng(sw);
+    if (scanNEMarker) scanNEMarker.setLatLng(ne);
+    
+    document.getElementById('scan-sw-lat').value = sw.lat.toFixed(6);
+    document.getElementById('scan-sw-lng').value = sw.lng.toFixed(6);
+    document.getElementById('scan-ne-lat').value = ne.lat.toFixed(6);
+    document.getElementById('scan-ne-lng').value = ne.lng.toFixed(6);
+    
+    applyScanCSS();
+    showToast(direction === 'reset' ? 'Đã reset căn khớp Scan.' : 'Đã dịch chuyển ảnh quy hoạch.', 'info');
+}
+
+function copyScanCoordinates() {
+    const sw = scanSWMarker ? scanSWMarker.getLatLng() : L.latLng(currentScanBounds[0]);
+    const ne = scanNEMarker ? scanNEMarker.getLatLng() : L.latLng(currentScanBounds[1]);
+    
+    const output = `// Bounding Box cấu hình bản đồ gốc Scan:
+const scanBounds = [[${sw.lat.toFixed(6)}, ${sw.lng.toFixed(6)}], [${ne.lat.toFixed(6)}, ${ne.lng.toFixed(6)}]];
+
+// Thuộc tính xoay và nghiêng CSS cho lớp ảnh quét:
+const scanCSS = {
+    opacity: ${scanOpacity},
+    rotate: "${scanRotation}deg",
+    skewX: "${scanSkewX}deg",
+    skewY: "${scanSkewY}deg",
+    transform: "rotate(${scanRotation}deg) skew(${scanSkewX}deg, ${scanSkewY}deg)"
+};`;
+
+    navigator.clipboard.writeText(output)
+        .then(() => showToast('Đã sao chép cấu hình ảnh Scan vào Clipboard!', 'success'))
+        .catch(() => showToast('Không thể sao chép, hãy copy bằng tay trong form.', 'error'));
+}
 </script>
 </body>
 </html>
