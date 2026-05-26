@@ -2448,6 +2448,28 @@ window.toggleMobileMenu = function() {
     }
 };
 
+// ==================== TOGGLE MAP CONTROL TOOLBAR ====================
+window.toggleToolbar = function() {
+    const toolbar = document.getElementById("map-control-toolbar");
+    const icon = document.getElementById("collapse-icon");
+    if (toolbar) {
+        const isCollapsed = toolbar.classList.toggle("collapsed");
+        if (icon) {
+            if (isCollapsed) {
+                icon.className = "fa-solid fa-gear";
+                toolbar.setAttribute("title", "Cấu hình Bản đồ");
+                const btn = document.getElementById("toolbar-collapse-btn");
+                if (btn) btn.setAttribute("title", "Mở rộng thanh công cụ");
+            } else {
+                icon.className = "fa-solid fa-chevron-left";
+                toolbar.removeAttribute("title");
+                const btn = document.getElementById("toolbar-collapse-btn");
+                if (btn) btn.setAttribute("title", "Thu gọn thanh công cụ");
+            }
+        }
+    }
+};
+
 document.addEventListener("click", (e) => {
     const dropdown = document.getElementById("mobile-dropdown");
     const toggleBtn = document.getElementById("menu-toggle");

@@ -798,7 +798,8 @@
         }
 
         /* Map Overlay Control styling for District Boundary Selector */
-        .map-overlay-control {
+        /* Map Control Toolbar - Gộp và sắp xếp lại các widget gọn gàng */
+        .map-control-toolbar {
             position: absolute;
             top: 20px;
             left: 20px;
@@ -806,117 +807,240 @@
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 14px;
             border: 1px solid rgba(226, 232, 240, 0.8);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: calc(100vw - 40px);
         }
 
-        .map-overlay-control:hover {
+        .map-control-toolbar:hover {
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            transform: translateY(-1px);
         }
 
-        .map-overlay-control .control-label {
-            font-size: 0.72rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .map-control-toolbar.collapsed {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            overflow: hidden;
+            border-radius: 50%;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .map-control-toolbar.collapsed .toolbar-content {
+            display: none;
+        }
+
+        .map-control-toolbar.collapsed .toolbar-collapse-btn {
+            margin: 0;
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .toolbar-collapse-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
-        .map-overlay-control select {
+        .toolbar-collapse-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--primary);
+        }
+
+        .toolbar-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: opacity 0.2s ease;
+            width: 100%;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .toolbar-group .group-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        /* Tinh chỉnh các control bên trong */
+        .toolbar-group select {
             border: 1px solid #e2e8f0;
-            padding: 6px 30px 6px 12px;
+            padding: 5px 24px 5px 10px;
             border-radius: 8px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #1e293b;
-            background: #ffffff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 8px center/16px;
+            background: #ffffff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 6px center/14px;
             outline: none;
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             transition: all 0.2s ease;
-            min-width: 160px;
+            min-width: 130px;
         }
 
-        .map-overlay-control select:hover {
+        .toolbar-group select:hover {
             border-color: var(--primary);
         }
 
-        .map-overlay-control select:focus {
+        .toolbar-group select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
-        .map-overlay-control button {
+        .toolbar-group select:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background-color: #f8fafc;
+        }
+
+        .toolbar-group button {
             background: #ef4444;
             color: #ffffff;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 8px;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 4px;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
         }
 
-        .map-overlay-control button:hover {
+        .toolbar-group button:hover {
             background: #dc2626;
-            box-shadow: 0 4px 12px -1px rgba(239, 68, 68, 0.4);
             transform: scale(1.02);
         }
 
-        /* Raster scan image overlay switch styles */
-        .raster-control {
-            top: 75px !important;
-            min-width: 320px;
+        .toolbar-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #7c3aed;
+            text-decoration: none;
+            padding: 5px 8px;
+            border-radius: 8px;
+            background: rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        /* Project layer control widget */
-        .project-layer-control {
-            top: 140px !important;
+        .toolbar-action-btn:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        /* Opacity slider wrapper inside toolbar */
+        .opacity-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 4px;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-5px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .opacity-slider {
+            -webkit-appearance: none;
+            width: 70px;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .opacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .opacity-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .opacity-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.15);
+            color: #2563eb;
+            padding: 2px 6px;
+            border-radius: 6px;
+            min-width: 32px;
+            text-align: center;
         }
 
         /* Layer status badge */
         .layer-badge {
             display: inline-flex;
             align-items: center;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 20px;
-            font-size: 0.62rem;
+            font-size: 0.58rem;
             font-weight: 800;
             letter-spacing: 0.04em;
             background: rgba(37,99,235,0.15);
             color: #2563eb;
             transition: all 0.3s ease;
-            margin-left: 4px;
-        }
-
-        /* Disabled select style */
-        .map-overlay-control select:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            background-color: #f8fafc;
+            margin-left: 2px;
         }
 
         /* Layer divider between toggle and select */
         .layer-divider {
             width: 1px;
-            height: 20px;
+            height: 16px;
             background: #e2e8f0;
             margin: 0 2px;
         }
@@ -1486,6 +1610,61 @@
                 flex: 1;
             }
 
+            /* Map control toolbar on mobile */
+            .map-control-toolbar {
+                top: 10px !important;
+                left: 10px !important;
+                padding: 6px 10px !important;
+                gap: 8px !important;
+                max-width: calc(100vw - 20px) !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                border-radius: 12px !important;
+            }
+
+            .map-control-toolbar.collapsed {
+                width: 36px !important;
+                height: 36px !important;
+                border-radius: 50% !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .toolbar-content {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+
+            .toolbar-group {
+                width: 100% !important;
+                justify-content: space-between !important;
+                gap: 6px !important;
+            }
+
+            .toolbar-group .group-label {
+                font-size: 0.68rem !important;
+            }
+
+            .toolbar-group select {
+                min-width: 100px !important;
+                max-width: 130px !important;
+                padding: 4px 18px 4px 6px !important;
+                font-size: 0.7rem !important;
+            }
+
+            .toolbar-divider {
+                width: 100% !important;
+                height: 1px !important;
+                background: #e2e8f0 !important;
+                margin: 2px 0 !important;
+            }
+
+            .opacity-slider {
+                width: 60px !important;
+            }
+
             body.show-map #projectList,
             body.show-map #faqList,
             body.show-map #mapList {
@@ -1634,44 +1813,56 @@
 
         <main id="main-content">
             <div id="map"></div>
-            <!-- Bộ chọn Ranh giới Hành chính (có toggle bật/tắt) -->
-            <div class="map-overlay-control">
-                <label class="switch" title="Bật/tắt lớp ranh giới quận huyện">
-                    <input type="checkbox" id="district-layer-toggle" checked onchange="toggleDistrictLayer(this.checked)">
-                    <span class="slider-switch"></span>
-                </label>
-                <div class="layer-divider"></div>
-                <span class="control-label"><i class="fa-solid fa-map-location-dot"></i> Quận Huyện</span>
-                <span class="layer-badge" id="district-layer-badge">BẬT</span>
-                <div class="layer-divider"></div>
-                <select id="district-select">
-                    <option value="">-- Chọn Quận/Huyện --</option>
-                </select>
-                <button id="clear-boundary-btn" style="display: none;"><i class="fa-solid fa-xmark"></i> Xóa</button>
-            </div>
-            <!-- Lớp Ranh giới Dự án Quy hoạch (widget tách biệt) -->
-            <div class="map-overlay-control project-layer-control">
-                <label class="switch" title="Bật/tắt lớp ranh giới dự án quy hoạch">
-                    <input type="checkbox" id="project-layer-toggle" checked onchange="toggleProjectLayer(this.checked)">
-                    <span class="slider-switch"></span>
-                </label>
-                <div class="layer-divider"></div>
-                <span class="control-label"><i class="fa-solid fa-draw-polygon"></i> Ranh giới Dự án</span>
-                <span class="layer-badge" id="project-layer-badge">BẬT</span>
-                <div class="layer-divider"></div>
-                <a href="edit-ranh-gioi-du-an.html" target="_blank" title="Mở công cụ biên tập GIS" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:700;color:#7c3aed;text-decoration:none;padding:4px 8px;border-radius:8px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);transition:all 0.2s ease;white-space:nowrap;" onmouseover="this.style.background='rgba(124,58,237,0.15)'" onmouseout="this.style.background='rgba(124,58,237,0.08)'"><i class="fa-solid fa-pen-to-square"></i> Biên tập GIS</a>
-            </div>
-            <!-- Bộ điều khiển Lớp phủ Ảnh Scan (Raster Overlay) -->
-            <div class="map-overlay-control raster-control">
-                <span class="control-label"><i class="fa-solid fa-layer-group"></i> Bản đồ gốc (Scan):</span>
-                <label class="switch">
-                    <input type="checkbox" id="raster-toggle" onchange="toggleRasterOverlay(this.checked)">
-                    <span class="slider-switch"></span>
-                </label>
-                <div class="opacity-container" id="opacity-slider-container">
-                    <span style="font-size: 0.65rem; font-weight: 700; color: var(--text-sub);">Độ mờ:</span>
-                    <input type="range" class="opacity-slider" id="raster-opacity" min="0" max="100" value="60" oninput="updateRasterOpacity(this.value)">
-                    <span id="opacity-val" style="font-size: 0.65rem; font-weight: 800; color: var(--primary);">60%</span>
+            <!-- Thanh công cụ điều khiển bản đồ thống nhất (Unified Map Control Toolbar) -->
+            <div class="map-control-toolbar" id="map-control-toolbar">
+                <button class="toolbar-collapse-btn" id="toolbar-collapse-btn" onclick="toggleToolbar()" title="Thu gọn thanh công cụ">
+                    <i class="fa-solid fa-chevron-left" id="collapse-icon"></i>
+                </button>
+                <div class="toolbar-content">
+                    <!-- Nhóm Ranh giới Quận Huyện -->
+                    <div class="toolbar-group">
+                        <label class="switch" title="Bật/tắt lớp ranh giới quận huyện">
+                            <input type="checkbox" id="district-layer-toggle" checked onchange="toggleDistrictLayer(this.checked)">
+                            <span class="slider-switch"></span>
+                        </label>
+                        <span class="group-label"><i class="fa-solid fa-map-location-dot"></i> Quận Huyện</span>
+                        <span class="layer-badge" id="district-layer-badge">BẬT</span>
+                        <div class="layer-divider"></div>
+                        <select id="district-select">
+                            <option value="">-- Chọn Quận/Huyện --</option>
+                        </select>
+                        <button id="clear-boundary-btn" style="display: none;"><i class="fa-solid fa-xmark"></i> Xóa</button>
+                    </div>
+                    
+                    <div class="toolbar-divider"></div>
+                    
+                    <!-- Nhóm Ranh giới Dự án -->
+                    <div class="toolbar-group">
+                        <label class="switch" title="Bật/tắt lớp ranh giới dự án quy hoạch">
+                            <input type="checkbox" id="project-layer-toggle" checked onchange="toggleProjectLayer(this.checked)">
+                            <span class="slider-switch"></span>
+                        </label>
+                        <span class="group-label"><i class="fa-solid fa-draw-polygon"></i> Dự án</span>
+                        <span class="layer-badge" id="project-layer-badge">BẬT</span>
+                        <div class="layer-divider"></div>
+                        <a href="edit-ranh-gioi-du-an.html" target="_blank" title="Mở công cụ biên tập GIS" class="toolbar-action-btn"><i class="fa-solid fa-pen-to-square"></i> Biên tập GIS</a>
+                    </div>
+                    
+                    <div class="toolbar-divider"></div>
+                    
+                    <!-- Nhóm Bản đồ gốc Scan -->
+                    <div class="toolbar-group">
+                        <span class="group-label"><i class="fa-solid fa-layer-group"></i> Bản đồ gốc (Scan):</span>
+                        <label class="switch">
+                            <input type="checkbox" id="raster-toggle" onchange="toggleRasterOverlay(this.checked)">
+                            <span class="slider-switch"></span>
+                        </label>
+                        <div class="opacity-slider-wrapper" id="opacity-slider-container" style="display: none;">
+                            <span style="font-size: 0.65rem; font-weight: 700; color: var(--text-sub);">Độ mờ:</span>
+                            <input type="range" class="opacity-slider" id="raster-opacity" min="0" max="100" value="60" oninput="updateRasterOpacity(this.value)">
+                            <span id="opacity-val" class="opacity-badge">60%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="detail-panel">
