@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biên tập Ranh giới Dự án GIS | DuLieuQuyHoach.com</title>
+    <meta name="description" content="Công cụ biên tập ranh giới dự án quy hoạch GIS chuyên sâu - Vẽ, sửa đỉnh đa giác, cập nhật thuộc tính và kiểm chứng tọa độ tự động.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Leaflet-Geoman: Plugin vẽ & biên tập polygon tốt nhất cho Leaflet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #1c2230;
+            --bg-glass: rgba(28, 34, 48, 0.75);
+            --border: rgba(255,255,255,0.07);
+            --border-active: rgba(99,102,241,0.5);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-sub: #6e7681;
+            --accent: #6366f1;
+            --accent-glow: rgba(99,102,241,0.25);
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+        }
+
+        html, body { height: 100%; overflow: hidden; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ─── HEADER ─── */
+        .editor-header {
+            height: 56px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .editor-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .header-badge {
+            padding: 3px 10px;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .header-spacer { flex: 1; }
+
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            color: white;
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
+
+        .btn-success {
+            background: rgba(16,185,129,0.15);
+            color: var(--accent-emerald);
+            border: 1px solid rgba(16,185,129,0.3);
+        }
+        .btn-success:hover { background: rgba(16,185,129,0.25); }
+
+        .btn-danger {
+            background: rgba(239,68,68,0.12);
+            color: var(--accent-red);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .btn-danger:hover { background: rgba(239,68,68,0.22); }
+
+        /* ─── MAIN LAYOUT ─── */
+        .editor-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ─── MAP PANEL ─── */
+        .map-panel {
+            flex: 1;
+            position: relative;
+            min-width: 0;
+        }
+
+        #editor-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Floating map info bar */
+        .map-info-bar {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            pointer-events: none;
+        }
+
+        .map-coord { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
+
+        /* ─── CONTROL PANEL ─── */
+        .control-panel {
+            width: 380px;
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Polygon list header */
+        .poly-list-header {
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .poly-list-header h3 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .poly-count-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            background: rgba(99,102,241,0.15);
+            border-radius: 20px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .poly-list {
+            padding: 10px 12px;
+            max-height: 160px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .poly-item {
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+            font-size: 0.73rem;
+        }
+
+        .poly-item:hover { background: rgba(255,255,255,0.04); border-color: var(--border); }
+        .poly-item.active { background: rgba(99,102,241,0.12); border-color: var(--border-active); }
+
+        .poly-color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .poly-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-primary);
+        }
+
+        .poly-category {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        .poly-del-btn {
+            opacity: 0;
+            background: none;
+            border: none;
+            color: var(--accent-red);
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            transition: all 0.15s;
+        }
+
+        .poly-item:hover .poly-del-btn { opacity: 1; }
+        .poly-del-btn:hover { background: rgba(239,68,68,0.15); }
+
+        /* ─── TABS ─── */
+        .panel-tabs {
+            display: flex;
+            padding: 0 12px;
+            gap: 2px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .panel-tab {
+            padding: 10px 14px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .panel-tab:hover { color: var(--text-primary); }
+        .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .tab-content.active { display: block; }
+
+        /* ─── PROPERTIES FORM ─── */
+        .no-selection-msg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 0.78rem;
+            gap: 12px;
+        }
+
+        .no-selection-msg i { font-size: 2.5rem; color: var(--border); }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 5px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus { border-color: var(--border-active); }
+
+        .form-input.mono { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+
+        textarea.form-input { resize: vertical; min-height: 60px; }
+
+        .form-select {
+            width: 100%;
+            background: var(--bg-primary) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b949e' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 8px center/16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 30px 8px 12px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .form-select:focus { border-color: var(--border-active); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .prop-save-btn {
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .coord-preview {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--text-sub);
+            max-height: 100px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        /* ─── JSON EDITOR TAB ─── */
+        .json-toolbar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .json-textarea {
+            width: 100%;
+            height: calc(100% - 80px);
+            min-height: 300px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: #a5d6ff;
+            outline: none;
+            resize: none;
+            line-height: 1.7;
+            transition: border-color 0.2s;
+        }
+
+        .json-textarea:focus { border-color: var(--border-active); }
+
+        .json-apply-btn { width: 100%; margin-top: 8px; }
+
+        /* ─── VALIDATION TAB ─── */
+        .validation-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .validation-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .status-pass { background: rgba(16,185,129,0.15); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.3); }
+        .status-fail { background: rgba(239,68,68,0.15); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+        .status-pending { background: rgba(245,158,11,0.12); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.25); }
+
+        .test-case {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .test-case.pass { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.04); }
+        .test-case.fail { border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.06); }
+
+        .test-case-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .test-icon { font-size: 0.9rem; }
+        .test-label { font-size: 0.75rem; font-weight: 700; color: var(--text-primary); flex: 1; }
+
+        .test-expected {
+            font-size: 0.62rem;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 12px;
+        }
+
+        .test-expected.inside { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+        .test-expected.safe { background: rgba(16,185,129,0.15); color: var(--accent-emerald); }
+
+        .test-detail {
+            font-size: 0.67rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+            padding-left: 24px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .run-all-btn { width: 100%; margin-bottom: 14px; }
+
+        /* ─── GUIDE BOX ─── */
+        .guide-box {
+            background: rgba(99,102,241,0.06);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-top: 12px;
+        }
+        .guide-box strong { color: var(--accent); }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+        /* ─── TOAST ─── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            z-index: 9999;
+            animation: slideUp 0.3s ease forwards;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(12px);
+        }
+        .toast-success { background: rgba(16,185,129,0.9); color: white; }
+        .toast-error   { background: rgba(239,68,68,0.9); color: white; }
+        .toast-info    { background: rgba(99,102,241,0.9); color: white; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── GEOMAN TOOLBAR DARK OVERRIDE ─── */
+        .leaflet-pm-toolbar .leaflet-pm-icon { filter: invert(0.8); }
+        .leaflet-pm-toolbar a { background-color: #1c2230 !important; border-color: rgba(255,255,255,0.1) !important; }
+        .leaflet-pm-toolbar a:hover { background-color: #2d3748 !important; }
+        .leaflet-pm-toolbar a.active { background-color: rgba(99,102,241,0.3) !important; }
+    </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="editor-header">
+    <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-draw-polygon"></i></div>
+        <span>GIS Editor</span>
+    </a>
+    <span class="header-badge">CÔNG CỤ NỘI BỘ</span>
+
+    <div class="header-spacer"></div>
+
+    <button class="header-btn btn-ghost" onclick="addNewPolygon()" title="Vẽ đa giác mới trên bản đồ">
+        <i class="fa-solid fa-plus"></i> Vẽ mới
+    </button>
+    <button class="header-btn btn-success" onclick="downloadGeoJSON()" title="Tải xuống file map.geojson">
+        <i class="fa-solid fa-download"></i> Tải xuống .geojson
+    </button>
+    <button class="header-btn btn-primary" onclick="copyGeoJSON()" title="Sao chép chuỗi JSON">
+        <i class="fa-solid fa-copy"></i> Sao chép JSON
+    </button>
+</header>
+
+<!-- ─── BODY ─── -->
+<div class="editor-body">
+
+    <!-- MAP PANEL -->
+    <div class="map-panel">
+        <div id="editor-map"></div>
+        <div class="map-info-bar">
+            <span><i class="fa-solid fa-mouse-pointer" style="color:var(--accent-purple);"></i> Con trỏ:</span>
+            <span class="map-coord" id="cursor-coords">—, —</span>
+            <span>|</span>
+            <span><i class="fa-solid fa-draw-polygon" style="color:var(--accent-blue);"></i> Polygon:</span>
+            <span id="poly-cursor-count" style="color:var(--accent-blue);font-family:'JetBrains Mono',monospace;">0</span>
+            <span>|</span>
+            <i class="fa-solid fa-circle-info" style="color:var(--text-sub)"></i>
+            <span style="color:var(--text-sub)">Click polygon để chọn & biên tập thuộc tính</span>
+        </div>
+    </div>
+
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+
+        <!-- Polygon List -->
+        <div class="poly-list-header">
+            <i class="fa-solid fa-layer-group" style="color:var(--accent);font-size:0.85rem;"></i>
+            <h3>Danh sách Đa giác</h3>
+            <span class="poly-count-badge" id="poly-count-badge">0 polygon</span>
+        </div>
+        <div class="poly-list" id="poly-list"></div>
+
+        <!-- Tabs -->
+        <div class="panel-tabs">
+            <button class="panel-tab active" onclick="switchPanelTab('props', this)" id="tab-props">
+                <i class="fa-solid fa-sliders"></i> Thuộc tính
+            </button>
+            <button class="panel-tab" onclick="switchPanelTab('json', this)" id="tab-json">
+                <i class="fa-solid fa-code"></i> JSON
+            </button>
+            <button class="panel-tab" onclick="switchPanelTab('validate', this)" id="tab-validate">
+                <i class="fa-solid fa-shield-halved"></i> Kiểm chứng
+            </button>
+        </div>
+
+        <!-- Tab: Properties -->
+        <div class="tab-content active" id="tab-content-props">
+            <div class="no-selection-msg" id="no-selection-msg">
+                <i class="fa-regular fa-hand-pointer"></i>
+                <p>Click vào một đa giác trên bản đồ<br>để chỉnh sửa thuộc tính của nó.</p>
+            </div>
+            <div id="props-form" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-id-badge"></i> ID (không thể sửa)</label>
+                    <input type="text" class="form-input mono" id="prop-id" readonly style="opacity:0.5;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-heading"></i> Tên khu vực (tenKhu)</label>
+                    <input type="text" class="form-input" id="prop-tenKhu" placeholder="VD: Phân khu Sông Hồng R1-R2">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-tag"></i> Loại (loai)</label>
+                        <input type="text" class="form-input" id="prop-loai" placeholder="VD: Quy hoạch Sông Hồng">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-palette"></i> Category</label>
+                        <select class="form-select" id="prop-category">
+                            <option value="songhong">songhong</option>
+                            <option value="vandai4">vandai4</option>
+                            <option value="taidinhcu">taidinhcu</option>
+                            <option value="giapranh">giapranh</option>
+                            <option value="default">default</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-ruler-combined"></i> Diện tích (dienTich)</label>
+                        <input type="text" class="form-input" id="prop-dienTich" placeholder="VD: 12,000 ha">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-calendar"></i> Ngày cập nhật</label>
+                        <input type="date" class="form-input" id="prop-ngayCapNhat">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-align-left"></i> Mô tả (description)</label>
+                    <textarea class="form-input" id="prop-description" rows="3" placeholder="Mô tả ngắn về khu quy hoạch..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-building-columns"></i> Nguồn (nguon)</label>
+                    <input type="text" class="form-input" id="prop-nguon" placeholder="VD: UBND Thành phố Hà Nội">
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-location-dot"></i> Tọa độ đỉnh hiện tại</label>
+                    <div class="coord-preview" id="coord-preview">—</div>
+                </div>
+                <button class="header-btn btn-primary prop-save-btn" onclick="saveProperties()">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu thuộc tính
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab: JSON Editor -->
+        <div class="tab-content" id="tab-content-json">
+            <div class="json-toolbar">
+                <button class="header-btn btn-ghost" style="flex:1;" onclick="copyGeoJSON()">
+                    <i class="fa-solid fa-copy"></i> Copy
+                </button>
+                <button class="header-btn btn-success" style="flex:1;" onclick="downloadGeoJSON()">
+                    <i class="fa-solid fa-download"></i> Tải xuống
+                </button>
+                <button class="header-btn btn-danger" style="flex:1;" onclick="resetToDefault()">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+            </div>
+            <textarea class="json-textarea" id="json-editor" spellcheck="false"></textarea>
+            <button class="header-btn btn-primary json-apply-btn" onclick="applyJSON()">
+                <i class="fa-solid fa-play"></i> Áp dụng JSON lên bản đồ
+            </button>
+            <div class="guide-box" style="margin-top:10px;">
+                <strong>📁 Đồng bộ lên dự án:</strong><br>
+                1. Nhấn <strong>Tải xuống</strong> → lưu đè file <code>data/map.geojson</code>.<br>
+                2. Sao chép nội dung JSON → gán vào biến <code>const mapGeojsonData = {...}</code> trong file <code>data/map.geojson.js</code>.<br>
+                3. Commit & push lên GitHub.
+            </div>
+        </div>
+
+        <!-- Tab: Live Validation -->
+        <div class="tab-content" id="tab-content-validate">
+            <div class="validation-header">
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">
+                    <i class="fa-solid fa-shield-halved" style="color:var(--accent);"></i> Kiểm chứng GIS tự động
+                </span>
+                <span class="validation-status status-pending" id="overall-status">— CHƯA CHẠY —</span>
+            </div>
+            <button class="header-btn btn-primary run-all-btn" onclick="runAllTests()">
+                <i class="fa-solid fa-bolt"></i> Chạy kiểm chứng ngay
+            </button>
+            <div id="test-cases-container"></div>
+            <div class="guide-box">
+                <strong>🛰️ 6 điểm kiểm chứng bất biến:</strong><br>
+                Bộ test cases này đối soát xem các điểm tọa độ cố định (Cầu Long Biên, Phố Huế, Mê Linh...) có nằm đúng vị trí trong các polygon quy hoạch tương ứng không.<br>
+                <strong>Cảnh báo đỏ</strong> = Ranh giới đang vẽ sai, cần điều chỉnh!
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+<script src="../data/map.geojson.js"></script>
+
+<script>
+// ================================================================
+//  GIS EDITOR — Core Logic
+// ================================================================
+
+// ─── GeoJSON State ───
+let geojsonState = null;      // Working copy of the full GeoJSON FeatureCollection
+let geojsonLayers = [];       // Array of {layer, feature, id} objects
+let selectedLayerInfo = null; // Currently selected layer
+let geoJSONLayer = null;      // Leaflet LayerGroup on map
+
+// ─── Test Cases (mirrors gis_test_cases.json) ───
+const TEST_CASES = [
+    { label: "118 Phố Huế (PHẢI an toàn)", lat: 21.0120, lng: 105.8500, expected: "SAFE",   reason: "Điểm nội đô, cách đê Hữu Hồng >500m" },
+    { label: "Nút giao VĐ4 An Khánh (PHẢI trong quy hoạch)", lat: 21.0100, lng: 105.6800, expected: "INSIDE", polygon_id: "vd4_sec1" },
+    { label: "Cầu Long Biên (PHẢI trong Sông Hồng)", lat: 21.0433, lng: 105.8589, expected: "INSIDE", polygon_id: "sh_r1" },
+    { label: "Trung tâm Đống Đa (PHẢI an toàn)", lat: 21.0245, lng: 105.8412, expected: "SAFE", reason: "Sâu trong nội đô" },
+    { label: "Khu TĐC Mê Linh (PHẢI trong quy hoạch)", lat: 21.1870, lng: 105.7220, expected: "INSIDE", polygon_id: "taidinhcu_ml" },
+    { label: "Khu TĐC Lĩnh Nam (PHẢI trong quy hoạch)", lat: 20.9730, lng: 105.8840, expected: "INSIDE", polygon_id: "taidinhcu_ln" }
+];
+
+// ─── Category color map ───
+const CAT_COLORS = {
+    songhong:  '#0044cc',
+    vandai4:   '#ff0000',
+    taidinhcu: '#00cc66',
+    giapranh:  '#ff8800',
+    default:   '#ef4444'
+};
+
+// ─── Map Setup ───
+const editorMap = L.map('editor-map', {
+    zoomControl: true,
+    attributionControl: false
+}).setView([21.0285, 105.8542], 12);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 20
+}).addTo(editorMap);
+
+L.control.scale({ metric: true, imperial: false }).addTo(editorMap);
+
+// Track mouse coords
+editorMap.on('mousemove', (e) => {
+    const el = document.getElementById('cursor-coords');
+    if (el) el.textContent = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+});
+
+// ─── Leaflet-Geoman setup ───
+editorMap.pm.addControls({
+    position: 'topleft',
+    drawCircle: false,
+    drawCircleMarker: false,
+    drawMarker: false,
+    drawPolyline: false,
+    drawRectangle: true,
+    drawPolygon: true,
+    editMode: true,
+    dragMode: true,
+    cutPolygon: false,
+    removalMode: false,
+});
+editorMap.pm.setGlobalOptions({ allowSelfIntersection: false });
+
+// When a new layer is created via Geoman toolbar
+editorMap.on('pm:create', (e) => {
+    const layer = e.layer;
+    const newId = 'new_polygon_' + Date.now();
+    const newFeature = {
+        type: 'Feature',
+        properties: {
+            id: newId,
+            tenKhu: 'Đa giác mới',
+            loai: 'Chưa phân loại',
+            category: 'default',
+            dienTich: '— ha',
+            description: '',
+            nguon: 'Biên tập thủ công',
+            ngayCapNhat: new Date().toISOString().split('T')[0]
+        },
+        geometry: layer.toGeoJSON().geometry
+    };
+    geojsonState.features.push(newFeature);
+
+    // Remove the raw layer and re-render styled
+    editorMap.removeLayer(layer);
+    renderMap();
+    syncJSONEditor();
+    showToast('Đã thêm đa giác mới! Chọn nó để điền thuộc tính.', 'info');
+});
+
+// When a layer is edited via Geoman
+editorMap.on('pm:edit', syncFromEdits);
+editorMap.on('pm:drag', syncFromEdits);
+
+function syncFromEdits() {
+    // Collect updated coords from all layers back into geojsonState
+    if (!geoJSONLayer) return;
+    geoJSONLayer.eachLayer(layer => {
+        const info = geojsonLayers.find(x => x.layer === layer);
+        if (info) {
+            info.feature.geometry = layer.toGeoJSON().geometry;
+        }
+    });
+    syncJSONEditor();
+}
+
+// ─── Load initial data ───
+function loadInitialData() {
+    let data = null;
+    if (typeof mapGeojsonData !== 'undefined') {
+        data = JSON.parse(JSON.stringify(mapGeojsonData)); // deep clone
+    } else {
+        // Fallback: fetch from file
+        fetch('../data/map.geojson')
+            .then(r => r.json())
+            .then(d => { geojsonState = d; renderMap(); syncJSONEditor(); })
+            .catch(() => {
+                geojsonState = { type: 'FeatureCollection', features: [] };
+                renderMap();
+                syncJSONEditor();
+                showToast('Không tải được map.geojson, bắt đầu với bản đồ trống.', 'error');
+            });
+        return;
+    }
+    geojsonState = data;
+    renderMap();
+    syncJSONEditor();
+}
+
+// ─── Render geojsonState onto the map ───
+function renderMap() {
+    if (geoJSONLayer) {
+        editorMap.removeLayer(geoJSONLayer);
+    }
+    geojsonLayers = [];
+
+    geoJSONLayer = L.featureGroup();
+
+    (geojsonState?.features || []).forEach(feature => {
+        if (!feature.geometry) return;
+        const cat = feature.properties?.category || 'default';
+        const color = CAT_COLORS[cat] || '#ef4444';
+
+        const layer = L.geoJSON(feature, {
+            style: {
+                color: color,
+                weight: 2.5,
+                fillColor: color,
+                fillOpacity: 0.12,
+                dashArray: cat === 'songhong' ? '6,5' : null
+            }
+        });
+
+        // Enable Geoman editing on each layer
+        layer.eachLayer(l => {
+            l.pm.enable({ allowSelfIntersection: false });
+            l.pm.disable(); // start disabled, user manually enables via toolbar
+
+            l.on('click', () => selectFeature(feature, l));
+            l.on('mouseover', () => { l.setStyle({ fillOpacity: 0.28, weight: 3.5 }); });
+            l.on('mouseout', () => { if (selectedLayerInfo?.layer !== l) l.setStyle({ fillOpacity: 0.12, weight: 2.5 }); });
+        });
+
+        geojsonLayers.push({ layer, feature, id: feature.properties?.id });
+        layer.addTo(geoJSONLayer);
+    });
+
+    geoJSONLayer.addTo(editorMap);
+    renderPolyList();
+    updatePolyCount();
+
+    // Keep coord preview updated on edit
+    editorMap.on('pm:edit pm:drag', () => {
+        syncFromEdits();
+        if (selectedLayerInfo) updateCoordPreview(selectedLayerInfo.feature);
+    });
+}
+
+function selectFeature(feature, layer) {
+    // Deselect previous
+    if (selectedLayerInfo) {
+        selectedLayerInfo.layer.setStyle({ fillOpacity: 0.12, weight: 2.5 });
+    }
+    layer.setStyle({ fillOpacity: 0.3, weight: 4, color: '#a78bfa' });
+    selectedLayerInfo = { feature, layer };
+
+    fillPropertiesForm(feature);
+    highlightPolyListItem(feature.properties?.id);
+
+    // Switch to props tab
+    switchPanelTab('props', document.getElementById('tab-props'));
+}
+
+function selectFeatureById(id) {
+    const info = geojsonLayers.find(x => x.id === id);
+    if (!info) return;
+    info.layer.eachLayer(l => selectFeature(info.feature, l));
+    const bounds = info.layer.getBounds();
+    if (bounds.isValid()) editorMap.fitBounds(bounds, { padding: [40, 40] });
+}
+
+// ─── Properties Form ───
+function fillPropertiesForm(feature) {
+    const p = feature.properties || {};
+    document.getElementById('no-selection-msg').style.display = 'none';
+    document.getElementById('props-form').style.display = 'block';
+
+    document.getElementById('prop-id').value           = p.id || '';
+    document.getElementById('prop-tenKhu').value       = p.tenKhu || '';
+    document.getElementById('prop-loai').value         = p.loai || '';
+    document.getElementById('prop-category').value     = p.category || 'default';
+    document.getElementById('prop-dienTich').value     = p.dienTich || '';
+    document.getElementById('prop-ngayCapNhat').value  = p.ngayCapNhat || '';
+    document.getElementById('prop-description').value  = p.description || '';
+    document.getElementById('prop-nguon').value        = p.nguon || '';
+
+    updateCoordPreview(feature);
+}
+
+function updateCoordPreview(feature) {
+    const coords = feature.geometry?.coordinates?.[0] || [];
+    const el = document.getElementById('coord-preview');
+    if (!el) return;
+    if (coords.length === 0) { el.textContent = '—'; return; }
+    el.textContent = coords.map((c, i) => `[${i}] ${c[1].toFixed(5)}, ${c[0].toFixed(5)}`).join('\n');
+}
+
+function saveProperties() {
+    if (!selectedLayerInfo) return showToast('Chưa chọn đa giác nào!', 'error');
+    const p = selectedLayerInfo.feature.properties;
+
+    p.tenKhu        = document.getElementById('prop-tenKhu').value;
+    p.loai          = document.getElementById('prop-loai').value;
+    p.category      = document.getElementById('prop-category').value;
+    p.dienTich      = document.getElementById('prop-dienTich').value;
+    p.ngayCapNhat   = document.getElementById('prop-ngayCapNhat').value;
+    p.description   = document.getElementById('prop-description').value;
+    p.nguon         = document.getElementById('prop-nguon').value;
+
+    // Update geojsonState reference
+    const stateFeature = geojsonState.features.find(f => f.properties.id === p.id);
+    if (stateFeature) Object.assign(stateFeature.properties, p);
+
+    renderMap();
+    syncJSONEditor();
+    showToast('Đã lưu thuộc tính thành công!', 'success');
+}
+
+// ─── Polygon List ───
+function renderPolyList() {
+    const container = document.getElementById('poly-list');
+    container.innerHTML = '';
+
+    (geojsonState?.features || []).forEach((feature, idx) => {
+        const p = feature.properties || {};
+        const cat = p.category || 'default';
+        const color = CAT_COLORS[cat] || '#94a3b8';
+
+        const item = document.createElement('div');
+        item.className = 'poly-item';
+        item.id = 'poly-item-' + p.id;
+        item.innerHTML = `
+            <span class="poly-color-dot" style="background:${color};box-shadow:0 0 6px ${color}60;"></span>
+            <span class="poly-name">${p.tenKhu || 'Đa giác #' + (idx+1)}</span>
+            <span class="poly-category">${cat}</span>
+            <button class="poly-del-btn" onclick="deleteFeature('${p.id}',event)" title="Xóa đa giác này"><i class="fa-solid fa-trash"></i></button>
+        `;
+        item.addEventListener('click', () => selectFeatureById(p.id));
+        container.appendChild(item);
+    });
+}
+
+function highlightPolyListItem(id) {
+    document.querySelectorAll('.poly-item').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('poly-item-' + id);
+    if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+}
+
+function updatePolyCount() {
+    const count = geojsonState?.features?.length || 0;
+    const badge = document.getElementById('poly-count-badge');
+    if (badge) badge.textContent = count + ' polygon';
+    const bar = document.getElementById('poly-cursor-count');
+    if (bar) bar.textContent = count;
+}
+
+function deleteFeature(id, event) {
+    event.stopPropagation();
+    if (!confirm(`Xóa đa giác "${id}"? Không thể hoàn tác!`)) return;
+    geojsonState.features = geojsonState.features.filter(f => f.properties?.id !== id);
+    if (selectedLayerInfo?.feature?.properties?.id === id) {
+        selectedLayerInfo = null;
+        document.getElementById('no-selection-msg').style.display = 'flex';
+        document.getElementById('props-form').style.display = 'none';
+    }
+    renderMap();
+    syncJSONEditor();
+    showToast('Đã xóa đa giác.', 'info');
+}
+
+// ─── Panel Tabs ───
+function switchPanelTab(id, btn) {
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-content-' + id).classList.add('active');
+}
+
+// ─── JSON Editor ───
+function syncJSONEditor() {
+    const el = document.getElementById('json-editor');
+    if (el) el.value = JSON.stringify(geojsonState, null, 2);
+}
+
+function applyJSON() {
+    const el = document.getElementById('json-editor');
+    try {
+        const parsed = JSON.parse(el.value);
+        if (parsed.type !== 'FeatureCollection') throw new Error('Không phải FeatureCollection hợp lệ');
+        geojsonState = parsed;
+        selectedLayerInfo = null;
+        document.getElementById('no-selection-msg').style.display = 'flex';
+        document.getElementById('props-form').style.display = 'none';
+        renderMap();
+        showToast('Áp dụng JSON thành công!', 'success');
+    } catch (e) {
+        showToast('JSON không hợp lệ: ' + e.message, 'error');
+    }
+}
+
+function copyGeoJSON() {
+    const text = JSON.stringify(geojsonState, null, 2);
+    navigator.clipboard.writeText(text)
+        .then(() => showToast('Đã sao chép GeoJSON!', 'success'))
+        .catch(() => showToast('Không thể sao chép. Hãy chọn văn bản trong tab JSON.', 'error'));
+}
+
+function downloadGeoJSON() {
+    const text = JSON.stringify(geojsonState, null, 2);
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'map.geojson';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Đã tải xuống map.geojson!', 'success');
+}
+
+function resetToDefault() {
+    if (!confirm('Khôi phục về dữ liệu gốc từ mapGeojsonData? Mọi thay đổi sẽ mất!')) return;
+    if (typeof mapGeojsonData !== 'undefined') {
+        geojsonState = JSON.parse(JSON.stringify(mapGeojsonData));
+        selectedLayerInfo = null;
+        document.getElementById('no-selection-msg').style.display = 'flex';
+        document.getElementById('props-form').style.display = 'none';
+        renderMap();
+        syncJSONEditor();
+        showToast('Đã khôi phục dữ liệu gốc.', 'info');
+    } else {
+        showToast('Không có dữ liệu gốc (mapGeojsonData không được định nghĩa).', 'error');
+    }
+}
+
+function addNewPolygon() {
+    editorMap.pm.enableDraw('Polygon');
+    showToast('Chế độ vẽ đa giác đã bật. Hãy click trên bản đồ để tạo đỉnh, double-click để hoàn tất.', 'info');
+}
+
+// ─── GIS Validation (Ray-Casting thuần JS) ───
+function pointInPolygon(lng, lat, coords) {
+    let inside = false;
+    const n = coords.length;
+    let p1 = coords[0];
+    for (let i = 1; i <= n; i++) {
+        const p2 = coords[i % n];
+        if (lat > Math.min(p1[1], p2[1])) {
+            if (lat <= Math.max(p1[1], p2[1])) {
+                if (lng <= Math.max(p1[0], p2[0])) {
+                    if (p1[1] !== p2[1]) {
+                        const xinters = (lat - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1]) + p1[0];
+                        if (p1[0] === p2[0] || lng <= xinters) inside = !inside;
+                    }
+                }
+            }
+        }
+        p1 = p2;
+    }
+    return inside;
+}
+
+function getPolygonsMap() {
+    const map = {};
+    (geojsonState?.features || []).forEach(f => {
+        const id = f.properties?.id;
+        if (id && f.geometry?.type === 'Polygon') {
+            map[id] = f.geometry.coordinates[0];
+        }
+    });
+    return map;
+}
+
+function runAllTests() {
+    const polygons = getPolygonsMap();
+    const container = document.getElementById('test-cases-container');
+    container.innerHTML = '';
+    let passCount = 0;
+
+    TEST_CASES.forEach(tc => {
+        const matchedPols = Object.entries(polygons)
+            .filter(([pid, coords]) => pointInPolygon(tc.lng, tc.lat, coords))
+            .map(([pid]) => pid);
+
+        let status = 'fail';
+        let icon = '❌';
+        let detail = '';
+
+        if (tc.expected === 'SAFE') {
+            if (matchedPols.length === 0) {
+                status = 'pass'; icon = '✅';
+                detail = 'An toàn — Nằm ngoài tất cả khu quy hoạch.';
+            } else {
+                detail = `LỖI: Điểm đang nằm trong → ${matchedPols.join(', ')}`;
+            }
+        } else if (tc.expected === 'INSIDE') {
+            if (tc.polygon_id && matchedPols.includes(tc.polygon_id)) {
+                status = 'pass'; icon = '✅';
+                detail = `Khớp chính xác: nằm trong "${tc.polygon_id}".`;
+            } else {
+                detail = matchedPols.length > 0
+                    ? `LỖI: Nằm sai polygon. Mong muốn "${tc.polygon_id}", thực tế: ${matchedPols.join(', ')}`
+                    : `LỖI: Không nằm trong polygon mong muốn "${tc.polygon_id}".`;
+            }
+        }
+
+        if (status === 'pass') passCount++;
+
+        const expClass = tc.expected === 'INSIDE' ? 'inside' : 'safe';
+        const div = document.createElement('div');
+        div.className = 'test-case ' + status;
+        div.innerHTML = `
+            <div class="test-case-header">
+                <span class="test-icon">${icon}</span>
+                <span class="test-label">${tc.label}</span>
+                <span class="test-expected ${expClass}">${tc.expected}</span>
+            </div>
+            <div class="test-detail">${detail}</div>
+        `;
+        container.appendChild(div);
+    });
+
+    const overall = document.getElementById('overall-status');
+    const allPass = passCount === TEST_CASES.length;
+    overall.textContent = allPass ? `✅ ${passCount}/${TEST_CASES.length} PASS` : `❌ ${passCount}/${TEST_CASES.length} PASS`;
+    overall.className = 'validation-status ' + (allPass ? 'status-pass' : 'status-fail');
+
+    showToast(
+        allPass ? `Kiểm chứng thành công: ${passCount}/${TEST_CASES.length} test cases đạt!` : `Có ${TEST_CASES.length - passCount} test case THẤT BẠI. Hãy điều chỉnh ranh giới!`,
+        allPass ? 'success' : 'error'
+    );
+}
+
+// ─── Toast ───
+let toastTimeout = null;
+function showToast(msg, type = 'info') {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    clearTimeout(toastTimeout);
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    const icons = { success: 'fa-check-circle', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+    toast.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-circle-info'}"></i> ${msg}`;
+    document.body.appendChild(toast);
+    toastTimeout = setTimeout(() => toast.remove(), 3500);
+}
+
+// ─── Initialize Test Cases UI (render as pending) ───
+function renderTestCasesUI() {
+    const container = document.getElementById('test-cases-container');
+    container.innerHTML = '';
+    TEST_CASES.forEach(tc => {
+        const expClass = tc.expected === 'INSIDE' ? 'inside' : 'safe';
+        const div = document.createElement('div');
+        div.className = 'test-case';
+        div.style.borderColor = 'rgba(245,158,11,0.25)';
+        div.innerHTML = `
+            <div class="test-case-header">
+                <span class="test-icon">⏳</span>
+                <span class="test-label">${tc.label}</span>
+                <span class="test-expected ${expClass}">${tc.expected}</span>
+            </div>
+            <div class="test-detail" style="color:var(--accent-amber);">Chưa chạy kiểm chứng — nhấn nút bên trên.</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// ─── Boot ───
+loadInitialData();
+renderTestCasesUI();
+</script>
+</body>
+</html>

@@ -20,6 +20,8 @@ let fuse = null;
 let landPriceFuse = null;
 let planningPolygons = [];
 let currentChartInstance = null;
+let planningGISLayer = null;    // Lớp Ranh giới Dự án Quy hoạch (tách biệt)
+let districtLayerEnabled = true; // Trạng thái Lớp Ranh giới Quận Huyện
 
 // Raster overlay variables
 const rasterOverlayBounds = [[20.88, 105.71], [21.19, 105.96]];
@@ -1781,7 +1783,13 @@ function loadPlanningGIS() {
     const drawGeojson = (geojsonData) => {
         planningPolygons = geojsonData.features || [];
 
-        L.geoJSON(geojsonData, {
+        // Xóa layer cũ nếu đang tồn tại
+        if (planningGISLayer) {
+            map.removeLayer(planningGISLayer);
+            planningGISLayer = null;
+        }
+
+        planningGISLayer = L.geoJSON(geojsonData, {
             style: function(feature) {
                 const cat = feature.properties ? feature.properties.category : '';
                 switch (cat) {
@@ -1856,7 +1864,7 @@ function loadPlanningGIS() {
                 `, { closeButton: true });
             }
         }).addTo(map);
-        console.log("Đã tải ranh giới GIS quy hoạch.");
+        console.log("Đã tải ranh giới GIS quy hoạch (planningGISLayer).");
     };
 
     if (typeof mapGeojsonData !== 'undefined') {
@@ -2197,6 +2205,57 @@ async function initDistrictSelector() {
         });
     }
 }
+
+// ==================== TOGGLE LAYER FUNCTIONS ====================
+
+/**
+ * Bật/tắt Lớp Ranh giới Dự án Quy hoạch (planningGISLayer)
+ */
+window.toggleProjectLayer = function(checked) {
+    if (!planningGISLayer) return;
+    if (checked) {
+        if (!map.hasLayer(planningGISLayer)) map.addLayer(planningGISLayer);
+    } else {
+        if (map.hasLayer(planningGISLayer)) map.removeLayer(planningGISLayer);
+    }
+    const badge = document.getElementById('project-layer-badge');
+    if (badge) {
+        badge.textContent = checked ? 'BẬT' : 'TẮT';
+        badge.style.background = checked ? 'rgba(37,99,235,0.15)' : 'rgba(148,163,184,0.15)';
+        badge.style.color = checked ? '#2563eb' : '#94a3b8';
+    }
+};
+
+/**
+ * Bật/tắt Lớp Ranh giới Quận Huyện (heatmap tổng quan + ranh giới đơn lẻ)
+ */
+window.toggleDistrictLayer = function(checked) {
+    districtLayerEnabled = checked;
+    const selectEl = document.getElementById('district-select');
+    const clearBtn = document.getElementById('clear-boundary-btn');
+
+    if (checked) {
+        if (selectEl) selectEl.disabled = false;
+        loadDistrictOverview();
+    } else {
+        if (overviewDistrictsLayer && map.hasLayer(overviewDistrictsLayer)) {
+            map.removeLayer(overviewDistrictsLayer);
+        }
+        if (activeBoundaryLayer && map.hasLayer(activeBoundaryLayer)) {
+            map.removeLayer(activeBoundaryLayer);
+            activeBoundaryLayer = null;
+        }
+        if (selectEl) { selectEl.disabled = true; selectEl.value = ''; }
+        if (clearBtn) clearBtn.style.display = 'none';
+    }
+
+    const badge = document.getElementById('district-layer-badge');
+    if (badge) {
+        badge.textContent = checked ? 'BẬT' : 'TẮT';
+        badge.style.background = checked ? 'rgba(37,99,235,0.15)' : 'rgba(148,163,184,0.15)';
+        badge.style.color = checked ? '#2563eb' : '#94a3b8';
+    }
+};
 
 // 3. THUẬT TOÁN ĐỐI SOÁT KHÔNG GIAN BẢN ĐỒ GIS (P1)
 // Buffer 100m tính tới BIÊN NGOÀI GẦN NHẤT của polygon (không phải tâm)

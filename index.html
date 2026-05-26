@@ -886,6 +886,42 @@
             min-width: 320px;
         }
 
+        /* Project layer control widget */
+        .project-layer-control {
+            top: 140px !important;
+        }
+
+        /* Layer status badge */
+        .layer-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            background: rgba(37,99,235,0.15);
+            color: #2563eb;
+            transition: all 0.3s ease;
+            margin-left: 4px;
+        }
+
+        /* Disabled select style */
+        .map-overlay-control select:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background-color: #f8fafc;
+        }
+
+        /* Layer divider between toggle and select */
+        .layer-divider {
+            width: 1px;
+            height: 20px;
+            background: #e2e8f0;
+            margin: 0 2px;
+        }
+
+
         .switch {
             position: relative;
             display: inline-block;
@@ -1598,13 +1634,32 @@
 
         <main id="main-content">
             <div id="map"></div>
-            <!-- Bộ chọn Ranh giới Hành chính -->
+            <!-- Bộ chọn Ranh giới Hành chính (có toggle bật/tắt) -->
             <div class="map-overlay-control">
-                <span class="control-label"><i class="fa-solid fa-map-location-dot"></i> Ranh giới:</span>
+                <label class="switch" title="Bật/tắt lớp ranh giới quận huyện">
+                    <input type="checkbox" id="district-layer-toggle" checked onchange="toggleDistrictLayer(this.checked)">
+                    <span class="slider-switch"></span>
+                </label>
+                <div class="layer-divider"></div>
+                <span class="control-label"><i class="fa-solid fa-map-location-dot"></i> Quận Huyện</span>
+                <span class="layer-badge" id="district-layer-badge">BẬT</span>
+                <div class="layer-divider"></div>
                 <select id="district-select">
                     <option value="">-- Chọn Quận/Huyện --</option>
                 </select>
                 <button id="clear-boundary-btn" style="display: none;"><i class="fa-solid fa-xmark"></i> Xóa</button>
+            </div>
+            <!-- Lớp Ranh giới Dự án Quy hoạch (widget tách biệt) -->
+            <div class="map-overlay-control project-layer-control">
+                <label class="switch" title="Bật/tắt lớp ranh giới dự án quy hoạch">
+                    <input type="checkbox" id="project-layer-toggle" checked onchange="toggleProjectLayer(this.checked)">
+                    <span class="slider-switch"></span>
+                </label>
+                <div class="layer-divider"></div>
+                <span class="control-label"><i class="fa-solid fa-draw-polygon"></i> Ranh giới Dự án</span>
+                <span class="layer-badge" id="project-layer-badge">BẬT</span>
+                <div class="layer-divider"></div>
+                <a href="edit-ranh-gioi-du-an.html" target="_blank" title="Mở công cụ biên tập GIS" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:700;color:#7c3aed;text-decoration:none;padding:4px 8px;border-radius:8px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);transition:all 0.2s ease;white-space:nowrap;" onmouseover="this.style.background='rgba(124,58,237,0.15)'" onmouseout="this.style.background='rgba(124,58,237,0.08)'"><i class="fa-solid fa-pen-to-square"></i> Biên tập GIS</a>
             </div>
             <!-- Bộ điều khiển Lớp phủ Ảnh Scan (Raster Overlay) -->
             <div class="map-overlay-control raster-control">
