@@ -1,0 +1,71 @@
+name: Daily Content Checker & Reporter
+
+on:
+  schedule:
+    # Chạy hàng ngày lúc 07:00 sáng giờ Hà Nội (00:00 UTC)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      skip_link_check:
+        description: 'Bỏ qua kiểm tra link (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  daily_check:
+    name: Kiểm tra & Tạo Báo cáo Ngày
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Daily Checker
+        id: checker
+        run: |
+          python tools/daily_checker.py
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Commit Reports
+        run: |
+          git config --global user.name  "DuLieuQuyHoach Daily Bot"
+          git config --global user.email "bot@dulieuquyhoach.com"
+          git add data/daily_report.json data/daily_report.md data/official_documents.json
+          git diff --quiet && git diff --staged --quiet || \
+            git commit -m "📊 daily-report $(date +'%Y-%m-%d') [auto]"
+          git push
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-report-${{ github.run_id }}
+          path: |
+            data/daily_report.json
+            data/daily_report.md
+          retention-days: 30
+
+      - name: Post Summary to GitHub Job Summary
+        run: |
+          echo "## 📊 Báo cáo Kiểm tra Ngày $(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f data/daily_report.md ]; then
+            cat data/daily_report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Không tìm thấy báo cáo." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Fail if critical issues detected
+        if: steps.checker.outcome == 'failure'
+        run: |
+          echo "::error::Có vấn đề nghiêm trọng được phát hiện trong báo cáo hàng ngày. Vui lòng kiểm tra data/daily_report.md"
+          exit 1
