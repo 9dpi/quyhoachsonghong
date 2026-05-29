@@ -667,6 +667,25 @@
             .footer-grid { grid-template-columns: 1fr; }
         }
 
+        /* Ads Container */
+        .ads-container {
+            margin: 24px auto;
+            max-width: 1280px;
+            width: 100%;
+            min-height: 90px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
         /* Divider */
         .divider { height: 1px; background: var(--border); max-width: 1280px; margin: 0 auto; }
     </style>
@@ -737,6 +756,19 @@
             </div>
         </section>
 
+        <!-- Adsense Top Leaderboard -->
+        <div class="ads-container">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; min-height:90px;"
+                 data-ad-client="ca-pub-8079778054351942"
+                 data-ad-slot="news-top"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
         <!-- ===== PROVINCE MAP GRID ===== -->
         <section class="section" id="province-section">
             <div class="section-header">
@@ -761,6 +793,19 @@
         </section>
 
         <div class="divider"></div>
+
+        <!-- Adsense Mid Banner -->
+        <div class="ads-container">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; min-height:90px;"
+                 data-ad-client="ca-pub-8079778054351942"
+                 data-ad-slot="news-mid"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
 
         <!-- ===== NEWS FEED ===== -->
         <section class="section" id="news-section">
@@ -797,6 +842,94 @@
                 </button>
             </div>
         </section>
+
+        <!-- ===== FEATURED STATIC ARTICLES ===== -->
+        <section class="section" id="featured-articles">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">✍️ Phân tích & <span>Cẩm nang</span> Quy hoạch chuyên sâu</div>
+                    <div class="section-subtitle">Bài viết phân tích độc lập, cẩm nang tra cứu và thông tin chính sách đất đai mới nhất</div>
+                </div>
+            </div>
+            <div class="news-grid">
+                <article class="news-card">
+                    <div class="news-card-header">
+                        <span class="source-tag source-vietnamnet">Phân tích</span>
+                        <span class="category-tag">Sông Hồng</span>
+                    </div>
+                    <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
+                    <h3 class="news-title">
+                        <a href="tin-tuc/quy-hoach-phan-khu-song-hong-ha-noi.html">Quy hoạch Phân khu Sông Hồng Hà Nội: Chi tiết ranh giới, lộ trình triển khai mới nhất</a>
+                    </h3>
+                    <p class="news-desc">Phân tích chi tiết ranh giới quy hoạch sông Hồng từ R1 đến R6, các vùng bãi sông được phép xây dựng và phương án tái định cư di dời dân cư vùng ven sông Hồng giai đoạn 2026-2045.</p>
+                    <div class="news-footer">
+                        <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội</span>
+                        <a href="tin-tuc/quy-hoach-phan-khu-song-hong-ha-noi.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-card-header">
+                        <span class="source-tag source-tuoitre">Bản đồ</span>
+                        <span class="category-tag">Vành đai 4</span>
+                    </div>
+                    <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
+                    <h3 class="news-title">
+                        <a href="tin-tuc/tuyen-duong-van-dai-4-ha-noi.html">Bản đồ hướng tuyến đường Vành đai 4 Hà Nội đi qua những quận huyện nào?</a>
+                    </h3>
+                    <p class="news-desc">Chi tiết lộ trình, hướng tuyến đường Vành đai 4 vùng Thủ đô Hà Nội. Cập nhật tiến độ giải phóng mặt bằng, các nút giao thông trọng điểm và thông tin bồi thường tái định cư mới nhất.</p>
+                    <div class="news-footer">
+                        <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội, Hưng Yên, Bắc Ninh</span>
+                        <a href="tin-tuc/tuyen-duong-van-dai-4-ha-noi.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-card-header">
+                        <span class="source-tag source-vnexpress">Cẩm nang</span>
+                        <span class="category-tag">Tra cứu</span>
+                    </div>
+                    <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
+                    <h3 class="news-title">
+                        <a href="tin-tuc/huong-dan-tra-cuu-quy-hoach-dat-dai.html">Hướng dẫn cách tra cứu quy hoạch đất đai trực tuyến nhanh chóng, chính xác nhất</a>
+                    </h3>
+                    <p class="news-desc">Cẩm nang toàn diện hướng dẫn các bước kiểm tra quy hoạch đất đai trực tuyến miễn phí. Hướng dẫn đọc ký hiệu màu sắc, phân biệt đất thổ cư, đất nông nghiệp và tránh rủi ro mua đất quy hoạch.</p>
+                    <div class="news-footer">
+                        <span class="news-location"><i class="fa-solid fa-location-dot"></i> Toàn quốc</span>
+                        <a href="tin-tuc/huong-dan-tra-cuu-quy-hoach-dat-dai.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-card-header">
+                        <span class="source-tag source-laodong">Bồi thường</span>
+                        <span class="category-tag">Giá đất</span>
+                    </div>
+                    <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
+                    <h3 class="news-title">
+                        <a href="tin-tuc/bang-gia-dat-boi-thuong-ha-noi.html">Bảng giá đất bồi thường giải phóng mặt bằng Hà Nội mới nhất 2026</a>
+                    </h3>
+                    <p class="news-desc">Cập nhật cách tính giá đất đền bù khi bị thu hồi đất theo Quyết định mới nhất của UBND TP. Hà Nội. Bảng giá đất đền bù Vành đai 4, cầu Tứ Liên và các dự án giao thông trọng điểm.</p>
+                    <div class="news-footer">
+                        <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội</span>
+                        <a href="tin-tuc/bang-gia-dat-boi-thuong-ha-noi.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Adsense Bottom Leaderboard -->
+        <div class="ads-container">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; min-height:90px;"
+                 data-ad-client="ca-pub-8079778054351942"
+                 data-ad-slot="news-bottom"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
 
         <!-- ===== SEO ARTICLE SECTION ===== -->
         <section class="seo-section" id="seo-guide">
@@ -848,17 +981,18 @@
                     <ul>
                         <li><a href="index.html">Bản đồ quy hoạch</a></li>
                         <li><a href="tin-tuc-quy-hoach.html">Tin tức quy hoạch</a></li>
-                        <li><a href="tai-ban-do-quy-hoach.html">Tải tài liệu pháp lý</a></li>
+                        <li><a href="tai-ban-do-quy-hoach.html">Tải bản đồ & giá đất</a></li>
                         <li><a href="index.html#faq">Hỏi đáp quy hoạch</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Thông tin</h4>
+                    <h4>Pháp lý & Thông tin</h4>
                     <ul>
-                        <li><a href="index.html">Quy hoạch Sông Hồng</a></li>
-                        <li><a href="index.html">Vành đai 4 Hà Nội</a></li>
-                        <li><a href="index.html">Tái định cư Mê Linh</a></li>
-                        <li><a href="index.html">Giá đất đền bù 2026</a></li>
+                        <li><a href="gioi-thieu.html">Giới thiệu dự án</a></li>
+                        <li><a href="dieu-khoan-su-dung.html">Điều khoản sử dụng</a></li>
+                        <li><a href="chinh-sach-bao-mat.html">Chính sách bảo mật</a></li>
+                        <li><a href="tuyen-bo-mien-tru-trach-nhiem.html">Miễn trừ trách nhiệm</a></li>
+                        <li><a href="lien-he.html">Liên hệ ban quản trị</a></li>
                     </ul>
                 </div>
             </div>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Adsense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8079778054351942"
+        crossorigin="anonymous"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDK7GC6X9J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-FDK7GC6X9J');
+    </script>
+
+    <title>Giới Thiệu Dự Án | Dulieuquyhoach.com</title>
+    <meta name="description"
+        content="Giới thiệu về Dulieuquyhoach.com - Nền tảng số tra cứu thông tin bản đồ quy hoạch phân khu Sông Hồng, đường Vành đai 4 và bảng giá đất Hà Nội mới nhất 2026.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://dulieuquyhoach.com/gioi-thieu.html" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dulieuquyhoach.com/gioi-thieu.html">
+    <meta property="og:title" content="Giới Thiệu Dự Án | Dulieuquyhoach.com">
+    <meta property="og:description" content="Giới thiệu về Dulieuquyhoach.com - Nền tảng số tra cứu thông tin bản đồ quy hoạch phân khu Sông Hồng, đường Vành đai 4 và bảng giá đất Hà Nội mới nhất 2026.">
+    <meta property="og:image" content="https://dulieuquyhoach.com/Branding/dulieuquyhoach.png">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>ℹ️</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #f59e0b;
+            --bg-light: #f8fafc;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .header-center {
+            flex-grow: 1;
+            max-width: 45%;
+            margin: 0 40px;
+            overflow: hidden;
+            background: #f1f5f9;
+            border-radius: 99px;
+            padding: 6px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker 40s linear infinite;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        .header-right ul {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .header-right a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .header-right a:hover {
+            color: var(--primary);
+        }
+
+        .header-right .btn-download {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .header-right .btn-download:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .mobile-dropdown {
+            display: none;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            flex-direction: column;
+            padding: 10px 24px;
+            gap: 12px;
+        }
+
+        .mobile-dropdown.open {
+            display: flex;
+        }
+
+        .mobile-menu-item {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 24px;
+            box-sizing: border-box;
+        }
+
+        .about-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 12px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 30px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #475569;
+            margin-bottom: 16px;
+        }
+
+        ul {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .tech-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .tech-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ads-container {
+            margin: 30px 0;
+            width: 100%;
+            min-height: 90px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            border: 1px dashed #cbd5e1;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 24px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+            }
+            .header-center {
+                display: none;
+            }
+            .header-right ul {
+                display: none;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .about-container {
+                padding: 24px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-links {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">🗺️</div>
+            <a href="index.html" class="logo-text">DULIEUQUYHOACH.COM</a>
+        </div>
+        <div class="header-center">
+            <div class="ticker-content" id="ticker">Đang tải tin tức quy hoạch mới nhất...</div>
+        </div>
+        <div class="header-right">
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="tin-tuc-quy-hoach.html"><i class="fa-solid fa-newspaper"></i> Tin tức</a></li>
+                <li><a href="tai-ban-do-quy-hoach.html" class="btn-download"><i class="fa-solid fa-download"></i> Bản đồ & Giá đất</a></li>
+            </ul>
+            <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </header>
+
+    <div class="mobile-dropdown" id="mobile-dropdown">
+        <a href="index.html" class="mobile-menu-item"><i class="fa-solid fa-house" style="color: var(--primary);"></i> Trang chủ</a>
+        <a href="tin-tuc-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-newspaper" style="color: var(--primary);"></i> Tin tức Quy hoạch</a>
+        <a href="tai-ban-do-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-download" style="color: var(--primary);"></i> Tải bản đồ quy hoạch</a>
+    </div>
+
+    <main>
+        <!-- AdSense Billboard Header -->
+        <div class="ads-container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8079778054351942"
+                 data-ad-slot="header"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <article class="about-container">
+            <h1>Giới Thiệu Nền Tảng</h1>
+            <p>Chào mừng bạn đến với <strong>Dulieuquyhoach.com</strong> - Nền tảng số hóa bản đồ không gian và tra cứu dữ liệu quy hoạch đất đai thông minh tại địa bàn Thành phố Hà Nội.</p>
+            <p>Được xây dựng từ năm 2026 bởi một đội ngũ kỹ sư yêu thích công nghệ địa lý (GIS) và dữ liệu lớn, sứ mệnh của chúng tôi là mang đến sự minh bạch, trực quan và dễ tiếp cận cho thị trường quy hoạch bất động sản. Chúng tôi giúp xóa bỏ rào cản thông tin giữa người dân, nhà đầu tư cá nhân và các đồ án quy hoạch đồ sộ của cơ quan quản lý nhà nước.</p>
+            
+            <h2>1. Sứ mệnh của Chúng tôi</h2>
+            <p>Quy hoạch đô thị đóng vai trò quyết định đến định hướng phát triển hạ tầng và giá trị bất động sản. Tuy nhiên, các tài liệu quy hoạch chính thống thường được ban hành dưới dạng các ảnh quét (scan) chất lượng thấp, tệp tin bản vẽ kỹ thuật dung lượng lớn hoặc định dạng GIS chuyên biệt mà người dân bình thường rất khó đọc hiểu.</p>
+            <p><strong>Dulieuquyhoach.com</strong> ra đời để giải quyết vấn đề đó bằng cách:</p>
+            <ul>
+                <li>Số hóa ranh giới các phân khu quy hoạch (ví dụ Quy hoạch Sông Hồng R1-R2) thành các đa giác vector trực quan, hiển thị mượt mà trên nền bản đồ vệ tinh tương tác thời gian thực.</li>
+                <li>Hỗ trợ tính năng đối chiếu lớp phủ bản đồ scan quy hoạch gốc bằng thanh trượt Opacity, giúp trực quan so sánh hiện trạng thực địa và bản đồ dự án của nhà nước.</li>
+                <li>Tự động hóa rà soát giá đất đền bù tái định cư theo khung giá chính sách kết hợp dữ liệu khảo sát giá thị trường thực địa để nhà đầu tư có cái nhìn toàn diện nhất.</li>
+            </ul>
+
+            <h2>2. Nguồn dữ liệu uy tín & Tính minh bạch (E-E-A-T)</h2>
+            <p>Chúng tôi đề cao tính trung thực và độ tin cậy của thông tin. Dữ liệu trên nền tảng được thu thập và đồng bộ tự động 3 lần/ngày từ các nguồn chính thống và uy tín nhất:</p>
+            <ul>
+                <li><strong>Cổng thông tin Điện tử TP. Hà Nội</strong> (hanoi.gov.vn) - Cập nhật văn bản pháp quy.</li>
+                <li><strong>Viện Quy hoạch Xây dựng Hà Nội</strong> (vqh.hanoi.gov.vn) - Cập nhật đồ án quy hoạch xây dựng đô thị.</li>
+                <li><strong>Cổng văn bản pháp luật Hà Nội</strong> (vanban.hanoi.gov.vn) - Cập nhật bảng giá đất, đền bù bồi thường giải tỏa tái định cư.</li>
+                <li><strong>Khảo sát thực địa bất động sản</strong> - Dữ liệu giá đất thị trường gồm 5,200+ bản ghi được phân tích không gian trong bán kính 1.5km từ alonhadat.com.vn và batdongsan.com.vn.</li>
+            </ul>
+
+            <h2>3. Các công nghệ cốt lõi của dự án</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3><i class="fa-solid fa-map-location-dot"></i> Bản đồ tương tác GIS</h3>
+                    <p style="font-size:0.88rem; margin-bottom:0;">Sử dụng thư viện Leaflet.js để hiển thị mượt mà hàng ngàn đa giác vector tọa độ địa lý mà không gián đoạn hiệu năng trình duyệt.</p>
+                </div>
+                <div class="tech-card">
+                    <h3><i class="fa-solid fa-layer-group"></i> Căn khớp Raster Overlay</h3>
+                    <p style="font-size:0.88rem; margin-bottom:0;">Thuật toán nắn ảnh phi tuyến tính dựa trên CSS Transform giúp khớp khít 100% hình vẽ scan quy hoạch sông Hồng lên bản đồ vệ tinh thực tế.</p>
+                </div>
+                <div class="tech-card">
+                    <h3><i class="fa-solid fa-gears"></i> GIS Verify Engine</h3>
+                    <p style="font-size:0.88rem; margin-bottom:0;">Bộ máy kiểm định chất lượng chạy bằng Python kiểm tra tính toàn vẹn địa lý của ranh giới vector trước khi phát hành lên máy chủ.</p>
+                </div>
+                <div class="tech-card">
+                    <h3><i class="fa-solid fa-magnifying-glass-chart"></i> Định vị Bán kính Không gian</h3>
+                    <p style="font-size:0.88rem; margin-bottom:0;">Công cụ tìm kiếm không gian lọc giá đất thực tế trong bán kính 1.5km thời gian thực, đem lại kết quả bản địa hóa chính xác cho người dùng.</p>
+                </div>
+            </div>
+
+            <h2>4. Đóng góp ý kiến & Hợp tác</h2>
+            <p>Dự án của chúng tôi là một dự án mở và phi lợi nhuận phục vụ cộng đồng. Mọi ý kiến đóng góp, báo cáo sai sót tọa độ ranh giới bản đồ hoặc đề xuất tích hợp dữ liệu của các tỉnh thành khác vui lòng gửi cho chúng tôi qua trang <a href="lien-he.html">Liên hệ</a> hoặc gửi email trực tiếp cho ban quản trị. Chúng tôi luôn trân trọng sự đồng hành của bạn để tạo nên một nền tảng dữ liệu số ngày càng hữu ích hơn!</p>
+
+            <p style="margin-top: 30px; font-style: italic; color: var(--text-sub);">Cập nhật lần cuối: Ngày 28 tháng 05 năm 2026</p>
+        </article>
+
+        <!-- AdSense Content Native Ad -->
+        <div class="ads-container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8079778054351942"
+                 data-ad-slot="footer"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </main>
+
+    <footer>
+        <div>© 2026 DULIEUQUYHOACH.COM</div>
+        <div class="footer-links">
+            <a href="gioi-thieu.html" style="color: var(--primary); font-weight: bold;">Giới thiệu</a>
+            <a href="dieu-khoan-su-dung.html">Điều khoản</a>
+            <a href="chinh-sach-bao-mat.html">Bảo mật</a>
+            <a href="tuyen-bo-mien-tru-trach-nhiem.html">Miễn trừ trách nhiệm</a>
+            <a href="lien-he.html">Liên hệ</a>
+        </div>
+    </footer>
+
+    <script>
+        // Hàm nạp dữ liệu Ticker
+        function initTicker(newsData) {
+            const tickerEl = document.getElementById("ticker");
+            if (!tickerEl || !newsData || newsData.length === 0) return;
+            
+            const latestNews = newsData.slice(0, 8);
+            let tickerHtml = "Tin mới nhận: ";
+            latestNews.forEach((item, index) => {
+                const title = item.tenKhu || item.title;
+                const link = item.nguonTin || item.link || "#";
+                tickerHtml += `<a href="${link}" target="_blank" style="color: #1e40af; text-decoration: none; font-weight: 700; margin: 0 15px;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#1e40af'">${title}</a>`;
+                if (index < latestNews.length - 1) {
+                    tickerHtml += " <span style='color: #64748b;'>|</span> ";
+                }
+            });
+            
+            tickerEl.innerHTML = tickerHtml;
+            tickerEl.style.cursor = "pointer";
+            tickerEl.addEventListener("mouseover", () => { tickerEl.style.animationPlayState = "paused"; });
+            tickerEl.addEventListener("mouseout", () => { tickerEl.style.animationPlayState = "running"; });
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const res = await fetch("data/sheet_data.json?t=" + Date.now());
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.news) initTicker(data.news);
+                }
+            } catch(e) {
+                console.error("Không thể tải tin tức ticker:", e);
+            }
+        });
+
+        function toggleMobileMenu() {
+            const dropdown = document.getElementById("mobile-dropdown");
+            if (dropdown) dropdown.classList.toggle("open");
+        }
+
+        document.addEventListener("click", (e) => {
+            const dropdown = document.getElementById("mobile-dropdown");
+            const toggleBtn = document.getElementById("menu-toggle");
+            if (dropdown && dropdown.classList.contains("open")) {
+                if (toggleBtn && !toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove("open");
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
