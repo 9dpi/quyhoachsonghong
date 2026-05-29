@@ -562,19 +562,266 @@
             right: 0;
             bottom: 0;
             width: var(--detail-width);
-            background: white;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             z-index: 4000;
-            box-shadow: -15px 0 40px rgba(0, 0, 0, 0.08);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 35px rgba(15, 23, 42, 0.08);
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
             transform: translateX(100%);
             display: flex;
             flex-direction: column;
             pointer-events: none;
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+            overflow: hidden;
         }
 
         #detail-panel.open {
             transform: translateX(0);
             pointer-events: auto;
+        }
+
+        /* Premium Side Panel Elements */
+        .panel-resize-handle {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            cursor: ew-resize;
+            background: transparent;
+            transition: background 0.2s;
+            z-index: 4002;
+        }
+        .panel-resize-handle:hover,
+        .panel-resize-handle.active {
+            background: var(--primary);
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .panel-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #94a3b8;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .panel-close-btn:hover {
+            background: rgba(148, 163, 184, 0.1);
+            color: #64748b;
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: rgba(241, 245, 249, 0.6);
+            padding: 6px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 8px 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #64748b;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .panel-tab:hover {
+            color: var(--text-main);
+        }
+        .panel-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+        }
+
+        .panel-content-container {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .tab-pane {
+            display: none;
+            padding: 20px;
+            animation: fadeInTab 0.25s ease-out;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pane-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Layer Control Cards */
+        .layer-control-card {
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.01);
+            transition: border-color 0.2s;
+        }
+        .layer-control-card:hover {
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .layer-control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .layer-control-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .layer-control-desc {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        /* Switch Premium design */
+        .switch-premium {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+        .switch-premium input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider-switch-premium {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 20px;
+        }
+        .slider-switch-premium:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+        }
+        .switch-premium input:checked + .slider-switch-premium {
+            background-color: var(--primary);
+        }
+        .switch-premium input:checked + .slider-switch-premium:before {
+            transform: translateX(18px);
+        }
+
+        /* Custom Inputs & Selects inside Side Panel */
+        .premium-select {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 0.8rem;
+            font-family: var(--font-main);
+            color: var(--text-main);
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .premium-select:focus {
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Legend CSS */
+        .legend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+        }
+        .legend-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .legend-code {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .legend-name {
+            font-size: 0.68rem;
+            color: var(--text-sub);
+            line-height: 1.3;
         }
 
         footer {
@@ -1878,17 +2125,167 @@
                             <span id="opacity-val" class="opacity-badge">60%</span>
                         </div>
                     </div>
+                    
+                    <div class="toolbar-divider"></div>
+                    
+                    <!-- Nhóm Công cụ Đo Đạc -->
+                    <div class="toolbar-group">
+                        <button id="measure-btn" class="toolbar-action-btn" onclick="toggleMeasureMode()" title="Đo đạc khoảng cách và diện tích trên bản đồ" style="background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; font-size: 0.72rem; color: var(--text-main); display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-ruler-combined" style="color: var(--primary);"></i> <span id="measure-btn-text">Đo đạc: TẮT</span>
+                        </button>
+                        <button id="measure-clear-btn" class="toolbar-action-btn" onclick="clearMeasurement()" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; font-weight: 700; font-size: 0.72rem; color: #ef4444; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; transition: all 0.2s;" title="Xóa nét vẽ đo đạc">
+                            <i class="fa-solid fa-trash-can"></i> Xóa
+                        </button>
+                    </div>
                 </div>
             </div>
             <div id="detail-panel">
-                <div
-                    style="padding:25px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
-                    <h2 id="detail-title" style="font-size:1.1rem; font-weight:800">Chi tiết</h2>
-                    <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.5rem; color:#94a3b8"
-                        onclick="closeDetail()"></i>
+                <!-- Drag Handle -->
+                <div id="panel-resize-handle" class="panel-resize-handle"></div>
+                
+                <!-- Panel Header with Brand -->
+                <div class="panel-header">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="logo-icon" style="width: 24px; height: 24px; border-radius: 6px; font-size: 0.8rem; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white;">🗺️</div>
+                        <h2 style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Bản đồ GIS</h2>
+                    </div>
+                    <button class="panel-close-btn" onclick="closeDetail()" title="Đóng bảng chi tiết"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div id="detail-body"
-                    style="padding:25px; overflow-y:auto; line-height:1.7; font-size:0.92rem; color:#334155"></div>
+                
+                <!-- Tab Controls -->
+                <div class="panel-tabs">
+                    <button id="side-tab-layers" class="panel-tab active" onclick="switchSideTab('layers')">
+                        <i class="fa-solid fa-layer-group"></i> Lớp Bản Đồ
+                    </button>
+                    <button id="side-tab-details" class="panel-tab" onclick="switchSideTab('details')">
+                        <i class="fa-solid fa-circle-info"></i> Tra Cứu
+                    </button>
+                    <button id="side-tab-legend" class="panel-tab" onclick="switchSideTab('legend')">
+                        <i class="fa-solid fa-list-ul"></i> Chú Giải Đất
+                    </button>
+                </div>
+                
+                <!-- Tab Contents -->
+                <div class="panel-content-container">
+                    <!-- Tab 1: Layers -->
+                    <div id="side-content-layers" class="tab-pane active">
+                        <h3 class="pane-title"><i class="fa-solid fa-sliders"></i> Quản lý lớp dữ liệu</h3>
+                        
+                        <div class="layer-control-card">
+                            <div class="layer-control-row">
+                                <span class="layer-control-name"><i class="fa-solid fa-map-location-dot" style="color: var(--primary);"></i> Ranh giới Quận Huyện</span>
+                                <label class="switch-premium">
+                                    <input type="checkbox" id="side-district-toggle" checked onchange="syncDistrictToggle(this.checked)">
+                                    <span class="slider-switch-premium"></span>
+                                </label>
+                            </div>
+                            <p class="layer-control-desc">Hiển thị đường ranh giới hành chính các Quận, Huyện trực thuộc TP. Hà Nội.</p>
+                            <div class="district-select-wrapper" style="margin-top: 10px;">
+                                <select id="side-district-select" class="premium-select" onchange="syncDistrictSelect(this.value)">
+                                    <option value="">-- Chọn Quận/Huyện --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layer-control-card">
+                            <div class="layer-control-row">
+                                <span class="layer-control-name"><i class="fa-solid fa-draw-polygon" style="color: #10b981;"></i> Ranh giới Dự án Quy hoạch</span>
+                                <label class="switch-premium">
+                                    <input type="checkbox" id="side-project-toggle" checked onchange="syncProjectToggle(this.checked)">
+                                    <span class="slider-switch-premium"></span>
+                                </label>
+                            </div>
+                            <p class="layer-control-desc">Bật/tắt hiển thị các phân khu quy hoạch Sông Hồng R1-R2, đường Vành đai 4 và khu tái định cư.</p>
+                        </div>
+
+                        <div class="layer-control-card">
+                            <div class="layer-control-row">
+                                <span class="layer-control-name"><i class="fa-solid fa-images" style="color: #a855f7;"></i> Bản đồ quét gốc (Raster Scan)</span>
+                                <label class="switch-premium">
+                                    <input type="checkbox" id="side-raster-toggle" onchange="syncRasterToggle(this.checked)">
+                                    <span class="slider-switch-premium"></span>
+                                </label>
+                            </div>
+                            <p class="layer-control-desc">Chồng bản vẽ quét quy hoạch phân khu Sông Hồng tỷ lệ 1/5000 gốc lên bản đồ thực địa.</p>
+                            <div class="side-opacity-slider-container" id="side-opacity-slider-container" style="display: none; margin-top: 10px;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 5px; color: var(--text-sub);">
+                                    <span>Độ mờ:</span>
+                                    <span id="side-opacity-val" style="font-weight: 700; color: var(--primary);">60%</span>
+                                </div>
+                                <input type="range" class="opacity-slider" id="side-raster-opacity" min="0" max="100" value="60" oninput="syncRasterOpacity(this.value)" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab 2: Tra cứu / Chi tiết -->
+                    <div id="side-content-details" class="tab-pane">
+                        <div id="detail-body" style="line-height: 1.7; font-size: 0.92rem; color: #334155;">
+                            <!-- Sẽ được điền động từ JS -->
+                            <div style="text-align: center; padding: 40px 20px; color: var(--text-sub);">
+                                <i class="fa-solid fa-magnifying-glass" style="font-size: 2.5rem; margin-bottom: 15px; color: #cbd5e1; display: block;"></i>
+                                <p style="font-size: 0.85rem; font-weight: 500;">Hãy nhập địa chỉ tra cứu ở thanh tìm kiếm hoặc click trực tiếp vào vùng quy hoạch trên bản đồ để xem chi tiết.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab 3: Chú giải đất (Legend) -->
+                    <div id="side-content-legend" class="tab-pane">
+                        <h3 class="pane-title"><i class="fa-solid fa-list-ul"></i> Phân loại đất Quy hoạch</h3>
+                        <p class="layer-control-desc" style="margin-bottom: 15px;">Màu sắc và phân loại đất theo quy chuẩn quy hoạch phân khu xây dựng của Bộ Xây dựng:</p>
+                        
+                        <div class="legend-list">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #f97316;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">ODT / ONT</span>
+                                    <span class="legend-name">Đất ở tại đô thị / nông thôn (Đất tái định cư)</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ef4444;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">DGT</span>
+                                    <span class="legend-name">Đất hạ tầng giao thông (Đường cao tốc, quốc lộ, vành đai)</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0ea5e9;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">RCL</span>
+                                    <span class="legend-name">Đất hành lang xanh, đê điều, lâm nghiệp thoát lũ</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #eab308;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">DKV</span>
+                                    <span class="legend-name">Đất công viên, cây xanh cách ly, khu bảo tồn xanh</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #a855f7;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">SKC / TMD</span>
+                                    <span class="legend-name">Đất sản xuất kinh doanh phi nông nghiệp, thương mại dịch vụ</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ec4899;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">DGD</span>
+                                    <span class="legend-name">Đất giáo dục và đào tạo (Trường học, trung tâm dạy nghề)</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #3b82f6;"></div>
+                                <div class="legend-info">
+                                    <span class="legend-code">DDL / DTT</span>
+                                    <span class="legend-name">Đất di tích lịch sử, văn hóa, danh lam thắng cảnh, tôn giáo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

@@ -12,7 +12,11 @@ const mapGeojsonData = {
         "category": "songhong",
         "description": "Định hướng phát triển đô thị ven sông Hồng, hành lang xanh, công viên sinh thái bảo tồn dòng chảy.",
         "nguon": "UBND Thành phố Hà Nội",
-        "ngayCapNhat": "2026-05-21"
+        "ngayCapNhat": "2026-05-29",
+        "loaiDat": "RCL",
+        "loaiDatTiengViet": "Đất hành lang xanh & Thoát lũ",
+        "color": "#0ea5e9",
+        "qdPheDuyet": "Quyết định số 1045/QĐ-UBND ngày 25/03/2022 của UBND TP Hà Nội"
       },
       "geometry": {
         "type": "Polygon",
@@ -50,12 +54,16 @@ const mapGeojsonData = {
       "properties": {
         "id": "vd4_sec1",
         "tenKhu": "Dự án Đường Vành đai 4 - Phân đoạn Hoài Đức - Đan Phượng",
-        "dienTich": "112km toàn tuyến",
+        "dienTich": "Chiều dài tuyến 112 km",
         "loai": "Vành đai 4",
         "category": "vandai4",
         "description": "Cảnh báo khu vực giải tỏa thu hồi đất phục vụ thi công cao tốc Vành đai 4 vùng Thủ đô.",
         "nguon": "Bộ Giao Thông Vận Tải",
-        "ngayCapNhat": "2026-05-21"
+        "ngayCapNhat": "2026-05-29",
+        "loaiDat": "DGT",
+        "loaiDatTiengViet": "Đất hạ tầng giao thông (Vành đai 4)",
+        "color": "#ef4444",
+        "qdPheDuyet": "Quyết định số 4133/QĐ-UBND ngày 28/10/2022 của UBND TP Hà Nội"
       },
       "geometry": {
         "type": "Polygon",
@@ -86,7 +94,11 @@ const mapGeojsonData = {
         "category": "taidinhcu",
         "description": "Khu tái định cư quy hoạch hiện đại phục vụ các hộ dân giải tỏa của dự án đường Vành đai 4.",
         "nguon": "UBND Huyện Mê Linh",
-        "ngayCapNhat": "2026-05-21"
+        "ngayCapNhat": "2026-05-29",
+        "loaiDat": "ODT",
+        "loaiDatTiengViet": "Đất ở tái định cư",
+        "color": "#f97316",
+        "qdPheDuyet": "Quyết định số 2254/QĐ-UBND ngày 18/04/2023 của UBND Huyện Mê Linh"
       },
       "geometry": {
         "type": "Polygon",
@@ -111,7 +123,11 @@ const mapGeojsonData = {
         "category": "taidinhcu",
         "description": "Quy hoạch hạ tầng đô thị mới phục vụ di dời giải tỏa hành lang đê Sông Hồng.",
         "nguon": "UBND Quận Hoàng Mai",
-        "ngayCapNhat": "2026-05-21"
+        "ngayCapNhat": "2026-05-29",
+        "loaiDat": "ODT",
+        "loaiDatTiengViet": "Đất ở tái định cư Lĩnh Nam",
+        "color": "#f97316",
+        "qdPheDuyet": "Quyết định số 3981/QĐ-UBND ngày 05/09/2023 của UBND Quận Hoàng Mai"
       },
       "geometry": {
         "type": "Polygon",
@@ -136,7 +152,11 @@ const mapGeojsonData = {
         "category": "giapranh",
         "description": "Vùng đệm an toàn xây dựng, hạn chế chiều cao và chuyển đổi mục đích sử dụng đất dọc trục Vành đai 4.",
         "nguon": "Sở Quy Hoạch Kiến Trúc Hà Nội",
-        "ngayCapNhat": "2026-05-21"
+        "ngayCapNhat": "2026-05-29",
+        "loaiDat": "DKV",
+        "loaiDatTiengViet": "Đất vùng đệm cách ly & Hành lang an toàn",
+        "color": "#eab308",
+        "qdPheDuyet": "Quyết định số 4133/QĐ-UBND ngày 28/10/2022 của UBND TP Hà Nội"
       },
       "geometry": {
         "type": "Polygon",
@@ -148,11 +168,11 @@ const mapGeojsonData = {
             [105.6740, 21.0100],
             [105.6790, 20.9700],
             [105.6910, 20.9700],
-            [105.6860, 21.0100],
-            [105.6960, 21.0650],
-            [105.7060, 21.1000],
-            [105.7160, 21.1550],
-            [105.7050, 21.1550]
+            [105.686, 21.0100],
+            [105.696, 21.0650],
+            [105.706, 21.1000],
+            [105.716, 21.1550],
+            [105.705, 21.1550]
           ]
         ]
       }
