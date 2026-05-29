@@ -1,6 +1,6 @@
 # 🟡 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-05-29 10:41:18 GMT+7`  
+**Thời gian:** `2026-05-29 11:06:15 GMT+7`  
 **Trạng thái tổng thể:** `WARNING`
 
 ---
@@ -20,19 +20,19 @@
 |------|------------|------------|------------|
 | `database.json` | 0.0 | 3.0 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
 | `extra_data.json` | 0.0 | 9.5 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `map.geojson` | 2.7 | 7.0 KB | 🟢 Moi cap nhat 2.7 ngay truoc |
-| `official_documents.json` | 0.0 | 3.6 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `planning_updates.json` | 0.0 | 3.2 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `market_prices.json` | 0.0 | 3723.0 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
+| `map.geojson` | 0.0 | 7.0 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
+| `official_documents.json` | 0.0 | 3.5 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
+| `planning_updates.json` | 0.0 | 3.1 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
+| `market_prices.json` | 0.0 | 3621.4 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
 
 ## 🟢 Link Health
 | Tên | URL | HTTP | Độ trễ | Trạng thái |
 |-----|-----|------|--------|------------|
 | Trang chu DuLieuQuyHoach | `https://dulieuquyhoach.com...` | `200` | 1ms | ✅ |
-| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 93ms | ✅ |
-| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 425ms | ✅ |
-| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 81ms | ✅ |
-| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 80ms | ✅ |
+| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 1293ms | ✅ |
+| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 2176ms | ✅ |
+| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 1073ms | ✅ |
+| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 1677ms | ✅ |
 
 ## 🟢 Data Quality
 > 10 ban ghi, khong co loi nao
@@ -61,4 +61,4 @@
 | `giapranh_vd4` | Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4 | giapranh | 11 | ✅ — |
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-05-29 10:41:18 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-05-29 11:06:15 GMT+7*
