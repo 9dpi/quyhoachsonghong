@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-30 10:52:58 GMT+7",
-  "date": "2026-05-30",
+  "generated_at": "2026-05-31 11:17:54 GMT+7",
+  "date": "2026-05-31",
   "overall_status": "warning",
   "total_checks": 8,
   "checks": [
@@ -115,7 +115,7 @@
           "name": "Cong thong tin Ha Noi",
           "url": "https://hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 1453,
+          "latency_ms": 1582,
           "ok": true,
           "status": "ok"
         },
@@ -123,7 +123,7 @@
           "name": "Vien Quy hoach Ha Noi (VQH)",
           "url": "https://vqh.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 1971,
+          "latency_ms": 2196,
           "ok": true,
           "status": "ok"
         },
@@ -131,7 +131,7 @@
           "name": "UBND Ha Noi - Van ban phap luat",
           "url": "https://vanban.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 1438,
+          "latency_ms": 1578,
           "ok": true,
           "status": "ok"
         },
@@ -139,7 +139,7 @@
           "name": "QD71/2024 Bang gia dat HN (PDF)",
           "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
           "status_code": 200,
-          "latency_ms": 1437,
+          "latency_ms": 1048,
           "ok": true,
           "status": "ok"
         }
@@ -186,7 +186,7 @@
       "status": "warning",
       "total": 7,
       "old_count": 2,
-      "last_check": "29/05/2026 18:29:35",
+      "last_check": "30/05/2026 16:58:30",
       "summary": "7 van ban, 2 can ra soat (<=2022)"
     },
     {
