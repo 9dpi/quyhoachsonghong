@@ -10,28 +10,6 @@
     "max_boundary_shift_m": 0.0,
     "level": "INFO"
   },
-  "sh_r1": {
-    "id": "sh_r1",
-    "status": "UNCHANGED",
-    "tenKhu": "Phân khu Quy hoạch Sông Hồng R1-R2",
-    "area_old_ha": 10369.47,
-    "area_new_ha": 10369.47,
-    "area_change_pct": 0.0,
-    "similarity_pct": 100.0,
-    "max_boundary_shift_m": 0.0,
-    "level": "INFO"
-  },
-  "giapranh_vd4": {
-    "id": "giapranh_vd4",
-    "status": "UNCHANGED",
-    "tenKhu": "Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4",
-    "area_old_ha": 2424.59,
-    "area_new_ha": 2424.59,
-    "area_change_pct": 0.0,
-    "similarity_pct": 100.0,
-    "max_boundary_shift_m": 0.0,
-    "level": "INFO"
-  },
   "vd4_sec1": {
     "id": "vd4_sec1",
     "status": "UNCHANGED",
@@ -49,6 +27,28 @@
     "tenKhu": "Khu tái định cư Lĩnh Nam (Hoàng Mai)",
     "area_old_ha": 13.84,
     "area_new_ha": 13.84,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "giapranh_vd4": {
+    "id": "giapranh_vd4",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4",
+    "area_old_ha": 2424.59,
+    "area_new_ha": 2424.59,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "sh_r1": {
+    "id": "sh_r1",
+    "status": "UNCHANGED",
+    "tenKhu": "Phân khu Quy hoạch Sông Hồng R1-R2",
+    "area_old_ha": 10369.47,
+    "area_new_ha": 10369.47,
     "area_change_pct": 0.0,
     "similarity_pct": 100.0,
     "max_boundary_shift_m": 0.0,
