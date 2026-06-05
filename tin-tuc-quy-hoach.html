@@ -37,11 +37,13 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://dulieuquyhoach.com/tin-tuc-quy-hoach.html">
     <meta property="twitter:title" content="Tin Tức Quy Hoạch Đô Thị 2026 | Bản Đồ 63 Tỉnh Thành">
-    <meta property="twitter:description" content="Cập nhật tin tức quy hoạch đô thị mới nhất 2026. Vành đai 4, Sông Hồng, Tái định cư.">
+    <meta property="twitter:description"
+        content="Cập nhật tin tức quy hoạch đô thị mới nhất 2026. Vành đai 4, Sông Hồng, Tái định cư.">
     <meta property="twitter:image" content="https://dulieuquyhoach.com/Branding/dulieuquyhoach.png">
 
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
 
     <!-- JSON-LD Schema Markup -->
     <script type="application/ld+json">
@@ -118,14 +120,18 @@
             --text-muted: #94a3b8;
             --border: #e2e8f0;
             --font: 'Inter', sans-serif;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
-            --glass: rgba(255,255,255,0.75);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+            --glass: rgba(255, 255, 255, 0.75);
             --radius: 14px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: var(--font);
@@ -137,7 +143,12 @@
             flex-direction: column;
         }
 
-        .fa, .fas, .far, .fab, .fa-solid, .fa-brands {
+        .fa,
+        .fas,
+        .far,
+        .fab,
+        .fa-solid,
+        .fa-brands {
             font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
         }
 
@@ -156,8 +167,19 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .logo-text { font-size: 1.25rem; font-weight: 800; color: var(--primary); text-decoration: none; white-space: nowrap; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            white-space: nowrap;
+        }
 
         .header-center {
             flex-grow: 1;
@@ -169,6 +191,7 @@
             padding: 6px 0;
             border: 1px solid var(--border);
         }
+
         .ticker-content {
             display: inline-block;
             white-space: nowrap;
@@ -178,14 +201,34 @@
             font-weight: 600;
             color: #1e40af;
         }
-        .header-center:hover .ticker-content { animation-play-state: paused; cursor: default; }
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-100%, 0, 0); }
+
+        .header-center:hover .ticker-content {
+            animation-play-state: paused;
+            cursor: default;
         }
 
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .header-right ul { display: flex; gap: 15px; list-style: none; align-items: center; }
+        @keyframes ticker {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            100% {
+                transform: translate3d(-100%, 0, 0);
+            }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-right ul {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+            align-items: center;
+        }
 
         .nav-link {
             color: var(--text-sub);
@@ -195,8 +238,14 @@
             transition: color .2s;
             white-space: nowrap;
         }
-        .nav-link:hover { color: var(--primary); }
-        .nav-link.active { color: var(--primary); }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+        }
 
         .nav-btn {
             background: var(--primary);
@@ -206,11 +255,15 @@
             font-size: 0.82rem;
             font-weight: 700;
             text-decoration: none;
-            box-shadow: 0 4px 10px rgba(37,99,235,0.2);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
             white-space: nowrap;
             transition: background .2s, transform .1s;
         }
-        .nav-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        .nav-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
 
         .nav-btn-news {
             background: transparent;
@@ -224,10 +277,21 @@
             white-space: nowrap;
             transition: background .2s, color .2s;
         }
-        .nav-btn-news:hover { background: var(--primary); color: white; }
 
-        .social-link a { color: var(--text-sub); font-size: 1.05rem; transition: color .2s; }
-        .social-link a:hover { color: var(--primary); }
+        .nav-btn-news:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .social-link a {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            transition: color .2s;
+        }
+
+        .social-link a:hover {
+            color: var(--primary);
+        }
 
         .menu-toggle {
             display: none;
@@ -247,7 +311,11 @@
             box-shadow: var(--shadow-md);
             z-index: 4999;
         }
-        .mobile-dropdown.open { display: flex; }
+
+        .mobile-dropdown.open {
+            display: flex;
+        }
+
         .mobile-menu-item {
             padding: 14px 24px;
             font-size: 0.9rem;
@@ -260,14 +328,32 @@
             gap: 10px;
             transition: background .15s;
         }
-        .mobile-menu-item:hover { background: var(--primary-light); color: var(--primary); }
-        .m-fb { color: #1877f2; }
-        .m-tiktok { color: #000; }
-        .m-zalo { color: #0078ff; }
-        .m-yt { color: #ff0000; }
+
+        .mobile-menu-item:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .m-fb {
+            color: #1877f2;
+        }
+
+        .m-tiktok {
+            color: #000;
+        }
+
+        .m-zalo {
+            color: #0078ff;
+        }
+
+        .m-yt {
+            color: #ff0000;
+        }
 
         /* ===== MAIN CONTENT ===== */
-        main { flex: 1; }
+        main {
+            flex: 1;
+        }
 
         /* ===== HERO SECTION ===== */
         .hero {
@@ -278,19 +364,25 @@
             position: relative;
             overflow: hidden;
         }
+
         .hero::before {
             content: '';
             position: absolute;
             inset: 0;
             background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
-        .hero > * { position: relative; z-index: 1; }
+
+        .hero>* {
+            position: relative;
+            z-index: 1;
+        }
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 99px;
             padding: 5px 14px;
             font-size: 0.78rem;
@@ -300,13 +392,18 @@
             margin-bottom: 16px;
             backdrop-filter: blur(8px);
         }
+
         .hero h2 {
             font-size: clamp(1.6rem, 4vw, 2.4rem);
             font-weight: 800;
             line-height: 1.25;
             margin-bottom: 12px;
         }
-        .hero h2 span { color: var(--secondary); }
+
+        .hero h2 span {
+            color: var(--secondary);
+        }
+
         .hero p {
             font-size: 1rem;
             opacity: .85;
@@ -324,8 +421,9 @@
             background: white;
             border-radius: 14px;
             padding: 5px 5px 5px 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
+
         .hero-search input {
             flex: 1;
             border: none;
@@ -335,7 +433,11 @@
             color: var(--text-main);
             background: transparent;
         }
-        .hero-search input::placeholder { color: var(--text-muted); }
+
+        .hero-search input::placeholder {
+            color: var(--text-muted);
+        }
+
         .hero-search button {
             background: var(--primary);
             color: white;
@@ -351,7 +453,10 @@
             gap: 7px;
             transition: background .2s;
         }
-        .hero-search button:hover { background: var(--primary-dark); }
+
+        .hero-search button:hover {
+            background: var(--primary-dark);
+        }
 
         /* Stat chips */
         .hero-stats {
@@ -361,27 +466,78 @@
             margin-top: 28px;
             flex-wrap: wrap;
         }
+
         .hero-stat {
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             padding: 10px 20px;
             backdrop-filter: blur(8px);
         }
-        .hero-stat .num { font-size: 1.4rem; font-weight: 800; }
-        .hero-stat .label { font-size: 0.75rem; opacity: .8; margin-top: 2px; }
+
+        .hero-stat .num {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .hero-stat .label {
+            font-size: 0.75rem;
+            opacity: .8;
+            margin-top: 2px;
+        }
 
         /* ===== CONTAINER ===== */
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
         /* ===== SECTION ===== */
-        .section { padding: 52px 20px; max-width: 1280px; margin: 0 auto; }
-        .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-        .section-title { font-size: 1.5rem; font-weight: 800; color: var(--text-main); }
-        .section-title span { color: var(--primary); }
-        .section-subtitle { font-size: 0.88rem; color: var(--text-sub); margin-top: 4px; }
-        .section-link { font-size: 0.85rem; color: var(--primary); font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px; }
-        .section-link:hover { text-decoration: underline; }
+        .section {
+            padding: 52px 20px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .section-link {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-link:hover {
+            text-decoration: underline;
+        }
 
         /* ===== FILTER BAR ===== */
         .filter-bar {
@@ -390,6 +546,7 @@
             flex-wrap: wrap;
             margin-bottom: 24px;
         }
+
         .filter-btn {
             padding: 7px 16px;
             border-radius: 99px;
@@ -402,7 +559,9 @@
             cursor: pointer;
             transition: all .2s;
         }
-        .filter-btn:hover, .filter-btn.active {
+
+        .filter-btn:hover,
+        .filter-btn.active {
             background: var(--primary);
             border-color: var(--primary);
             color: white;
@@ -426,6 +585,7 @@
             transition: transform .2s, box-shadow .2s, border-color .2s;
             display: block;
         }
+
         .province-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
@@ -441,6 +601,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .province-thumb .icon-layer {
             position: absolute;
             inset: 0;
@@ -451,10 +612,30 @@
             opacity: 0.14;
         }
 
-        .province-body { padding: 12px 14px 14px; }
-        .province-name { font-size: 1rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
-        .province-desc { font-size: 0.78rem; color: var(--text-sub); line-height: 1.5; }
-        .province-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+        .province-body {
+            padding: 12px 14px 14px;
+        }
+
+        .province-name {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .province-desc {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        .province-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
         .province-tag {
             font-size: 0.7rem;
             font-weight: 600;
@@ -463,10 +644,12 @@
             background: var(--primary-light);
             color: var(--primary);
         }
+
         .province-tag.hot {
             background: #fef2f2;
             color: #dc2626;
         }
+
         .province-tag.amber {
             background: var(--secondary-light);
             color: #b45309;
@@ -489,13 +672,19 @@
             gap: 10px;
             transition: transform .2s, box-shadow .2s, border-color .2s;
         }
+
         .news-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-md);
             border-color: #bfdbfe;
         }
 
-        .news-card-header { display: flex; align-items: center; gap: 8px; }
+        .news-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .source-tag {
             font-size: 0.72rem;
             font-weight: 700;
@@ -504,11 +693,31 @@
             text-transform: uppercase;
             letter-spacing: .02em;
         }
-        .source-vnexpress { background: #fef3c7; color: #92400e; }
-        .source-tuoitre { background: #fee2e2; color: #b91c1c; }
-        .source-vietnamnet { background: #dbeafe; color: #1e40af; }
-        .source-laodong { background: #f3e8ff; color: #7c3aed; }
-        .source-other { background: #f1f5f9; color: #475569; }
+
+        .source-vnexpress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .source-tuoitre {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .source-vietnamnet {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .source-laodong {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .source-other {
+            background: #f1f5f9;
+            color: #475569;
+        }
 
         .category-tag {
             font-size: 0.7rem;
@@ -534,8 +743,16 @@
             line-height: 1.45;
             color: var(--text-main);
         }
-        .news-title a { color: inherit; text-decoration: none; }
-        .news-title a:hover { color: var(--primary); text-decoration: underline; }
+
+        .news-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .news-title a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
 
         .news-desc {
             font-size: 0.82rem;
@@ -555,7 +772,13 @@
             color: var(--text-muted);
         }
 
-        .news-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
         .read-more {
             font-size: 0.8rem;
             font-weight: 700;
@@ -566,14 +789,19 @@
             gap: 5px;
             transition: gap .15s;
         }
-        .read-more:hover { gap: 8px; }
+
+        .read-more:hover {
+            gap: 8px;
+        }
 
         /* Loading & Empty states */
-        .loading-state, .empty-state {
+        .loading-state,
+        .empty-state {
             text-align: center;
             padding: 60px 24px;
             color: var(--text-muted);
         }
+
         .loading-state .spinner {
             width: 40px;
             height: 40px;
@@ -583,9 +811,18 @@
             animation: spin .8s linear infinite;
             margin: 0 auto 16px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .load-more-wrap { text-align: center; margin-top: 32px; }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .load-more-wrap {
+            text-align: center;
+            margin-top: 32px;
+        }
+
         .load-more-btn {
             padding: 12px 32px;
             border-radius: 99px;
@@ -598,8 +835,16 @@
             cursor: pointer;
             transition: all .2s;
         }
-        .load-more-btn:hover { background: var(--primary); color: white; }
-        .load-more-btn:disabled { opacity: .4; cursor: default; }
+
+        .load-more-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .load-more-btn:disabled {
+            opacity: .4;
+            cursor: default;
+        }
 
         /* ===== SEO ARTICLE SECTION ===== */
         .seo-section {
@@ -608,11 +853,37 @@
             border-bottom: 1px solid var(--border);
             padding: 52px 20px;
         }
-        .seo-inner { max-width: 1280px; margin: 0 auto; }
-        .seo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .seo-article h3 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; border-left: 3px solid var(--primary); padding-left: 12px; }
-        .seo-article p { font-size: 0.88rem; color: var(--text-sub); line-height: 1.75; }
-        .seo-article ul { list-style: none; }
+
+        .seo-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .seo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .seo-article h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            border-left: 3px solid var(--primary);
+            padding-left: 12px;
+        }
+
+        .seo-article p {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.75;
+        }
+
+        .seo-article ul {
+            list-style: none;
+        }
+
         .seo-article ul li {
             font-size: 0.88rem;
             color: var(--text-sub);
@@ -623,7 +894,13 @@
             gap: 8px;
             line-height: 1.6;
         }
-        .seo-article ul li::before { content: '→'; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+        .seo-article ul li::before {
+            content: '→';
+            color: var(--primary);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
 
         /* ===== FOOTER ===== */
         footer {
@@ -631,40 +908,159 @@
             color: #94a3b8;
             padding: 40px 24px 24px;
         }
-        .footer-inner { max-width: 1280px; margin: 0 auto; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
-        .footer-brand .footer-logo { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 10px; }
-        .footer-brand p { font-size: 0.82rem; line-height: 1.7; max-width: 280px; }
-        .footer-col h4 { font-size: 0.85rem; font-weight: 700; color: #e2e8f0; margin-bottom: 14px; text-transform: uppercase; letter-spacing: .06em; }
-        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .footer-col ul li a { font-size: 0.82rem; color: #94a3b8; text-decoration: none; transition: color .2s; }
-        .footer-col ul li a:hover { color: white; }
-        .footer-bottom { border-top: 1px solid #1e293b; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .footer-bottom p { font-size: 0.78rem; }
-        .footer-social { display: flex; gap: 12px; }
-        .footer-social a { color: #64748b; font-size: 1rem; transition: color .2s; }
-        .footer-social a:hover { color: white; }
+
+        .footer-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+
+        .footer-brand .footer-logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .footer-brand p {
+            font-size: 0.82rem;
+            line-height: 1.7;
+            max-width: 280px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-col ul li a {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color .2s;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1e293b;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer-bottom p {
+            font-size: 0.78rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .footer-social a {
+            color: #64748b;
+            font-size: 1rem;
+            transition: color .2s;
+        }
+
+        .footer-social a:hover {
+            color: white;
+        }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
-            .header-center { display: none; }
-            .social-link { display: none; }
-            .menu-toggle { display: block; }
-            .header-right > ul { display: none; }
-            .seo-grid { grid-template-columns: 1fr; gap: 24px; }
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
-            .footer-brand { grid-column: 1 / -1; }
+            .header-center {
+                display: none;
+            }
+
+            .social-link {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .header-right>ul {
+                display: none;
+            }
+
+            .seo-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
         }
+
         @media (max-width: 640px) {
-            .hero { padding: 36px 16px 32px; }
-            .hero h2 { font-size: 1.5rem; }
-            .hero-stats { gap: 12px; }
-            .hero-stat { padding: 8px 14px; }
-            .province-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-            .news-grid { grid-template-columns: 1fr; }
-            .section { padding: 36px 16px; }
-            .section-header { flex-direction: column; align-items: flex-start; }
-            .footer-grid { grid-template-columns: 1fr; }
+            .hero {
+                padding: 36px 16px 32px;
+            }
+
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+
+            .hero-stats {
+                gap: 12px;
+            }
+
+            .hero-stat {
+                padding: 8px 14px;
+            }
+
+            .province-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 12px;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 36px 16px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Ads Container */
@@ -687,7 +1083,12 @@
         }
 
         /* Divider */
-        .divider { height: 1px; background: var(--border); max-width: 1280px; margin: 0 auto; }
+        .divider {
+            height: 1px;
+            background: var(--border);
+            max-width: 1280px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -697,33 +1098,48 @@
         <div class="header-left">
             <img src="Branding/dulieuquyhoach.png" alt="Dữ liệu Quy hoạch Logo"
                 style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;">
-            <a href="index.html" class="logo-text">DỮ LIỆU QUY HOẠCH <span style="color: var(--secondary);">2026</span></a>
+            <a href="index.html" class="logo-text">DỮ LIỆU QUY HOẠCH <span
+                    style="color: var(--secondary);">2026</span></a>
         </div>
         <div class="header-center">
-            <div id="ticker" class="ticker-content">Tin tức: Đông Anh lên Quận 2025 | Vành đai 4 đẩy nhanh tiến độ | Phê duyệt Quy hoạch Sông Hồng R1-R2...</div>
+            <div id="ticker" class="ticker-content">Tin tức: Đông Anh lên Quận 2025 | Vành đai 4 đẩy nhanh tiến độ | Phê
+                duyệt Quy hoạch Sông Hồng R1-R2...</div>
         </div>
         <div class="header-right">
             <ul>
                 <li><a href="index.html" class="nav-link">Trang chủ</a></li>
                 <li><a href="tin-tuc-quy-hoach.html" class="nav-link active">Tin tức</a></li>
-                <li><a href="tai-ban-do-quy-hoach.html" class="nav-btn"><i class="fa-solid fa-download"></i> Bảng giá đất</a></li>
-                <li class="social-link"><a href="https://www.facebook.com/groups/1694801338541423" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li>
-                <li class="social-link"><a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"><i class="fa-brands fa-tiktok"></i></a></li>
-                <li class="social-link"><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"><i class="fa-solid fa-comment-dots" title="Zalo"></i></a></li>
-                <li class="social-link"><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
+                <li><a href="tai-ban-do-quy-hoach.html" class="nav-btn"><i class="fa-solid fa-download"></i> Bảng giá
+                        đất</a></li>
+                <li class="social-link"><a href="https://www.facebook.com/groups/1694801338541423" target="_blank"><i
+                            class="fa-brands fa-facebook-f"></i></a></li>
+                <li class="social-link"><a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"><i
+                            class="fa-brands fa-tiktok"></i></a></li>
+                <li class="social-link"><a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"><i
+                            class="fa-solid fa-comment-dots" title="Zalo"></i></a></li>
+                <li class="social-link"><a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"><i
+                            class="fa-brands fa-youtube"></i></a></li>
             </ul>
-            <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+            <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()"><i
+                    class="fa-solid fa-bars"></i></button>
         </div>
     </header>
 
     <div class="mobile-dropdown" id="mobile-dropdown">
-        <a href="index.html" class="mobile-menu-item"><i class="fa-solid fa-house" style="color: var(--primary);"></i> Trang chủ</a>
-        <a href="tin-tuc-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-newspaper" style="color: var(--primary);"></i> Tin tức Quy hoạch</a>
-        <a href="tai-ban-do-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-download" style="color: var(--primary);"></i> Tải bản đồ quy hoạch</a>
-        <a href="https://www.facebook.com/groups/1694801338541423" target="_blank" class="mobile-menu-item"><i class="fa-brands fa-facebook-f m-fb"></i> Facebook Cộng đồng</a>
-        <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i class="fa-brands fa-tiktok m-tiktok"></i> Kênh TikTok</a>
-        <a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank" class="mobile-menu-item"><i class="fa-solid fa-comment-dots m-zalo"></i> Nhóm Zalo Hỗ trợ</a>
-        <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i class="fa-brands fa-youtube m-yt"></i> Kênh YouTube</a>
+        <a href="index.html" class="mobile-menu-item"><i class="fa-solid fa-house" style="color: var(--primary);"></i>
+            Trang chủ</a>
+        <a href="tin-tuc-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-newspaper"
+                style="color: var(--primary);"></i> Tin tức Quy hoạch</a>
+        <a href="tai-ban-do-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-download"
+                style="color: var(--primary);"></i> Tải bản đồ quy hoạch</a>
+        <a href="https://www.facebook.com/groups/1694801338541423" target="_blank" class="mobile-menu-item"><i
+                class="fa-brands fa-facebook-f m-fb"></i> Facebook Cộng đồng</a>
+        <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i
+                class="fa-brands fa-tiktok m-tiktok"></i> Kênh TikTok</a>
+        <a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank" class="mobile-menu-item"><i
+                class="fa-solid fa-comment-dots m-zalo"></i> Nhóm Zalo Hỗ trợ</a>
+        <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i
+                class="fa-brands fa-youtube m-yt"></i> Kênh YouTube</a>
     </div>
 
     <main>
@@ -731,12 +1147,12 @@
         <section class="hero">
             <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Cập nhật hàng ngày</div>
             <h2>Tin Tức <span>Quy Hoạch</span> Đô Thị<br>& Bản Đồ 63 Tỉnh Thành</h2>
-            <p>Theo dõi tin tức quy hoạch mới nhất, tra cứu bản đồ quy hoạch theo địa phương và nắm bắt thông tin đền bù, tái định cư nhanh chóng, chính xác.</p>
+            <p>Theo dõi tin tức quy hoạch mới nhất, tra cứu bản đồ quy hoạch theo địa phương và nắm bắt thông tin đền
+                bù, tái định cư nhanh chóng, chính xác.</p>
 
             <div class="hero-search" id="hero-search-bar">
                 <input type="text" id="global-search" placeholder="Tìm kiếm tỉnh thành, dự án quy hoạch..."
-                    oninput="onGlobalSearch(this.value)"
-                    onkeydown="if(event.key==='Enter') doSearch()">
+                    oninput="onGlobalSearch(this.value)" onkeydown="if(event.key==='Enter') doSearch()">
                 <button onclick="doSearch()"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
             </div>
 
@@ -756,25 +1172,14 @@
             </div>
         </section>
 
-        <!-- Adsense Top Leaderboard -->
-        <div class="ads-container">
-            <ins class="adsbygoogle"
-                 style="display:block; width:100%; min-height:90px;"
-                 data-ad-client="ca-pub-8079778054351942"
-                 data-ad-slot="news-top"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
 
         <!-- ===== PROVINCE MAP GRID ===== -->
         <section class="section" id="province-section">
             <div class="section-header">
                 <div>
                     <div class="section-title">🗺️ Tra cứu <span>Bản đồ Quy hoạch</span> theo địa phương</div>
-                    <div class="section-subtitle">Click vào địa phương để tra cứu bản đồ quy hoạch tương tác trực tiếp</div>
+                    <div class="section-subtitle">Click vào địa phương để tra cứu bản đồ quy hoạch tương tác trực tiếp
+                    </div>
                 </div>
                 <a href="index.html" class="section-link">Xem bản đồ đầy đủ <i class="fa-solid fa-arrow-right"></i></a>
             </div>
@@ -794,25 +1199,14 @@
 
         <div class="divider"></div>
 
-        <!-- Adsense Mid Banner -->
-        <div class="ads-container">
-            <ins class="adsbygoogle"
-                 style="display:block; width:100%; min-height:90px;"
-                 data-ad-client="ca-pub-8079778054351942"
-                 data-ad-slot="news-mid"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
 
         <!-- ===== NEWS FEED ===== -->
         <section class="section" id="news-section">
             <div class="section-header">
                 <div>
                     <div class="section-title">📰 Tin tức <span>Quy hoạch</span> mới nhất</div>
-                    <div class="section-subtitle">Tổng hợp tự động từ VnExpress, Tuổi Trẻ, VietnamNet... cập nhật liên tục</div>
+                    <div class="section-subtitle">Tổng hợp tự động từ VnExpress, Tuổi Trẻ, VietnamNet... cập nhật liên
+                        tục</div>
                 </div>
             </div>
 
@@ -848,7 +1242,8 @@
             <div class="section-header">
                 <div>
                     <div class="section-title">✍️ Phân tích & <span>Cẩm nang</span> Quy hoạch chuyên sâu</div>
-                    <div class="section-subtitle">Bài viết phân tích độc lập, cẩm nang tra cứu và thông tin chính sách đất đai mới nhất</div>
+                    <div class="section-subtitle">Bài viết phân tích độc lập, cẩm nang tra cứu và thông tin chính sách
+                        đất đai mới nhất</div>
                 </div>
             </div>
             <div class="news-grid">
@@ -859,12 +1254,16 @@
                     </div>
                     <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
                     <h3 class="news-title">
-                        <a href="tin-tuc/quy-hoach-phan-khu-song-hong-ha-noi.html">Quy hoạch Phân khu Sông Hồng Hà Nội: Chi tiết ranh giới, lộ trình triển khai mới nhất</a>
+                        <a href="tin-tuc/quy-hoach-phan-khu-song-hong-ha-noi.html">Quy hoạch Phân khu Sông Hồng Hà Nội:
+                            Chi tiết ranh giới, lộ trình triển khai mới nhất</a>
                     </h3>
-                    <p class="news-desc">Phân tích chi tiết ranh giới quy hoạch sông Hồng từ R1 đến R6, các vùng bãi sông được phép xây dựng và phương án tái định cư di dời dân cư vùng ven sông Hồng giai đoạn 2026-2045.</p>
+                    <p class="news-desc">Phân tích chi tiết ranh giới quy hoạch sông Hồng từ R1 đến R6, các vùng bãi
+                        sông được phép xây dựng và phương án tái định cư di dời dân cư vùng ven sông Hồng giai đoạn
+                        2026-2045.</p>
                     <div class="news-footer">
                         <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội</span>
-                        <a href="tin-tuc/quy-hoach-phan-khu-song-hong-ha-noi.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="tin-tuc/quy-hoach-phan-khu-song-hong-ha-noi.html" class="read-more">Đọc chi tiết <i
+                                class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </article>
 
@@ -875,12 +1274,17 @@
                     </div>
                     <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
                     <h3 class="news-title">
-                        <a href="tin-tuc/tuyen-duong-van-dai-4-ha-noi.html">Bản đồ hướng tuyến đường Vành đai 4 Hà Nội đi qua những quận huyện nào?</a>
+                        <a href="tin-tuc/tuyen-duong-van-dai-4-ha-noi.html">Bản đồ hướng tuyến đường Vành đai 4 Hà Nội
+                            đi qua những quận huyện nào?</a>
                     </h3>
-                    <p class="news-desc">Chi tiết lộ trình, hướng tuyến đường Vành đai 4 vùng Thủ đô Hà Nội. Cập nhật tiến độ giải phóng mặt bằng, các nút giao thông trọng điểm và thông tin bồi thường tái định cư mới nhất.</p>
+                    <p class="news-desc">Chi tiết lộ trình, hướng tuyến đường Vành đai 4 vùng Thủ đô Hà Nội. Cập nhật
+                        tiến độ giải phóng mặt bằng, các nút giao thông trọng điểm và thông tin bồi thường tái định cư
+                        mới nhất.</p>
                     <div class="news-footer">
-                        <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội, Hưng Yên, Bắc Ninh</span>
-                        <a href="tin-tuc/tuyen-duong-van-dai-4-ha-noi.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội, Hưng Yên, Bắc
+                            Ninh</span>
+                        <a href="tin-tuc/tuyen-duong-van-dai-4-ha-noi.html" class="read-more">Đọc chi tiết <i
+                                class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </article>
 
@@ -891,12 +1295,16 @@
                     </div>
                     <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
                     <h3 class="news-title">
-                        <a href="tin-tuc/huong-dan-tra-cuu-quy-hoach-dat-dai.html">Hướng dẫn cách tra cứu quy hoạch đất đai trực tuyến nhanh chóng, chính xác nhất</a>
+                        <a href="tin-tuc/huong-dan-tra-cuu-quy-hoach-dat-dai.html">Hướng dẫn cách tra cứu quy hoạch đất
+                            đai trực tuyến nhanh chóng, chính xác nhất</a>
                     </h3>
-                    <p class="news-desc">Cẩm nang toàn diện hướng dẫn các bước kiểm tra quy hoạch đất đai trực tuyến miễn phí. Hướng dẫn đọc ký hiệu màu sắc, phân biệt đất thổ cư, đất nông nghiệp và tránh rủi ro mua đất quy hoạch.</p>
+                    <p class="news-desc">Cẩm nang toàn diện hướng dẫn các bước kiểm tra quy hoạch đất đai trực tuyến
+                        miễn phí. Hướng dẫn đọc ký hiệu màu sắc, phân biệt đất thổ cư, đất nông nghiệp và tránh rủi ro
+                        mua đất quy hoạch.</p>
                     <div class="news-footer">
                         <span class="news-location"><i class="fa-solid fa-location-dot"></i> Toàn quốc</span>
-                        <a href="tin-tuc/huong-dan-tra-cuu-quy-hoach-dat-dai.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="tin-tuc/huong-dan-tra-cuu-quy-hoach-dat-dai.html" class="read-more">Đọc chi tiết <i
+                                class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </article>
 
@@ -907,29 +1315,21 @@
                     </div>
                     <div class="news-date"><i class="fa-regular fa-calendar"></i> 28/05/2026</div>
                     <h3 class="news-title">
-                        <a href="tin-tuc/bang-gia-dat-boi-thuong-ha-noi.html">Bảng giá đất bồi thường giải phóng mặt bằng Hà Nội mới nhất 2026</a>
+                        <a href="tin-tuc/bang-gia-dat-boi-thuong-ha-noi.html">Bảng giá đất bồi thường giải phóng mặt
+                            bằng Hà Nội mới nhất 2026</a>
                     </h3>
-                    <p class="news-desc">Cập nhật cách tính giá đất đền bù khi bị thu hồi đất theo Quyết định mới nhất của UBND TP. Hà Nội. Bảng giá đất đền bù Vành đai 4, cầu Tứ Liên và các dự án giao thông trọng điểm.</p>
+                    <p class="news-desc">Cập nhật cách tính giá đất đền bù khi bị thu hồi đất theo Quyết định mới nhất
+                        của UBND TP. Hà Nội. Bảng giá đất đền bù Vành đai 4, cầu Tứ Liên và các dự án giao thông trọng
+                        điểm.</p>
                     <div class="news-footer">
                         <span class="news-location"><i class="fa-solid fa-location-dot"></i> Hà Nội</span>
-                        <a href="tin-tuc/bang-gia-dat-boi-thuong-ha-noi.html" class="read-more">Đọc chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="tin-tuc/bang-gia-dat-boi-thuong-ha-noi.html" class="read-more">Đọc chi tiết <i
+                                class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </article>
             </div>
         </section>
 
-        <!-- Adsense Bottom Leaderboard -->
-        <div class="ads-container">
-            <ins class="adsbygoogle"
-                 style="display:block; width:100%; min-height:90px;"
-                 data-ad-client="ca-pub-8079778054351942"
-                 data-ad-slot="news-bottom"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
 
         <!-- ===== SEO ARTICLE SECTION ===== -->
         <section class="seo-section" id="seo-guide">
@@ -937,24 +1337,36 @@
                 <div class="seo-grid">
                     <article class="seo-article">
                         <h3>Hướng dẫn tra cứu quy hoạch theo địa chỉ</h3>
-                        <p>Để kiểm tra xem địa chỉ của bạn có nằm trong vùng quy hoạch không, thực hiện theo các bước đơn giản sau: Nhập tên đường, phường, quận hoặc tỉnh thành vào ô tìm kiếm trên trang chủ. Hệ thống sẽ tự động định vị trên bản đồ và hiển thị kết quả đối chiếu với ranh giới các dự án quy hoạch được cập nhật mới nhất.</p>
+                        <p>Để kiểm tra xem địa chỉ của bạn có nằm trong vùng quy hoạch không, thực hiện theo các bước
+                            đơn giản sau: Nhập tên đường, phường, quận hoặc tỉnh thành vào ô tìm kiếm trên trang chủ. Hệ
+                            thống sẽ tự động định vị trên bản đồ và hiển thị kết quả đối chiếu với ranh giới các dự án
+                            quy hoạch được cập nhật mới nhất.</p>
                         <br>
                         <ul>
-                            <li>Quy hoạch Vành đai 4: Đi qua Sóc Sơn, Mê Linh, Đan Phượng, Hoài Đức, Hà Đông, Thanh Oai, Thường Tín</li>
+                            <li>Quy hoạch Vành đai 4: Đi qua Sóc Sơn, Mê Linh, Đan Phượng, Hoài Đức, Hà Đông, Thanh Oai,
+                                Thường Tín</li>
                             <li>Phân khu Sông Hồng R1-R2: Bao gồm cả hai bờ sông từ Mê Linh xuống tới Thường Tín</li>
-                            <li>Tái định cư Mê Linh: Các khu TĐC trên địa bàn xã Văn Khê, Đại Thịnh phục vụ Vành đai 4</li>
-                            <li>Tái định cư Lĩnh Nam: Chung cư Thượng Thanh dành cho hộ dân vùng giải tỏa cầu Tứ Liên</li>
+                            <li>Tái định cư Mê Linh: Các khu TĐC trên địa bàn xã Văn Khê, Đại Thịnh phục vụ Vành đai 4
+                            </li>
+                            <li>Tái định cư Lĩnh Nam: Chung cư Thượng Thanh dành cho hộ dân vùng giải tỏa cầu Tứ Liên
+                            </li>
                         </ul>
                     </article>
                     <article class="seo-article">
                         <h3>Những khu vực quy hoạch trọng điểm Hà Nội 2026</h3>
                         <ul>
-                            <li><strong>Trục Đại lộ Sông Hồng:</strong> Hà Nội chuẩn bị 79.000–85.000 chỗ ở tái định cư, di dời 860.000 dân trong Vành đai 3 giai đoạn 2026–2045</li>
-                            <li><strong>Cầu Tứ Liên và Trần Hưng Đạo:</strong> Khu TĐC quy mô lớn tại Thượng Thanh, Hoàng Mai, Đông Anh phục vụ các hộ ảnh hưởng</li>
-                            <li><strong>Vành đai 2,5:</strong> Đẩy nhanh GPMB tại Thanh Xuân, Khương Đình, Yên Hòa; hoàn thành bàn giao mặt bằng trước 30/6</li>
-                            <li><strong>Mở rộng Quốc lộ 1A (16 làn xe):</strong> Khởi công từ Vành đai 1 đến nút giao Cầu Giẽ dài hơn 36km, vốn 162.000 tỷ</li>
-                            <li><strong>Đường sắt đô thị:</strong> Hà Nội quy hoạch 1.200 km đường sắt, ưu tiên 979 km metro đô thị và vận tải công cộng khối lượng lớn</li>
-                            <li><strong>Hòa Lạc & Phía Tây:</strong> Thu hồi hơn 125ha, triển khai loạt dự án hạ tầng và khu công nghệ cao giai đoạn 2026–2030</li>
+                            <li><strong>Trục Đại lộ Sông Hồng:</strong> Hà Nội chuẩn bị 79.000–85.000 chỗ ở tái định cư,
+                                di dời 860.000 dân trong Vành đai 3 giai đoạn 2026–2045</li>
+                            <li><strong>Cầu Tứ Liên và Trần Hưng Đạo:</strong> Khu TĐC quy mô lớn tại Thượng Thanh,
+                                Hoàng Mai, Đông Anh phục vụ các hộ ảnh hưởng</li>
+                            <li><strong>Vành đai 2,5:</strong> Đẩy nhanh GPMB tại Thanh Xuân, Khương Đình, Yên Hòa; hoàn
+                                thành bàn giao mặt bằng trước 30/6</li>
+                            <li><strong>Mở rộng Quốc lộ 1A (16 làn xe):</strong> Khởi công từ Vành đai 1 đến nút giao
+                                Cầu Giẽ dài hơn 36km, vốn 162.000 tỷ</li>
+                            <li><strong>Đường sắt đô thị:</strong> Hà Nội quy hoạch 1.200 km đường sắt, ưu tiên 979 km
+                                metro đô thị và vận tải công cộng khối lượng lớn</li>
+                            <li><strong>Hòa Lạc & Phía Tây:</strong> Thu hồi hơn 125ha, triển khai loạt dự án hạ tầng và
+                                khu công nghệ cao giai đoạn 2026–2030</li>
                         </ul>
                     </article>
                 </div>
@@ -968,12 +1380,17 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <div class="footer-logo">🗺️ DULIEUQUYHOACH.COM</div>
-                    <p>Hệ thống tra cứu quy hoạch đô thị và bất động sản Việt Nam. Cập nhật tin tức, bản đồ quy hoạch và giá đất mới nhất từ 63 tỉnh thành.</p>
+                    <p>Hệ thống tra cứu quy hoạch đô thị và bất động sản Việt Nam. Cập nhật tin tức, bản đồ quy hoạch và
+                        giá đất mới nhất từ 63 tỉnh thành.</p>
                     <div class="footer-social" style="margin-top:16px;">
-                        <a href="https://www.facebook.com/groups/1694801338541423" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
-                        <a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"><i class="fa-solid fa-comment-dots"></i></a>
-                        <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.facebook.com/groups/1694801338541423" target="_blank"><i
+                                class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank"><i
+                                class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://zalo.me/g/mgqmnwhir8oajnifstzq" target="_blank"><i
+                                class="fa-solid fa-comment-dots"></i></a>
+                        <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"><i
+                                class="fa-brands fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="footer-col">
@@ -997,240 +1414,243 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 DULIEUQUYHOACH.COM — Dữ liệu quy hoạch mang tính tham khảo. Vui lòng xác minh thông tin tại cơ quan chức năng.</p>
+                <p>© 2026 DULIEUQUYHOACH.COM — Dữ liệu quy hoạch mang tính tham khảo. Vui lòng xác minh thông tin tại cơ
+                    quan chức năng.</p>
                 <div class="footer-social">
-                    <a href="https://www.facebook.com/groups/1694801338541423" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/groups/1694801338541423" target="_blank"><i
+                            class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/@dulieuquyhoach" target="_blank"><i
+                            class="fa-brands fa-youtube"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-    // ===================================================
-    // DATA: PROVINCES (SEO-rich, Gumap-inspired)
-    // ===================================================
-    const PROVINCES = [
-        // ---- Hà Nội & vùng lân cận (HOT) ----
-        {
-            name: 'Hà Nội', emoji: '🏙️',
-            bg: 'linear-gradient(135deg, #1e40af, #3b82f6)',
-            region: 'ha-noi',
-            desc: 'Trung tâm thủ đô — quy hoạch Sông Hồng, Vành đai 4, Metro',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Vành đai 4', cls: '' }],
-            search: 'Hà Nội'
-        },
-        {
-            name: 'Mê Linh', emoji: '🌾',
-            bg: 'linear-gradient(135deg, #065f46, #059669)',
-            region: 'ha-noi',
-            desc: 'Khu tái định cư Vành đai 4, quy hoạch đô thị vệ tinh',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'TĐC', cls: 'amber' }],
-            search: 'Mê Linh'
-        },
-        {
-            name: 'Đông Anh', emoji: '🏗️',
-            bg: 'linear-gradient(135deg, #92400e, #d97706)',
-            region: 'ha-noi',
-            desc: 'Đô thị vệ tinh phía Bắc, cầu Tứ Liên, quy hoạch 1/5000',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Cầu Tứ Liên', cls: '' }],
-            search: 'Đông Anh'
-        },
-        {
-            name: 'Hoài Đức', emoji: '🛣️',
-            bg: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
-            region: 'ha-noi',
-            desc: 'Nút giao Vành đai 4 An Khánh, GPMB hành lang an toàn',
-            tags: [{ label: 'Vành đai 4', cls: '' }, { label: 'GPMB', cls: 'amber' }],
-            search: 'Hoài Đức'
-        },
-        {
-            name: 'Hoàng Mai', emoji: '🏘️',
-            bg: 'linear-gradient(135deg, #0c4a6e, #0284c7)',
-            region: 'ha-noi',
-            desc: 'Lĩnh Nam, tái định cư cầu Trần Hưng Đạo, Giải Phóng',
-            tags: [{ label: 'Lĩnh Nam', cls: '' }, { label: 'TĐC', cls: 'amber' }],
-            search: 'Lĩnh Nam Hoàng Mai'
-        },
-        {
-            name: 'Long Biên', emoji: '🌉',
-            bg: 'linear-gradient(135deg, #134e4a, #0d9488)',
-            region: 'ha-noi',
-            desc: 'Cầu Long Biên, quy hoạch phân khu Sông Hồng R1-R2',
-            tags: [{ label: 'Sông Hồng', cls: '' }],
-            search: 'Long Biên'
-        },
-        {
-            name: 'Tây Hồ', emoji: '🏞️',
-            bg: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
-            region: 'ha-noi',
-            desc: 'Hồ Tây, hành lang ven hồ, quy hoạch khu đô thị cao cấp',
-            tags: [{ label: 'Hồ Tây', cls: '' }],
-            search: 'Tây Hồ'
-        },
-        {
-            name: 'Cầu Giấy', emoji: '🎓',
-            bg: 'linear-gradient(135deg, #1c1917, #44403c)',
-            region: 'ha-noi',
-            desc: 'Khu đô thị Cầu Giấy, TĐC N01, giá đất cao nhất Hà Nội',
-            tags: [{ label: 'TĐC N01', cls: 'amber' }],
-            search: 'Cầu Giấy'
-        },
-        {
-            name: 'Đan Phượng', emoji: '🌿',
-            bg: 'linear-gradient(135deg, #14532d, #16a34a)',
-            region: 'ha-noi',
-            desc: 'Vành đai 4 đoạn qua Đan Phượng, khu đô thị sinh thái',
-            tags: [{ label: 'Vành đai 4', cls: '' }],
-            search: 'Đan Phượng'
-        },
-        {
-            name: 'Gia Lâm', emoji: '🔧',
-            bg: 'linear-gradient(135deg, #7c2d12, #ea580c)',
-            region: 'ha-noi',
-            desc: 'Lên quận 2025, quy hoạch đô thị phía Đông thủ đô',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Lên Quận', cls: 'amber' }],
-            search: 'Gia Lâm'
-        },
-        {
-            name: 'Thanh Xuân', emoji: '🏢',
-            bg: 'linear-gradient(135deg, #312e81, #4f46e5)',
-            region: 'ha-noi',
-            desc: 'Vành đai 2,5, GPMB Khương Đình, Nguyễn Trãi',
-            tags: [{ label: 'Vành đai 2,5', cls: '' }],
-            search: 'Thanh Xuân'
-        },
-        {
-            name: 'Hòa Lạc', emoji: '💡',
-            bg: 'linear-gradient(135deg, #0f2027, #203a43)',
-            region: 'ha-noi',
-            desc: 'Khu công nghệ cao, thu hồi 125ha giai đoạn 2026-2030',
-            tags: [{ label: 'Công nghệ cao', cls: '' }],
-            search: 'Hòa Lạc'
-        },
-        // ---- Miền Bắc ----
-        {
-            name: 'Hưng Yên', emoji: '🌾',
-            bg: 'linear-gradient(135deg, #78350f, #b45309)',
-            region: 'mien-bac',
-            desc: 'Vành đai 4 kết nối Hưng Yên, quy hoạch KCN đông đúc',
-            tags: [{ label: 'Vành đai 4', cls: '' }],
-            search: 'Hưng Yên'
-        },
-        {
-            name: 'Bắc Ninh', emoji: '🏭',
-            bg: 'linear-gradient(135deg, #0369a1, #0284c7)',
-            region: 'mien-bac',
-            desc: 'Công nghiệp Samsung, quy hoạch đô thị mở rộng',
-            tags: [{ label: 'KCN lớn', cls: '' }],
-            search: 'Bắc Ninh'
-        },
-        {
-            name: 'Hải Phòng', emoji: '⚓',
-            bg: 'linear-gradient(135deg, #0c4a6e, #075985)',
-            region: 'mien-bac',
-            desc: 'Cảng biển quốc tế, quy hoạch đô thị ven biển',
-            tags: [{ label: 'Cảng biển', cls: '' }],
-            search: 'Hải Phòng'
-        },
-        {
-            name: 'Quảng Ninh', emoji: '🌊',
-            bg: 'linear-gradient(135deg, #164e63, #0891b2)',
-            region: 'mien-bac',
-            desc: 'Hạ Long, quy hoạch du lịch và đô thị biển',
-            tags: [{ label: 'Du lịch', cls: '' }],
-            search: 'Quảng Ninh'
-        },
-        {
-            name: 'Vĩnh Phúc', emoji: '🌲',
-            bg: 'linear-gradient(135deg, #14532d, #15803d)',
-            region: 'mien-bac',
-            desc: 'KCN Bình Xuyên, quy hoạch đô thị Phúc Yên',
-            tags: [{ label: 'KCN', cls: '' }],
-            search: 'Vĩnh Phúc'
-        },
-        {
-            name: 'Thái Nguyên', emoji: '⚙️',
-            bg: 'linear-gradient(135deg, #3f3f46, #71717a)',
-            region: 'mien-bac',
-            desc: 'Trung tâm công nghiệp Samsung miền Bắc',
-            tags: [{ label: 'Công nghiệp', cls: '' }],
-            search: 'Thái Nguyên'
-        },
-        // ---- Miền Trung ----
-        {
-            name: 'Đà Nẵng', emoji: '🌇',
-            bg: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
-            region: 'mien-trung',
-            desc: 'Đô thị thông minh, quy hoạch ven biển Mỹ Khê',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Ven biển', cls: '' }],
-            search: 'Đà Nẵng'
-        },
-        {
-            name: 'Thừa Thiên Huế', emoji: '🏯',
-            bg: 'linear-gradient(135deg, #4a1942, #be185d)',
-            region: 'mien-trung',
-            desc: 'Di sản Huế, quy hoạch đô thị di sản và du lịch',
-            tags: [{ label: 'Di sản', cls: '' }],
-            search: 'Huế'
-        },
-        {
-            name: 'Quảng Nam', emoji: '🏛️',
-            bg: 'linear-gradient(135deg, #451a03, #92400e)',
-            region: 'mien-trung',
-            desc: 'Hội An, Chu Lai, quy hoạch khu kinh tế mở',
-            tags: [{ label: 'Khu kinh tế', cls: '' }],
-            search: 'Quảng Nam'
-        },
-        // ---- Miền Nam ----
-        {
-            name: 'TP. Hồ Chí Minh', emoji: '🌆',
-            bg: 'linear-gradient(135deg, #7c0a02, #dc2626)',
-            region: 'mien-nam',
-            desc: 'Đô thị lớn nhất VN — quy hoạch 100 năm, Thủ Thiêm, Long Thành',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Metro', cls: '' }],
-            search: 'TP Hồ Chí Minh'
-        },
-        {
-            name: 'Bình Dương', emoji: '🏗️',
-            bg: 'linear-gradient(135deg, #164e63, #0e7490)',
-            region: 'mien-nam',
-            desc: 'Vành đai 4 TP.HCM, KCN lớn nhất Đông Nam Á',
-            tags: [{ label: 'Vành đai 4', cls: '' }],
-            search: 'Bình Dương'
-        },
-        {
-            name: 'Đồng Nai', emoji: '🌱',
-            bg: 'linear-gradient(135deg, #14532d, #16a34a)',
-            region: 'mien-nam',
-            desc: 'Vành đai 4, sân bay Long Thành, khu kinh tế mở',
-            tags: [{ label: 'Long Thành', cls: 'amber' }],
-            search: 'Đồng Nai'
-        },
-        {
-            name: 'Phú Quốc', emoji: '🏝️',
-            bg: 'linear-gradient(135deg, #0369a1, #0ea5e9)',
-            region: 'mien-nam',
-            desc: 'Đặc khu kinh tế, APEC 2027, du lịch cao cấp',
-            tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'APEC 2027', cls: 'amber' }],
-            search: 'Phú Quốc'
-        },
-    ];
+        // ===================================================
+        // DATA: PROVINCES (SEO-rich, Gumap-inspired)
+        // ===================================================
+        const PROVINCES = [
+            // ---- Hà Nội & vùng lân cận (HOT) ----
+            {
+                name: 'Hà Nội', emoji: '🏙️',
+                bg: 'linear-gradient(135deg, #1e40af, #3b82f6)',
+                region: 'ha-noi',
+                desc: 'Trung tâm thủ đô — quy hoạch Sông Hồng, Vành đai 4, Metro',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Vành đai 4', cls: '' }],
+                search: 'Hà Nội'
+            },
+            {
+                name: 'Mê Linh', emoji: '🌾',
+                bg: 'linear-gradient(135deg, #065f46, #059669)',
+                region: 'ha-noi',
+                desc: 'Khu tái định cư Vành đai 4, quy hoạch đô thị vệ tinh',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'TĐC', cls: 'amber' }],
+                search: 'Mê Linh'
+            },
+            {
+                name: 'Đông Anh', emoji: '🏗️',
+                bg: 'linear-gradient(135deg, #92400e, #d97706)',
+                region: 'ha-noi',
+                desc: 'Đô thị vệ tinh phía Bắc, cầu Tứ Liên, quy hoạch 1/5000',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Cầu Tứ Liên', cls: '' }],
+                search: 'Đông Anh'
+            },
+            {
+                name: 'Hoài Đức', emoji: '🛣️',
+                bg: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
+                region: 'ha-noi',
+                desc: 'Nút giao Vành đai 4 An Khánh, GPMB hành lang an toàn',
+                tags: [{ label: 'Vành đai 4', cls: '' }, { label: 'GPMB', cls: 'amber' }],
+                search: 'Hoài Đức'
+            },
+            {
+                name: 'Hoàng Mai', emoji: '🏘️',
+                bg: 'linear-gradient(135deg, #0c4a6e, #0284c7)',
+                region: 'ha-noi',
+                desc: 'Lĩnh Nam, tái định cư cầu Trần Hưng Đạo, Giải Phóng',
+                tags: [{ label: 'Lĩnh Nam', cls: '' }, { label: 'TĐC', cls: 'amber' }],
+                search: 'Lĩnh Nam Hoàng Mai'
+            },
+            {
+                name: 'Long Biên', emoji: '🌉',
+                bg: 'linear-gradient(135deg, #134e4a, #0d9488)',
+                region: 'ha-noi',
+                desc: 'Cầu Long Biên, quy hoạch phân khu Sông Hồng R1-R2',
+                tags: [{ label: 'Sông Hồng', cls: '' }],
+                search: 'Long Biên'
+            },
+            {
+                name: 'Tây Hồ', emoji: '🏞️',
+                bg: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
+                region: 'ha-noi',
+                desc: 'Hồ Tây, hành lang ven hồ, quy hoạch khu đô thị cao cấp',
+                tags: [{ label: 'Hồ Tây', cls: '' }],
+                search: 'Tây Hồ'
+            },
+            {
+                name: 'Cầu Giấy', emoji: '🎓',
+                bg: 'linear-gradient(135deg, #1c1917, #44403c)',
+                region: 'ha-noi',
+                desc: 'Khu đô thị Cầu Giấy, TĐC N01, giá đất cao nhất Hà Nội',
+                tags: [{ label: 'TĐC N01', cls: 'amber' }],
+                search: 'Cầu Giấy'
+            },
+            {
+                name: 'Đan Phượng', emoji: '🌿',
+                bg: 'linear-gradient(135deg, #14532d, #16a34a)',
+                region: 'ha-noi',
+                desc: 'Vành đai 4 đoạn qua Đan Phượng, khu đô thị sinh thái',
+                tags: [{ label: 'Vành đai 4', cls: '' }],
+                search: 'Đan Phượng'
+            },
+            {
+                name: 'Gia Lâm', emoji: '🔧',
+                bg: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+                region: 'ha-noi',
+                desc: 'Lên quận 2025, quy hoạch đô thị phía Đông thủ đô',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Lên Quận', cls: 'amber' }],
+                search: 'Gia Lâm'
+            },
+            {
+                name: 'Thanh Xuân', emoji: '🏢',
+                bg: 'linear-gradient(135deg, #312e81, #4f46e5)',
+                region: 'ha-noi',
+                desc: 'Vành đai 2,5, GPMB Khương Đình, Nguyễn Trãi',
+                tags: [{ label: 'Vành đai 2,5', cls: '' }],
+                search: 'Thanh Xuân'
+            },
+            {
+                name: 'Hòa Lạc', emoji: '💡',
+                bg: 'linear-gradient(135deg, #0f2027, #203a43)',
+                region: 'ha-noi',
+                desc: 'Khu công nghệ cao, thu hồi 125ha giai đoạn 2026-2030',
+                tags: [{ label: 'Công nghệ cao', cls: '' }],
+                search: 'Hòa Lạc'
+            },
+            // ---- Miền Bắc ----
+            {
+                name: 'Hưng Yên', emoji: '🌾',
+                bg: 'linear-gradient(135deg, #78350f, #b45309)',
+                region: 'mien-bac',
+                desc: 'Vành đai 4 kết nối Hưng Yên, quy hoạch KCN đông đúc',
+                tags: [{ label: 'Vành đai 4', cls: '' }],
+                search: 'Hưng Yên'
+            },
+            {
+                name: 'Bắc Ninh', emoji: '🏭',
+                bg: 'linear-gradient(135deg, #0369a1, #0284c7)',
+                region: 'mien-bac',
+                desc: 'Công nghiệp Samsung, quy hoạch đô thị mở rộng',
+                tags: [{ label: 'KCN lớn', cls: '' }],
+                search: 'Bắc Ninh'
+            },
+            {
+                name: 'Hải Phòng', emoji: '⚓',
+                bg: 'linear-gradient(135deg, #0c4a6e, #075985)',
+                region: 'mien-bac',
+                desc: 'Cảng biển quốc tế, quy hoạch đô thị ven biển',
+                tags: [{ label: 'Cảng biển', cls: '' }],
+                search: 'Hải Phòng'
+            },
+            {
+                name: 'Quảng Ninh', emoji: '🌊',
+                bg: 'linear-gradient(135deg, #164e63, #0891b2)',
+                region: 'mien-bac',
+                desc: 'Hạ Long, quy hoạch du lịch và đô thị biển',
+                tags: [{ label: 'Du lịch', cls: '' }],
+                search: 'Quảng Ninh'
+            },
+            {
+                name: 'Vĩnh Phúc', emoji: '🌲',
+                bg: 'linear-gradient(135deg, #14532d, #15803d)',
+                region: 'mien-bac',
+                desc: 'KCN Bình Xuyên, quy hoạch đô thị Phúc Yên',
+                tags: [{ label: 'KCN', cls: '' }],
+                search: 'Vĩnh Phúc'
+            },
+            {
+                name: 'Thái Nguyên', emoji: '⚙️',
+                bg: 'linear-gradient(135deg, #3f3f46, #71717a)',
+                region: 'mien-bac',
+                desc: 'Trung tâm công nghiệp Samsung miền Bắc',
+                tags: [{ label: 'Công nghiệp', cls: '' }],
+                search: 'Thái Nguyên'
+            },
+            // ---- Miền Trung ----
+            {
+                name: 'Đà Nẵng', emoji: '🌇',
+                bg: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
+                region: 'mien-trung',
+                desc: 'Đô thị thông minh, quy hoạch ven biển Mỹ Khê',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Ven biển', cls: '' }],
+                search: 'Đà Nẵng'
+            },
+            {
+                name: 'Thừa Thiên Huế', emoji: '🏯',
+                bg: 'linear-gradient(135deg, #4a1942, #be185d)',
+                region: 'mien-trung',
+                desc: 'Di sản Huế, quy hoạch đô thị di sản và du lịch',
+                tags: [{ label: 'Di sản', cls: '' }],
+                search: 'Huế'
+            },
+            {
+                name: 'Quảng Nam', emoji: '🏛️',
+                bg: 'linear-gradient(135deg, #451a03, #92400e)',
+                region: 'mien-trung',
+                desc: 'Hội An, Chu Lai, quy hoạch khu kinh tế mở',
+                tags: [{ label: 'Khu kinh tế', cls: '' }],
+                search: 'Quảng Nam'
+            },
+            // ---- Miền Nam ----
+            {
+                name: 'TP. Hồ Chí Minh', emoji: '🌆',
+                bg: 'linear-gradient(135deg, #7c0a02, #dc2626)',
+                region: 'mien-nam',
+                desc: 'Đô thị lớn nhất VN — quy hoạch 100 năm, Thủ Thiêm, Long Thành',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'Metro', cls: '' }],
+                search: 'TP Hồ Chí Minh'
+            },
+            {
+                name: 'Bình Dương', emoji: '🏗️',
+                bg: 'linear-gradient(135deg, #164e63, #0e7490)',
+                region: 'mien-nam',
+                desc: 'Vành đai 4 TP.HCM, KCN lớn nhất Đông Nam Á',
+                tags: [{ label: 'Vành đai 4', cls: '' }],
+                search: 'Bình Dương'
+            },
+            {
+                name: 'Đồng Nai', emoji: '🌱',
+                bg: 'linear-gradient(135deg, #14532d, #16a34a)',
+                region: 'mien-nam',
+                desc: 'Vành đai 4, sân bay Long Thành, khu kinh tế mở',
+                tags: [{ label: 'Long Thành', cls: 'amber' }],
+                search: 'Đồng Nai'
+            },
+            {
+                name: 'Phú Quốc', emoji: '🏝️',
+                bg: 'linear-gradient(135deg, #0369a1, #0ea5e9)',
+                region: 'mien-nam',
+                desc: 'Đặc khu kinh tế, APEC 2027, du lịch cao cấp',
+                tags: [{ label: '🔥 Nóng', cls: 'hot' }, { label: 'APEC 2027', cls: 'amber' }],
+                search: 'Phú Quốc'
+            },
+        ];
 
-    // ===================================================
-    // PROVINCE GRID RENDER
-    // ===================================================
-    let provinceFilter = 'all';
+        // ===================================================
+        // PROVINCE GRID RENDER
+        // ===================================================
+        let provinceFilter = 'all';
 
-    function renderProvinces(filter = 'all', search = '') {
-        const grid = document.getElementById('province-grid');
-        const filtered = PROVINCES.filter(p => {
-            const matchFilter = filter === 'all' || p.region === filter;
-            const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.desc.toLowerCase().includes(search.toLowerCase());
-            return matchFilter && matchSearch;
-        });
+        function renderProvinces(filter = 'all', search = '') {
+            const grid = document.getElementById('province-grid');
+            const filtered = PROVINCES.filter(p => {
+                const matchFilter = filter === 'all' || p.region === filter;
+                const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.desc.toLowerCase().includes(search.toLowerCase());
+                return matchFilter && matchSearch;
+            });
 
-        grid.innerHTML = filtered.map(p => `
+            grid.innerHTML = filtered.map(p => `
             <a href="index.html?search=${encodeURIComponent(p.search)}" class="province-card" title="Tra cứu quy hoạch ${p.name}">
                 <div class="province-thumb" style="background: ${p.bg};">
                     <div class="icon-layer">🗺️</div>
@@ -1246,100 +1666,100 @@
                 </div>
             </a>
         `).join('') || '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1; padding:40px;">Không có địa phương phù hợp.</p>';
-    }
-
-    function filterProvinces(filter, btn) {
-        provinceFilter = filter;
-        document.querySelectorAll('#province-filter .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderProvinces(filter, document.getElementById('global-search').value);
-    }
-
-    // ===================================================
-    // NEWS FEED
-    // ===================================================
-    let allNews = [];
-    let currentNewsFilter = 'all';
-    let visibleCount = 12;
-
-    function getSourceTag(url) {
-        if (!url) return { label: 'Khác', cls: 'source-other' };
-        if (url.includes('vnexpress')) return { label: 'VnExpress', cls: 'source-vnexpress' };
-        if (url.includes('tuoitre')) return { label: 'Tuổi Trẻ', cls: 'source-tuoitre' };
-        if (url.includes('vietnamnet')) return { label: 'VietnamNet', cls: 'source-vietnamnet' };
-        if (url.includes('laodong')) return { label: 'Lao Động', cls: 'source-laodong' };
-        return { label: 'Khác', cls: 'source-other' };
-    }
-
-    function getCategoryLabel(text, title) {
-        const content = ((text || '') + ' ' + (title || '')).toLowerCase();
-        if (content.includes('tái định cư') || content.includes('tai dinh cu')) return 'Tái định cư';
-        if (content.includes('bồi thường') || content.includes('đền bù') || content.includes('giải phóng mặt bằng')) return 'Đền bù';
-        if (content.includes('vành đai') || content.includes('cao tốc') || content.includes('đường sắt') || content.includes('metro') || content.includes('cầu')) return 'Giao thông';
-        if (content.includes('quy hoạch') || content.includes('phân khu') || content.includes('khu đô thị')) return 'Quy hoạch';
-        return 'Bất động sản';
-    }
-
-    function matchesNewsFilter(item, filter) {
-        const content = ((item.moTa || '') + ' ' + (item.tenKhu || '')).toLowerCase();
-        if (filter === 'all') return true;
-        if (filter === 'ha-noi') return content.includes('hà nội') || content.includes('ha noi') || content.includes('thủ đô') || content.includes('đông anh') || content.includes('hoài đức') || content.includes('mê linh') || content.includes('gia lâm');
-        if (filter === 'quy-hoach') return content.includes('quy hoạch') || content.includes('phân khu');
-        if (filter === 'giao-thong') return content.includes('vành đai') || content.includes('cao tốc') || content.includes('đường sắt') || content.includes('metro') || content.includes('cầu');
-        if (filter === 'tai-dinh-cu') return content.includes('tái định cư') || content.includes('khu tđc') || content.includes('di dân') || content.includes('di dời');
-        if (filter === 'bai-thuong') return content.includes('bồi thường') || content.includes('đền bù') || content.includes('giải phóng mặt bằng');
-        return true;
-    }
-
-    function formatDate(dateStr) {
-        if (!dateStr) return '';
-        const d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        const now = new Date();
-        const diff = Math.floor((now - d) / 1000);
-        if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
-        if (diff < 604800) return `${Math.floor(diff / 86400)} ngày trước`;
-        return d.toLocaleDateString('vi-VN');
-    }
-
-    function renderNews() {
-        const grid = document.getElementById('news-grid');
-        const loading = document.getElementById('news-loading');
-        const empty = document.getElementById('news-empty');
-        const loadMoreWrap = document.getElementById('load-more-wrap');
-
-        const globalSearch = document.getElementById('global-search').value.toLowerCase();
-
-        const filtered = allNews.filter(item => {
-            const matchFilter = matchesNewsFilter(item, currentNewsFilter);
-            const matchSearch = !globalSearch || 
-                (item.tenKhu && item.tenKhu.toLowerCase().includes(globalSearch)) || 
-                (item.moTa && item.moTa.toLowerCase().includes(globalSearch));
-            return matchFilter && matchSearch;
-        });
-
-        loading.style.display = 'none';
-
-        if (filtered.length === 0) {
-            grid.style.display = 'none';
-            empty.style.display = 'block';
-            loadMoreWrap.style.display = 'none';
-            return;
         }
 
-        empty.style.display = 'none';
-        grid.style.display = 'grid';
+        function filterProvinces(filter, btn) {
+            provinceFilter = filter;
+            document.querySelectorAll('#province-filter .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderProvinces(filter, document.getElementById('global-search').value);
+        }
 
-        const toShow = filtered.slice(0, visibleCount);
-        grid.innerHTML = toShow.map(item => {
-            const src = getSourceTag(item.nguonTin);
-            const cat = getCategoryLabel(item.moTa, item.tenKhu);
-            const date = formatDate(item['Ngày Cập Nhật']);
-            const title = (item.tenKhu || '').trim();
-            const desc = (item.moTa || '').trim();
+        // ===================================================
+        // NEWS FEED
+        // ===================================================
+        let allNews = [];
+        let currentNewsFilter = 'all';
+        let visibleCount = 12;
 
-            return `
+        function getSourceTag(url) {
+            if (!url) return { label: 'Khác', cls: 'source-other' };
+            if (url.includes('vnexpress')) return { label: 'VnExpress', cls: 'source-vnexpress' };
+            if (url.includes('tuoitre')) return { label: 'Tuổi Trẻ', cls: 'source-tuoitre' };
+            if (url.includes('vietnamnet')) return { label: 'VietnamNet', cls: 'source-vietnamnet' };
+            if (url.includes('laodong')) return { label: 'Lao Động', cls: 'source-laodong' };
+            return { label: 'Khác', cls: 'source-other' };
+        }
+
+        function getCategoryLabel(text, title) {
+            const content = ((text || '') + ' ' + (title || '')).toLowerCase();
+            if (content.includes('tái định cư') || content.includes('tai dinh cu')) return 'Tái định cư';
+            if (content.includes('bồi thường') || content.includes('đền bù') || content.includes('giải phóng mặt bằng')) return 'Đền bù';
+            if (content.includes('vành đai') || content.includes('cao tốc') || content.includes('đường sắt') || content.includes('metro') || content.includes('cầu')) return 'Giao thông';
+            if (content.includes('quy hoạch') || content.includes('phân khu') || content.includes('khu đô thị')) return 'Quy hoạch';
+            return 'Bất động sản';
+        }
+
+        function matchesNewsFilter(item, filter) {
+            const content = ((item.moTa || '') + ' ' + (item.tenKhu || '')).toLowerCase();
+            if (filter === 'all') return true;
+            if (filter === 'ha-noi') return content.includes('hà nội') || content.includes('ha noi') || content.includes('thủ đô') || content.includes('đông anh') || content.includes('hoài đức') || content.includes('mê linh') || content.includes('gia lâm');
+            if (filter === 'quy-hoach') return content.includes('quy hoạch') || content.includes('phân khu');
+            if (filter === 'giao-thong') return content.includes('vành đai') || content.includes('cao tốc') || content.includes('đường sắt') || content.includes('metro') || content.includes('cầu');
+            if (filter === 'tai-dinh-cu') return content.includes('tái định cư') || content.includes('khu tđc') || content.includes('di dân') || content.includes('di dời');
+            if (filter === 'bai-thuong') return content.includes('bồi thường') || content.includes('đền bù') || content.includes('giải phóng mặt bằng');
+            return true;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+            const now = new Date();
+            const diff = Math.floor((now - d) / 1000);
+            if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+            if (diff < 604800) return `${Math.floor(diff / 86400)} ngày trước`;
+            return d.toLocaleDateString('vi-VN');
+        }
+
+        function renderNews() {
+            const grid = document.getElementById('news-grid');
+            const loading = document.getElementById('news-loading');
+            const empty = document.getElementById('news-empty');
+            const loadMoreWrap = document.getElementById('load-more-wrap');
+
+            const globalSearch = document.getElementById('global-search').value.toLowerCase();
+
+            const filtered = allNews.filter(item => {
+                const matchFilter = matchesNewsFilter(item, currentNewsFilter);
+                const matchSearch = !globalSearch ||
+                    (item.tenKhu && item.tenKhu.toLowerCase().includes(globalSearch)) ||
+                    (item.moTa && item.moTa.toLowerCase().includes(globalSearch));
+                return matchFilter && matchSearch;
+            });
+
+            loading.style.display = 'none';
+
+            if (filtered.length === 0) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+                loadMoreWrap.style.display = 'none';
+                return;
+            }
+
+            empty.style.display = 'none';
+            grid.style.display = 'grid';
+
+            const toShow = filtered.slice(0, visibleCount);
+            grid.innerHTML = toShow.map(item => {
+                const src = getSourceTag(item.nguonTin);
+                const cat = getCategoryLabel(item.moTa, item.tenKhu);
+                const date = formatDate(item['Ngày Cập Nhật']);
+                const title = (item.tenKhu || '').trim();
+                const desc = (item.moTa || '').trim();
+
+                return `
             <div class="news-card">
                 <div class="news-card-header">
                     <span class="source-tag ${src.cls}">${src.label}</span>
@@ -1355,109 +1775,110 @@
                     <a href="${item.nguonTin || '#'}" target="_blank" rel="noopener" class="read-more">Đọc thêm <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>`;
-        }).join('');
+            }).join('');
 
-        if (filtered.length > visibleCount) {
-            loadMoreWrap.style.display = 'block';
-            document.getElementById('load-more-btn').disabled = false;
-            document.getElementById('load-more-btn').innerHTML = `<i class="fa-solid fa-chevron-down"></i> Xem thêm (${filtered.length - visibleCount} tin còn lại)`;
-        } else {
-            loadMoreWrap.style.display = 'none';
+            if (filtered.length > visibleCount) {
+                loadMoreWrap.style.display = 'block';
+                document.getElementById('load-more-btn').disabled = false;
+                document.getElementById('load-more-btn').innerHTML = `<i class="fa-solid fa-chevron-down"></i> Xem thêm (${filtered.length - visibleCount} tin còn lại)`;
+            } else {
+                loadMoreWrap.style.display = 'none';
+            }
         }
-    }
 
-    function loadMoreNews() {
-        visibleCount += 12;
-        renderNews();
-    }
-
-    function filterNews(filter, btn) {
-        currentNewsFilter = filter;
-        visibleCount = 12;
-        document.querySelectorAll('#news-filter .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderNews();
-    }
-
-    function onGlobalSearch(val) {
-        renderProvinces(provinceFilter, val);
-        renderNews();
-    }
-
-    function doSearch() {
-        const val = document.getElementById('global-search').value.trim();
-        if (val) {
-            window.location.href = 'index.html?search=' + encodeURIComponent(val);
+        function loadMoreNews() {
+            visibleCount += 12;
+            renderNews();
         }
-    }
 
-    // ===================================================
-    // MOBILE MENU
-    // ===================================================
-    function toggleMobileMenu() {
-        document.getElementById('mobile-dropdown').classList.toggle('open');
-    }
+        function filterNews(filter, btn) {
+            currentNewsFilter = filter;
+            visibleCount = 12;
+            document.querySelectorAll('#news-filter .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderNews();
+        }
 
-    // ===================================================
-    // DATA LOADING
-    // ===================================================
-    async function loadData() {
-        // Try sync XHR first (works on file://)
-        try {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'data/sheet_data.json', false);
-            xhr.send();
-            if (xhr.status === 200) {
-                const data = JSON.parse(xhr.responseText);
-                if (data && data.news && data.news.length > 0) {
-                    return data;
+        function onGlobalSearch(val) {
+            renderProvinces(provinceFilter, val);
+            renderNews();
+        }
+
+        function doSearch() {
+            const val = document.getElementById('global-search').value.trim();
+            if (val) {
+                window.location.href = 'index.html?search=' + encodeURIComponent(val);
+            }
+        }
+
+        // ===================================================
+        // MOBILE MENU
+        // ===================================================
+        function toggleMobileMenu() {
+            document.getElementById('mobile-dropdown').classList.toggle('open');
+        }
+
+        // ===================================================
+        // DATA LOADING
+        // ===================================================
+        async function loadData() {
+            // Try sync XHR first (works on file://)
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'data/sheet_data.json', false);
+                xhr.send();
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data && data.news && data.news.length > 0) {
+                        return data;
+                    }
                 }
-            }
-        } catch (e) { /* fallback */ }
+            } catch (e) { /* fallback */ }
 
-        // Async fetch
-        try {
-            const res = await fetch('data/sheet_data.json?t=' + Date.now());
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.news) return data;
-            }
-        } catch (e) { /* fallback */ }
+            // Async fetch
+            try {
+                const res = await fetch('data/sheet_data.json?t=' + Date.now());
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.news) return data;
+                }
+            } catch (e) { /* fallback */ }
 
-        return null;
-    }
-
-    async function init() {
-        // Render provinces immediately (static data)
-        renderProvinces();
-
-        // Load news
-        const data = await loadData();
-        if (data && data.news && data.news.length > 0) {
-            allNews = [...data.news].sort((a, b) => {
-                const da = new Date(a['Ngày Cập Nhật'] || 0);
-                const db = new Date(b['Ngày Cập Nhật'] || 0);
-                return db - da;
-            });
-
-            document.getElementById('stat-news').textContent = allNews.length + '+';
-
-            // Populate ticker with real news
-            const tickerItems = allNews.slice(0, 15).map(n => `📰 ${(n.tenKhu || '').trim()}`).join('   •   ');
-            const ticker = document.getElementById('ticker');
-            if (ticker && tickerItems) ticker.textContent = tickerItems;
-        } else {
-            allNews = [];
-            document.getElementById('stat-news').textContent = '50+';
+            return null;
         }
 
-        renderNews();
-    }
+        async function init() {
+            // Render provinces immediately (static data)
+            renderProvinces();
 
-    // Handle ?search= redirect from province cards
-    window.addEventListener('DOMContentLoaded', () => {
-        init();
-    });
+            // Load news
+            const data = await loadData();
+            if (data && data.news && data.news.length > 0) {
+                allNews = [...data.news].sort((a, b) => {
+                    const da = new Date(a['Ngày Cập Nhật'] || 0);
+                    const db = new Date(b['Ngày Cập Nhật'] || 0);
+                    return db - da;
+                });
+
+                document.getElementById('stat-news').textContent = allNews.length + '+';
+
+                // Populate ticker with real news
+                const tickerItems = allNews.slice(0, 15).map(n => `📰 ${(n.tenKhu || '').trim()}`).join('   •   ');
+                const ticker = document.getElementById('ticker');
+                if (ticker && tickerItems) ticker.textContent = tickerItems;
+            } else {
+                allNews = [];
+                document.getElementById('stat-news').textContent = '50+';
+            }
+
+            renderNews();
+        }
+
+        // Handle ?search= redirect from province cards
+        window.addEventListener('DOMContentLoaded', () => {
+            init();
+        });
     </script>
 </body>
+
 </html>

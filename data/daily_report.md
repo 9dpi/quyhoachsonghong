@@ -1,6 +1,6 @@
 # 🟡 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-06-04 11:39:34 GMT+7`  
+**Thời gian:** `2026-06-04 14:40:40 GMT+7`  
 **Trạng thái tổng thể:** `WARNING`
 
 ---
@@ -18,27 +18,27 @@
 ## 🟢 Data Freshness
 | File | Tuổi (ngày) | Kích thước | Trạng thái |
 |------|------------|------------|------------|
-| `database.json` | 0.0 | 3.0 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `extra_data.json` | 0.0 | 9.5 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `map.geojson` | 0.0 | 6.0 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `official_documents.json` | 0.0 | 3.5 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `planning_updates.json` | 0.0 | 3.1 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
-| `market_prices.json` | 0.0 | 3621.4 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
+| `database.json` | 6.2 | 3.0 KB | 🟢 Moi cap nhat 6.2 ngay truoc |
+| `extra_data.json` | 6.2 | 9.5 KB | 🟢 Moi cap nhat 6.2 ngay truoc |
+| `map.geojson` | 6.2 | 6.0 KB | 🟢 Moi cap nhat 6.2 ngay truoc |
+| `official_documents.json` | 0.0 | 3.6 KB | 🟢 Moi cap nhat 0.0 ngay truoc |
+| `planning_updates.json` | 6.2 | 3.2 KB | 🟢 Moi cap nhat 6.2 ngay truoc |
+| `market_prices.json` | 6.2 | 3723.0 KB | 🟢 Moi cap nhat 6.2 ngay truoc |
 
 ## 🟢 Link Health
 | Tên | URL | HTTP | Độ trễ | Trạng thái |
 |-----|-----|------|--------|------------|
 | Trang chu DuLieuQuyHoach | `https://dulieuquyhoach.com...` | `200` | 1ms | ✅ |
-| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 2059ms | ✅ |
-| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 2791ms | ✅ |
-| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 1559ms | ✅ |
-| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 1565ms | ✅ |
+| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 105ms | ✅ |
+| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 442ms | ✅ |
+| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 235ms | ✅ |
+| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 88ms | ✅ |
 
 ## 🟢 Data Quality
 > 10 ban ghi, khong co loi nao
 
 ## 🟢 Market Prices
-> 5200 listing, moi cap nhat 0.0 ngay truoc
+> 5200 listing, moi cap nhat 6.2 ngay truoc
 
 ## 🟡 Official Documents
 > 7 van ban, 2 can ra soat (<=2022)
@@ -61,4 +61,4 @@
 | `giapranh_vd4` | Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4 | giapranh | 11 | ✅ — |
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-06-04 11:39:34 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-06-04 14:40:40 GMT+7*

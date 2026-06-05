@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-04 11:39:34 GMT+7",
+  "generated_at": "2026-06-04 14:40:40 GMT+7",
   "date": "2026-06-04",
   "overall_status": "warning",
   "total_checks": 8,
@@ -56,45 +56,45 @@
       "files": [
         {
           "file": "database.json",
-          "age_days": 0.0,
+          "age_days": 6.2,
           "size_kb": 3.0,
           "status": "ok",
-          "note": "Moi cap nhat 0.0 ngay truoc"
+          "note": "Moi cap nhat 6.2 ngay truoc"
         },
         {
           "file": "extra_data.json",
-          "age_days": 0.0,
+          "age_days": 6.2,
           "size_kb": 9.5,
           "status": "ok",
-          "note": "Moi cap nhat 0.0 ngay truoc"
+          "note": "Moi cap nhat 6.2 ngay truoc"
         },
         {
           "file": "map.geojson",
-          "age_days": 0.0,
+          "age_days": 6.2,
           "size_kb": 6.0,
           "status": "ok",
-          "note": "Moi cap nhat 0.0 ngay truoc"
+          "note": "Moi cap nhat 6.2 ngay truoc"
         },
         {
           "file": "official_documents.json",
           "age_days": 0.0,
-          "size_kb": 3.5,
+          "size_kb": 3.6,
           "status": "ok",
           "note": "Moi cap nhat 0.0 ngay truoc"
         },
         {
           "file": "planning_updates.json",
-          "age_days": 0.0,
-          "size_kb": 3.1,
+          "age_days": 6.2,
+          "size_kb": 3.2,
           "status": "ok",
-          "note": "Moi cap nhat 0.0 ngay truoc"
+          "note": "Moi cap nhat 6.2 ngay truoc"
         },
         {
           "file": "market_prices.json",
-          "age_days": 0.0,
-          "size_kb": 3621.4,
+          "age_days": 6.2,
+          "size_kb": 3723.0,
           "status": "ok",
-          "note": "Moi cap nhat 0.0 ngay truoc"
+          "note": "Moi cap nhat 6.2 ngay truoc"
         }
       ],
       "status": "ok"
@@ -115,7 +115,7 @@
           "name": "Cong thong tin Ha Noi",
           "url": "https://hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 2059,
+          "latency_ms": 105,
           "ok": true,
           "status": "ok"
         },
@@ -123,7 +123,7 @@
           "name": "Vien Quy hoach Ha Noi (VQH)",
           "url": "https://vqh.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 2791,
+          "latency_ms": 442,
           "ok": true,
           "status": "ok"
         },
@@ -131,7 +131,7 @@
           "name": "UBND Ha Noi - Van ban phap luat",
           "url": "https://vanban.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 1559,
+          "latency_ms": 235,
           "ok": true,
           "status": "ok"
         },
@@ -139,7 +139,7 @@
           "name": "QD71/2024 Bang gia dat HN (PDF)",
           "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
           "status_code": 200,
-          "latency_ms": 1565,
+          "latency_ms": 88,
           "ok": true,
           "status": "ok"
         }
@@ -161,10 +161,10 @@
       "name": "Market Prices",
       "icon": "chart-line",
       "status": "ok",
-      "age_days": 0.0,
-      "size_kb": 3621.4,
+      "age_days": 6.2,
+      "size_kb": 3723.0,
       "listing_count": 5200,
-      "summary": "5200 listing, moi cap nhat 0.0 ngay truoc"
+      "summary": "5200 listing, moi cap nhat 6.2 ngay truoc"
     },
     {
       "name": "Official Documents",
@@ -186,7 +186,7 @@
       "status": "warning",
       "total": 7,
       "old_count": 2,
-      "last_check": "03/06/2026 19:44:59",
+      "last_check": "04/06/2026 06:39:48",
       "summary": "7 van ban, 2 can ra soat (<=2022)"
     },
     {

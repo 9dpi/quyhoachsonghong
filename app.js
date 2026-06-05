@@ -288,6 +288,9 @@ async function init() {
         
         // Khởi tạo Lớp phủ Ảnh Scan (Raster Overlay)
         initRasterOverlay();
+        
+        // Khởi tạo bộ co giãn thanh bên
+        initSidePanelResizer();
     } catch (e) {
         console.error("Data Load Error:", e);
     }
@@ -1968,6 +1971,7 @@ async function loadDistrictOverview() {
 // 2. Khởi tạo bộ chọn ranh giới quận/huyện
 async function initDistrictSelector() {
     const selectEl = document.getElementById('district-select');
+    const sideSelectEl = document.getElementById('side-district-select');
     const clearBtn = document.getElementById('clear-boundary-btn');
     if (!selectEl) return;
 
@@ -1977,6 +1981,12 @@ async function initDistrictSelector() {
         opt.value = d;
         opt.textContent = d;
         selectEl.appendChild(opt);
+        if (sideSelectEl) {
+            const optSide = document.createElement('option');
+            optSide.value = d;
+            optSide.textContent = d;
+            sideSelectEl.appendChild(optSide);
+        }
     });
 
     // Tải dữ liệu ranh giới Hà Nội (CORS trực tiếp + localStorage Cache)
@@ -2002,6 +2012,7 @@ async function initDistrictSelector() {
     // Xử lý khi người dùng chọn Quận/Huyện cụ thể
     selectEl.addEventListener('change', async (e) => {
         const selected = e.target.value;
+        if (sideSelectEl) sideSelectEl.value = selected;
         
         // Ẩn ranh giới đơn lẻ cũ
         if (activeBoundaryLayer) {
@@ -2095,6 +2106,7 @@ async function initDistrictSelector() {
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
             selectEl.value = "";
+            if (sideSelectEl) sideSelectEl.value = "";
             clearBtn.style.display = 'none';
             
             if (activeBoundaryLayer) {
@@ -2126,6 +2138,10 @@ window.toggleProjectLayer = function(checked) {
         badge.style.background = checked ? 'rgba(37,99,235,0.15)' : 'rgba(148,163,184,0.15)';
         badge.style.color = checked ? '#2563eb' : '#94a3b8';
     }
+    
+    // Đồng bộ sang checkbox ở side panel
+    const sideToggle = document.getElementById('side-project-toggle');
+    if (sideToggle) sideToggle.checked = checked;
 };
 
 /**
@@ -2134,10 +2150,12 @@ window.toggleProjectLayer = function(checked) {
 window.toggleDistrictLayer = function(checked) {
     districtLayerEnabled = checked;
     const selectEl = document.getElementById('district-select');
+    const sideSelectEl = document.getElementById('side-district-select');
     const clearBtn = document.getElementById('clear-boundary-btn');
 
     if (checked) {
         if (selectEl) selectEl.disabled = false;
+        if (sideSelectEl) sideSelectEl.disabled = false;
         loadDistrictOverview();
     } else {
         if (overviewDistrictsLayer && map.hasLayer(overviewDistrictsLayer)) {
@@ -2148,6 +2166,7 @@ window.toggleDistrictLayer = function(checked) {
             activeBoundaryLayer = null;
         }
         if (selectEl) { selectEl.disabled = true; selectEl.value = ''; }
+        if (sideSelectEl) { sideSelectEl.disabled = true; sideSelectEl.value = ''; }
         if (clearBtn) clearBtn.style.display = 'none';
     }
 
@@ -2157,6 +2176,10 @@ window.toggleDistrictLayer = function(checked) {
         badge.style.background = checked ? 'rgba(37,99,235,0.15)' : 'rgba(148,163,184,0.15)';
         badge.style.color = checked ? '#2563eb' : '#94a3b8';
     }
+    
+    // Đồng bộ sang checkbox ở side panel
+    const sideToggle = document.getElementById('side-district-toggle');
+    if (sideToggle) sideToggle.checked = checked;
 };
 
 // 3. THUẬT TOÁN ĐỐI SOÁT KHÔNG GIAN BẢN ĐỒ GIS (P1)
@@ -2318,15 +2341,23 @@ function toggleRasterOverlay(visible) {
     if (!rasterOverlay) return;
     
     const sliderContainer = document.getElementById("opacity-slider-container");
+    const sideSliderContainer = document.getElementById("side-opacity-slider-container");
+    
     if (visible) {
         rasterOverlay.addTo(map);
         if (sliderContainer) sliderContainer.style.display = "flex";
+        if (sideSliderContainer) sideSliderContainer.style.display = "block";
         // Di chuyển lớp phủ xuống dưới các đa giác vector
         rasterOverlay.bringToBack();
     } else {
         map.removeLayer(rasterOverlay);
         if (sliderContainer) sliderContainer.style.display = "none";
+        if (sideSliderContainer) sideSliderContainer.style.display = "none";
     }
+
+    // Đồng bộ sang side-panel controls
+    const sideToggle = document.getElementById('side-raster-toggle');
+    if (sideToggle) sideToggle.checked = visible;
 }
 
 function updateRasterOpacity(value) {
@@ -2338,6 +2369,12 @@ function updateRasterOpacity(value) {
     if (opacityVal) {
         opacityVal.innerText = value + "%";
     }
+
+    // Đồng bộ sang side-panel controls
+    const sideSlider = document.getElementById("side-raster-opacity");
+    if (sideSlider) sideSlider.value = value;
+    const sideOpacityVal = document.getElementById("side-opacity-val");
+    if (sideOpacityVal) sideOpacityVal.innerText = value + "%";
 }
 
 document.addEventListener('DOMContentLoaded', init);
@@ -2381,4 +2418,415 @@ document.addEventListener("click", (e) => {
         }
     }
 });
+
+
+// ==================== PREMIUM SIDE PANEL & TAB LOGIC ====================
+
+window.switchSideTab = function(tabName) {
+    // Remove active class from all tabs
+    document.querySelectorAll('.panel-tab').forEach(btn => btn.classList.remove('active'));
+    // Add active class to clicked tab button
+    const activeBtn = document.getElementById('side-tab-' + tabName);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // Remove active class from all tab contents
+    document.querySelectorAll('.panel-content-container .tab-pane').forEach(pane => pane.classList.remove('active'));
+    // Add active class to clicked tab content
+    const activePane = document.getElementById('side-content-' + tabName);
+    if (activePane) activePane.classList.add('active');
+};
+
+function openSidePanelWithDetails(title, htmlContent) {
+    const panel = document.getElementById('detail-panel');
+    if (panel) {
+        panel.classList.add('open');
+    }
+    switchSideTab('details');
+    const body = document.getElementById('detail-body');
+    if (body) {
+        if (title) {
+            body.innerHTML = `
+                <div style="padding: 5px 0 12px 0; border-bottom: 1px dashed #cbd5e1; margin-bottom: 15px;">
+                    <h3 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--primary); text-transform: uppercase;">${title}</h3>
+                </div>
+                ${htmlContent}
+            `;
+        } else {
+            body.innerHTML = htmlContent;
+        }
+    }
+}
+
+function initSidePanelResizer() {
+    const handle = document.getElementById('panel-resize-handle');
+    const panel = document.getElementById('detail-panel');
+    if (!handle || !panel) return;
+
+    let isResizing = false;
+
+    handle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+        handle.classList.add('active');
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        
+        // Calculate new width based on window width and mouse X position
+        const newWidth = window.innerWidth - e.clientX;
+        
+        // Constrain width between 320px and 80% of window width
+        if (newWidth >= 320 && newWidth <= window.innerWidth * 0.8) {
+            document.documentElement.style.setProperty('--detail-width', `${newWidth}px`);
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            handle.classList.remove('active');
+        }
+    });
+
+    // Custom CSS for measurement tooltips
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .measure-tooltip {
+            background: rgba(15, 23, 42, 0.95) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+            border-radius: 6px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.72rem !important;
+            padding: 4px 8px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            font-weight: 500 !important;
+            white-space: nowrap !important;
+        }
+        .measure-tooltip::before {
+            border-top-color: rgba(15, 23, 42, 0.95) !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Mutation observer to switch tabs when panel is opened via legacy code
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                if (panel.classList.contains('open')) {
+                    // Check if we need to switch (only if not already on detailed/active tab)
+                    const activeTab = document.querySelector('.panel-tab.active');
+                    if (!activeTab || activeTab.id !== 'side-tab-details') {
+                        switchSideTab('details');
+                    }
+                }
+            }
+        });
+    });
+    observer.observe(panel, { attributes: true });
+}
+
+// ==================== GIS LAND-USE MULTI-COLOR LOGIC ====================
+
+function getColorByLoaiDat(loaiDat) {
+    if (!loaiDat) return "#ef4444"; // Mặc định: Đất đỏ
+    const code = loaiDat.toUpperCase().trim();
+    if (code.startsWith("ODT") || code.startsWith("ONT") || code.includes("ĐẤT Ở")) return "#f97316"; // Đất ở tái định cư (Cam)
+    if (code.startsWith("DGT") || code.includes("GIAO THÔNG")) return "#ef4444"; // Đất hạ tầng giao thông (Đỏ)
+    if (code === "RCL" || code.includes("HÀNH LANG") || code.includes("THOÁT LŨ") || code.includes("XANH")) return "#0ea5e9"; // Hành lang thoát lũ/xanh (Xanh dương sáng)
+    if (code.startsWith("DKV") || code.includes("CÂY XANH") || code.includes("CÔNG VIÊN")) return "#eab308"; // Đất công viên cây xanh (Vàng)
+    if (code.startsWith("SKC") || code.startsWith("TMD") || code.includes("THƯƠNG MẠI") || code.includes("DỊCH VỤ")) return "#a855f7"; // Đất TMDV (Tím)
+    if (code.startsWith("DGD") || code.includes("GIÁO DỤC") || code.includes("TRƯỜNG")) return "#ec4899"; // Đất giáo dục (Hồng)
+    if (code.startsWith("DDL") || code.startsWith("DTT") || code.includes("DI TÍCH") || code.includes("TÔN GIÁO")) return "#3b82f6"; // Đất di tích tôn giáo (Xanh lam đậm)
+    return "#ef4444"; // Mặc định
+}
+
+function loadPlanningGIS() {
+    const drawGeojson = (geojsonData) => {
+        planningPolygons = geojsonData.features || [];
+
+        // Xóa layer cũ nếu đang tồn tại
+        if (planningGISLayer) {
+            map.removeLayer(planningGISLayer);
+            planningGISLayer = null;
+        }
+
+        planningGISLayer = L.geoJSON(geojsonData, {
+            style: function(feature) {
+                const props = feature.properties || {};
+                const color = props.color || getColorByLoaiDat(props.loaiDat);
+                return {
+                    color: color,
+                    weight: 3,
+                    fillColor: color,
+                    fillOpacity: 0.35,
+                    dashArray: props.category === 'songhong' || props.id === 'sh_r1' ? '5, 5' : ''
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.on('click', function(e) {
+                    L.DomEvent.stopPropagation(e); // Dừng lan truyền sự kiện
+                    
+                    const props = feature.properties || {};
+                    const name = props.tenKhu || props.name || "Khu vực quy hoạch";
+                    const loaiDat = props.loaiDat || "";
+                    const loaiDatTiengViet = props.loaiDatTiengViet || "Đang cập nhật";
+                    const category = props.loai || props.category || "Quy hoạch";
+                    const description = props.description || "Chưa có mô tả chi tiết.";
+                    const area = props.dienTich || "Đang cập nhật";
+                    const source = props.nguon || "UBND TP Hà Nội";
+                    const updated = props.ngayCapNhat || "Đang cập nhật";
+                    const qd = props.qdPheDuyet || "Đang cập nhật";
+                    
+                    const docs = contextualDocuments[props.id] || [];
+                    let docsHtml = "";
+                    if (docs.length > 0) {
+                        docsHtml = `
+                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 12px; margin-top: 12px;">
+                            <span style="font-size: 0.85rem; font-weight: 800; color: #1e40af; display: block; margin-bottom: 6px;"><i class="fa-solid fa-folder-open"></i> Tài liệu pháp lý liên quan:</span>
+                            ${docs.map(d => `<a href="${d.url}" target="_blank" style="display: block; font-size: 0.8rem; color: #2563eb; text-decoration: none; margin-bottom: 6px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><i class="fa-solid fa-file-pdf" style="color:#ef4444; margin-right: 4px;"></i> ${d.name}</a>`).join('')}
+                        </div>`;
+                    }
+
+                    const colorCode = props.color || getColorByLoaiDat(loaiDat);
+                    const htmlContent = `
+                        <div class="planning-detail-card" style="font-family: 'Inter', sans-serif;">
+                            <span style="display: inline-block; padding: 3px 8px; background: rgba(37,99,235,0.1); border-radius: 6px; font-size: 0.72rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 8px;">🏗️ ${category}</span>
+                            <h3 style="margin: 0 0 10px 0; color: var(--text-main); font-weight: 800; font-size: 1.1rem; line-height: 1.4;">${name}</h3>
+                            
+                            <div class="detail-row" style="margin-bottom: 12px;">
+                                <span style="font-size: 0.75rem; color: var(--text-sub); display: block; margin-bottom: 2px;">Loại đất quy hoạch:</span>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="display: inline-block; width: 14px; height: 14px; border-radius: 3px; background: ${colorCode};"></span>
+                                    <b style="font-size: 0.85rem; color: var(--text-main);">${loaiDat ? loaiDat + " - " : ""}${loaiDatTiengViet}</b>
+                                </div>
+                            </div>
+
+                            <p style="margin: 0 0 15px 0; font-size: 0.85rem; color: var(--text-main); line-height: 1.6; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 3px solid #cbd5e1;">${description}</p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 0.8rem; color: var(--text-main); margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">
+                                    <span style="color: var(--text-sub);">Diện tích:</span>
+                                    <b>${area}</b>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">
+                                    <span style="color: var(--text-sub);">Nguồn dữ liệu:</span>
+                                    <b>${source}</b>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">
+                                    <span style="color: var(--text-sub);">Ngày cập nhật:</span>
+                                    <b>${updated}</b>
+                                </div>
+                                <div style="display: flex; flex-direction: column; padding-bottom: 4px; border-bottom: 1px solid #f1f5f9;">
+                                    <span style="color: var(--text-sub); margin-bottom: 2px;">Quyết định phê duyệt:</span>
+                                    <b style="font-size: 0.78rem; line-height: 1.4; color: #475569;">${qd}</b>
+                                </div>
+                            </div>
+                            ${docsHtml}
+                        </div>
+                    `;
+
+                    openSidePanelWithDetails("Chi tiết phân khu", htmlContent);
+                    
+                    if (layer.getBounds) {
+                        map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+                    }
+                });
+            }
+        }).addTo(map);
+        console.log("Đã tải ranh giới GIS quy hoạch (planningGISLayer).");
+    };
+
+    if (typeof mapGeojsonData !== 'undefined') {
+        console.log("Sử dụng dữ liệu GeoJSON inlined (tránh lỗi CORS file://).");
+        drawGeojson(mapGeojsonData);
+    } else {
+        const GIS_URL = "data/map.geojson"; 
+        fetch(GIS_URL)
+            .then(res => res.json())
+            .then(geojsonData => drawGeojson(geojsonData))
+            .catch(err => console.log("Không thể tải ranh giới GIS quy hoạch qua fetch:", err));
+    }
+}
+
+// ==================== LEAFLET CUSTOM MEASUREMENT TOOL ====================
+
+let isMeasureActive = false;
+let measurePoints = [];
+let measureLayers = L.featureGroup();
+let measureTempLine = null;
+
+window.toggleMeasureMode = function() {
+    isMeasureActive = !isMeasureActive;
+    
+    const btnText = document.getElementById('measure-btn-text');
+    const btn = document.getElementById('measure-btn');
+    const clearBtn = document.getElementById('measure-clear-btn');
+    
+    if (isMeasureActive) {
+        btnText.innerText = "Đo đạc: BẬT";
+        btn.style.background = "#e0f2fe";
+        btn.style.borderColor = "#bae6fd";
+        btn.style.color = "#0369a1";
+        clearBtn.style.display = "flex";
+        
+        map.getContainer().style.cursor = 'crosshair';
+        measureLayers.addTo(map);
+        
+        map.on('click', onMeasureMapClick);
+        map.on('mousemove', onMeasureMapMouseMove);
+    } else {
+        btnText.innerText = "Đo đạc: TẮT";
+        btn.style.background = "rgba(255, 255, 255, 0.9)";
+        btn.style.borderColor = "#cbd5e1";
+        btn.style.color = "var(--text-main)";
+        
+        map.getContainer().style.cursor = '';
+        map.off('click', onMeasureMapClick);
+        map.off('mousemove', onMeasureMapMouseMove);
+        
+        if (measureTempLine) {
+            map.removeLayer(measureTempLine);
+            measureTempLine = null;
+        }
+    }
+};
+
+window.clearMeasurement = function() {
+    measurePoints = [];
+    measureLayers.clearLayers();
+    if (measureTempLine) {
+        map.removeLayer(measureTempLine);
+        measureTempLine = null;
+    }
+    const clearBtn = document.getElementById('measure-clear-btn');
+    if (clearBtn) clearBtn.style.display = "none";
+    if (isMeasureActive) {
+        toggleMeasureMode();
+    }
+};
+
+function onMeasureMapClick(e) {
+    const latlng = e.latlng;
+    measurePoints.push(latlng);
+    
+    const marker = L.circleMarker(latlng, {
+        radius: 6,
+        color: '#2563eb',
+        fillColor: '#ffffff',
+        fillOpacity: 1,
+        weight: 3
+    }).addTo(measureLayers);
+    
+    const count = measurePoints.length;
+    if (count > 1) {
+        L.polyline([measurePoints[count - 2], measurePoints[count - 1]], {
+            color: '#2563eb',
+            weight: 3,
+            dashArray: '5, 5'
+        }).addTo(measureLayers);
+        
+        let totalDist = 0;
+        for (let i = 1; i < count; i++) {
+            totalDist += measurePoints[i - 1].distanceTo(measurePoints[i]);
+        }
+        
+        let distText = totalDist >= 1000 ? (totalDist / 1000).toFixed(2) + " km" : Math.round(totalDist) + " m";
+        let areaText = "";
+        
+        if (count >= 3) {
+            const area = calculatePolygonArea(measurePoints);
+            areaText = area >= 1000000 ? (area / 1000000).toFixed(2) + " km²" : Math.round(area).toLocaleString('vi-VN') + " m²";
+        }
+        
+        let label = `Khoảng cách: <b>${distText}</b>`;
+        if (areaText) {
+            label += `<br>Diện tích: <b>${areaText}</b>`;
+        }
+        
+        marker.bindTooltip(label, {
+            permanent: true,
+            direction: 'top',
+            className: 'measure-tooltip'
+        }).openTooltip();
+    } else {
+        marker.bindTooltip("Điểm xuất phát", {
+            permanent: true,
+            direction: 'top',
+            className: 'measure-tooltip'
+        }).openTooltip();
+    }
+}
+
+function onMeasureMapMouseMove(e) {
+    if (measurePoints.length === 0) return;
+    
+    const count = measurePoints.length;
+    const lastPoint = measurePoints[count - 1];
+    const mousePoint = e.latlng;
+    
+    if (measureTempLine) {
+        measureTempLine.setLatLngs([lastPoint, mousePoint]);
+    } else {
+        measureTempLine = L.polyline([lastPoint, mousePoint], {
+            color: '#2563eb',
+            weight: 2,
+            dashArray: '3, 6'
+        }).addTo(map);
+    }
+}
+
+function calculatePolygonArea(latlngs) {
+    const R = 6378137;
+    const len = latlngs.length;
+    if (len < 3) return 0;
+    
+    let totalArea = 0;
+    const radPoints = latlngs.map(p => ({
+        lat: p.lat * Math.PI / 180,
+        lng: p.lng * Math.PI / 180
+    }));
+    
+    for (let i = 0; i < len; i++) {
+        const p1 = radPoints[i];
+        const p2 = radPoints[(i + 1) % len];
+        totalArea += (p2.lng - p1.lng) * (2 + Math.sin(p1.lat) + Math.sin(p2.lat));
+    }
+    
+    totalArea = Math.abs(totalArea * R * R / 2);
+    return totalArea;
+}
+
+// ==================== SIDE BAR SYNC EVENT CALLBACKS ====================
+
+window.syncDistrictToggle = function(checked) {
+    toggleDistrictLayer(checked);
+};
+
+window.syncDistrictSelect = function(value) {
+    const selectEl = document.getElementById('district-select');
+    if (selectEl) {
+        selectEl.value = value;
+        const event = new Event('change');
+        selectEl.dispatchEvent(event);
+    }
+};
+
+window.syncProjectToggle = function(checked) {
+    toggleProjectLayer(checked);
+};
+
+window.syncRasterToggle = function(checked) {
+    toggleRasterOverlay(checked);
+};
+
+window.syncRasterOpacity = function(value) {
+    updateRasterOpacity(value);
+};
+
 
