@@ -1592,12 +1592,18 @@ function renderFAQ(data) {
         list.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:0.8rem; font-family:\'Inter\'">Dữ liệu Hỏi đáp đang được cập nhật từ hệ thống...</div>';
         return;
     }
-    list.innerHTML = data.map(f => `
-        <div class="faq-item" onclick="this.classList.toggle('open')">
-            <div class="faq-q" style="font-family:'Inter'">${f.q || "Câu hỏi đang cập nhật"}</div>
-            <div class="faq-a">${f.a || "Câu trả lời đang cập nhật"}</div>
-        </div>
-    `).join('');
+    list.innerHTML = data.map(f => {
+        const sourceHtml = f.source ? `<div class="faq-source" style="font-size: 0.72rem; color: #94a3b8; margin-top: 8px; border-top: 1px dashed #e2e8f0; padding-top: 6px; font-style: italic;">Nguồn: ${f.source}</div>` : '';
+        return `
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q" style="font-family:'Inter'">${f.q || "Câu hỏi đang cập nhật"}</div>
+                <div class="faq-a">
+                    <div>${f.a || "Câu trả lời đang cập nhật"}</div>
+                    ${sourceHtml}
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function renderProjectsInMapTab(data) {

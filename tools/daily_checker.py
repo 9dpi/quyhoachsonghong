@@ -91,6 +91,36 @@ def ping_url(url, timeout=8):
     except Exception:
         return None, None
 
+def send_telegram_notification(message):
+    token = os.environ.get('TELEGRAM_BOT_TOKEN')
+    chat_id = os.environ.get('TELEGRAM_CHAT_ID')
+    if not token or not chat_id:
+        print("   [INFO] Telegram notification skipped: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not configured.")
+        return False
+    
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    payload = json.dumps({
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "Markdown"
+    }).encode('utf-8')
+    
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "DuLieuQuyHoach-Checker/1.0"},
+        method="POST"
+    )
+    
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status == 200:
+                print("   [SUCCESS] Telegram notification sent successfully.")
+                return True
+    except Exception as e:
+        print(f"   [ERROR] Failed to send Telegram notification: {e}")
+    return False
+
 def status_icon(ok):
     return "PASS" if ok else "FAIL"
 
@@ -383,27 +413,35 @@ def check_official_documents():
 # ═══════════════════════════════════════════════════════════════════════════════
 # CHECK 7 — Q&A Coverage
 # ═══════════════════════════════════════════════════════════════════════════════
+
+
 def check_qa_coverage():
     print("\n[7/8] Kiem tra Q&A Coverage...")
     result = {'name': 'Q&A Coverage', 'icon': 'circle-question', 'status': 'ok'}
 
     if not os.path.exists(QA_FILE):
-        # QA.json là file text, không phải JSON chuẩn
-        result['status'] = 'info'
-        result['summary'] = 'File QA.json la plain-text, khong phan tich duoc tu dong'
+        result['status'] = 'critical'
+        result['summary'] = 'File QA.json khong ton tai'
         return result
 
-    # Đọc file text và đếm câu hỏi / nguồn
     try:
-        with open(QA_FILE, 'r', encoding='utf-8') as f:
-            content = f.read()
-    except:
-        result['status'] = 'warning'
-        result['summary'] = 'Khong doc duoc file QA.json'
+        data = load_json(QA_FILE)
+        if not isinstance(data, list):
+            result['status'] = 'critical'
+            result['summary'] = 'File QA.json khong phai la list JSON'
+            return result
+    except Exception as e:
+        result['status'] = 'critical'
+        result['summary'] = f'Loi khi parse QA.json: {e}'
         return result
 
-    q_count  = content.count('Tra loi:')
-    src_count = content.count('Nguon:')
+    q_count = len(data)
+    src_count = 0
+    for item in data:
+        src = item.get('source', '')
+        if src and str(src).strip() not in ('', 'N/A', 'null'):
+            src_count += 1
+
     no_src = q_count - src_count
 
     result['question_count'] = q_count
@@ -599,6 +637,35 @@ def main():
     report = build_report(checks)
     write_json_report(report)
     write_md_report(report)
+
+    # Gửi thông báo Telegram khi phát hiện lỗi CRITICAL
+    if report['overall_status'] == 'critical':
+        msg_parts = [
+            "⚠️ *[DULIEUQUYHOACH.COM] CẢNH BÁO LỖI CRITICAL*",
+            f"📅 *Thời gian:* `{report['generated_at']}`",
+            "",
+            "Hệ thống phát hiện các lỗi nghiêm trọng sau cần xử lý ngay:"
+        ]
+        for c in report['checks']:
+            if c.get('status') == 'critical':
+                msg_parts.append(f"• *{c['name']}:* {c.get('summary', 'Phát hiện lỗi nghiêm trọng')}")
+                if c.get('checks'):
+                    for ch in c['checks']:
+                        if not ch['ok']:
+                            msg_parts.append(f"  - Lỗi: {ch['label']} — {ch['detail']}")
+                if c.get('links'):
+                    for lk in c['links']:
+                        if not lk['ok']:
+                            msg_parts.append(f"  - Lỗi Link: {lk['name']} ({lk.get('status_code', 'Không truy cập được')})")
+                if c.get('files'):
+                    for fi in c['files']:
+                        if fi['status'] == 'critical':
+                            msg_parts.append(f"  - Lỗi File: `{fi['file']}` — {fi.get('note', '')}")
+        
+        msg_parts.append("")
+        msg_parts.append("👉 Vui lòng truy cập trang Quản lý / GitHub Actions Runner để xem báo cáo chi tiết.")
+        
+        send_telegram_notification("\n".join(msg_parts))
 
     print("\n" + "=" * 70)
     overall = report['overall_status']

@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-04 14:40:40 GMT+7",
-  "date": "2026-06-04",
-  "overall_status": "warning",
+  "generated_at": "2026-06-12 10:26:53 GMT+7",
+  "date": "2026-06-12",
+  "overall_status": "critical",
   "total_checks": 8,
   "checks": [
     {
@@ -56,48 +56,48 @@
       "files": [
         {
           "file": "database.json",
-          "age_days": 6.2,
+          "age_days": 14.0,
           "size_kb": 3.0,
-          "status": "ok",
-          "note": "Moi cap nhat 6.2 ngay truoc"
+          "status": "critical",
+          "note": "Da 14.0 ngay chua cap nhat (nguong 7 ngay)"
         },
         {
           "file": "extra_data.json",
-          "age_days": 6.2,
+          "age_days": 14.0,
           "size_kb": 9.5,
-          "status": "ok",
-          "note": "Moi cap nhat 6.2 ngay truoc"
+          "status": "warning",
+          "note": "Da 14.0 ngay chua cap nhat (nguong 7 ngay)"
         },
         {
           "file": "map.geojson",
-          "age_days": 6.2,
+          "age_days": 14.0,
           "size_kb": 6.0,
           "status": "ok",
-          "note": "Moi cap nhat 6.2 ngay truoc"
+          "note": "Moi cap nhat 14.0 ngay truoc"
         },
         {
           "file": "official_documents.json",
-          "age_days": 0.0,
+          "age_days": 7.8,
           "size_kb": 3.6,
           "status": "ok",
-          "note": "Moi cap nhat 0.0 ngay truoc"
+          "note": "Moi cap nhat 7.8 ngay truoc"
         },
         {
           "file": "planning_updates.json",
-          "age_days": 6.2,
+          "age_days": 14.0,
           "size_kb": 3.2,
-          "status": "ok",
-          "note": "Moi cap nhat 6.2 ngay truoc"
+          "status": "warning",
+          "note": "Da 14.0 ngay chua cap nhat (nguong 7 ngay)"
         },
         {
           "file": "market_prices.json",
-          "age_days": 6.2,
+          "age_days": 14.0,
           "size_kb": 3723.0,
-          "status": "ok",
-          "note": "Moi cap nhat 6.2 ngay truoc"
+          "status": "critical",
+          "note": "Da 14.0 ngay chua cap nhat (nguong 7 ngay)"
         }
       ],
-      "status": "ok"
+      "status": "critical"
     },
     {
       "name": "Link Health",
@@ -115,7 +115,7 @@
           "name": "Cong thong tin Ha Noi",
           "url": "https://hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 105,
+          "latency_ms": 91,
           "ok": true,
           "status": "ok"
         },
@@ -123,7 +123,7 @@
           "name": "Vien Quy hoach Ha Noi (VQH)",
           "url": "https://vqh.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 442,
+          "latency_ms": 482,
           "ok": true,
           "status": "ok"
         },
@@ -131,7 +131,7 @@
           "name": "UBND Ha Noi - Van ban phap luat",
           "url": "https://vanban.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 235,
+          "latency_ms": 385,
           "ok": true,
           "status": "ok"
         },
@@ -139,7 +139,7 @@
           "name": "QD71/2024 Bang gia dat HN (PDF)",
           "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
           "status_code": 200,
-          "latency_ms": 88,
+          "latency_ms": 74,
           "ok": true,
           "status": "ok"
         }
@@ -160,11 +160,11 @@
     {
       "name": "Market Prices",
       "icon": "chart-line",
-      "status": "ok",
-      "age_days": 6.2,
+      "status": "warning",
+      "age_days": 14.0,
       "size_kb": 3723.0,
       "listing_count": 5200,
-      "summary": "5200 listing, moi cap nhat 6.2 ngay truoc"
+      "summary": "5200 listing, da 14.0 ngay chua cap nhat"
     },
     {
       "name": "Official Documents",
@@ -186,17 +186,17 @@
       "status": "warning",
       "total": 7,
       "old_count": 2,
-      "last_check": "04/06/2026 06:39:48",
+      "last_check": "04/06/2026 14:40:40",
       "summary": "7 van ban, 2 can ra soat (<=2022)"
     },
     {
       "name": "Q&A Coverage",
       "icon": "circle-question",
       "status": "ok",
-      "question_count": 0,
-      "with_source": 0,
+      "question_count": 30,
+      "with_source": 30,
       "without_source": 0,
-      "summary": "0 cau hoi, 0 co nguon trich dan, 0 chua co"
+      "summary": "30 cau hoi, 30 co nguon trich dan, 0 chua co"
     },
     {
       "name": "Map Polygons",
