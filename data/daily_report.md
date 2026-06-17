@@ -1,6 +1,6 @@
 # 🟡 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-06-16 11:54:55 GMT+7`  
+**Thời gian:** `2026-06-17 11:42:28 GMT+7`  
 **Trạng thái tổng thể:** `WARNING`
 
 ---
@@ -29,10 +29,10 @@
 | Tên | URL | HTTP | Độ trễ | Trạng thái |
 |-----|-----|------|--------|------------|
 | Trang chu DuLieuQuyHoach | `https://dulieuquyhoach.com...` | `200` | 1ms | ✅ |
-| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 1596ms | ✅ |
-| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 2015ms | ✅ |
-| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 1672ms | ✅ |
-| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 1378ms | ✅ |
+| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 1336ms | ✅ |
+| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 1930ms | ✅ |
+| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 1496ms | ✅ |
+| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 1797ms | ✅ |
 
 ## 🟢 Data Quality
 > 10 ban ghi, khong co loi nao
@@ -61,4 +61,4 @@
 | `giapranh_vd4` | Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4 | giapranh | 11 | ✅ — |
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-06-16 11:54:55 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-06-17 11:42:28 GMT+7*
