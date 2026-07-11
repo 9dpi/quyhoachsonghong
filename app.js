@@ -21,7 +21,7 @@ let landPriceFuse = null;
 let planningPolygons = [];
 let currentChartInstance = null;
 let planningGISLayer = null;    // Lớp Ranh giới Dự án Quy hoạch (tách biệt)
-let districtLayerEnabled = true; // Trạng thái Lớp Ranh giới Quận Huyện
+let districtLayerEnabled = false; // Trạng thái Lớp Ranh giới Quận Huyện
 
 // Raster overlay variables
 const rasterOverlayBounds = [[20.88, 105.71], [21.19, 105.96]];
@@ -1968,7 +1968,10 @@ async function loadDistrictOverview() {
                 }
             });
         }
-    }).addTo(map);
+    });
+    if (districtLayerEnabled) {
+        overviewDistrictsLayer.addTo(map);
+    }
 
     // Zoom toàn thành phố
     map.setView([21.0285, 105.8542], 12);
@@ -2644,7 +2647,10 @@ function loadPlanningGIS() {
                     }
                 });
             }
-        }).addTo(map);
+        const projectToggle = document.getElementById('project-layer-toggle');
+        if (!projectToggle || projectToggle.checked) {
+            planningGISLayer.addTo(map);
+        }
         console.log("Đã tải ranh giới GIS quy hoạch (planningGISLayer).");
     };
 

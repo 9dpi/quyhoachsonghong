@@ -2215,12 +2215,12 @@
                     <!-- Nhóm Ranh giới Quận Huyện -->
                     <div class="toolbar-group">
                         <label class="switch" title="Bật/tắt lớp ranh giới quận huyện">
-                            <input type="checkbox" id="district-layer-toggle" checked
+                            <input type="checkbox" id="district-layer-toggle"
                                 onchange="toggleDistrictLayer(this.checked)">
                             <span class="slider-switch"></span>
                         </label>
                         <span class="group-label"><i class="fa-solid fa-map-location-dot"></i> Quận Huyện</span>
-                        <span class="layer-badge" id="district-layer-badge">BẬT</span>
+                        <span class="layer-badge" id="district-layer-badge" style="background:rgba(148,163,184,0.15);color:#94a3b8">TẮT</span>
                         <div class="layer-divider"></div>
                         <select id="district-select">
                             <option value="">-- Chọn Quận/Huyện --</option>
@@ -2234,12 +2234,12 @@
                     <!-- Nhóm Ranh giới Dự án -->
                     <div class="toolbar-group">
                         <label class="switch" title="Bật/tắt lớp ranh giới dự án quy hoạch">
-                            <input type="checkbox" id="project-layer-toggle" checked
+                            <input type="checkbox" id="project-layer-toggle"
                                 onchange="toggleProjectLayer(this.checked)">
                             <span class="slider-switch"></span>
                         </label>
                         <span class="group-label"><i class="fa-solid fa-draw-polygon"></i> Dự án</span>
-                        <span class="layer-badge" id="project-layer-badge">BẬT</span>
+                        <span class="layer-badge" id="project-layer-badge" style="background:rgba(148,163,184,0.15);color:#94a3b8">TẮT</span>
                         <div class="layer-divider"></div>
                         <a href="edit-ranh-gioi-du-an.html" target="_blank" title="Mở công cụ biên tập GIS"
                             class="toolbar-action-btn"><i class="fa-solid fa-pen-to-square"></i> Biên tập GIS</a>
@@ -2323,7 +2323,7 @@
                                 <span class="layer-control-name"><i class="fa-solid fa-map-location-dot"
                                         style="color: var(--primary);"></i> Ranh giới Quận Huyện</span>
                                 <label class="switch-premium">
-                                    <input type="checkbox" id="side-district-toggle" checked
+                                    <input type="checkbox" id="side-district-toggle"
                                         onchange="syncDistrictToggle(this.checked)">
                                     <span class="slider-switch-premium"></span>
                                 </label>
@@ -2343,7 +2343,7 @@
                                 <span class="layer-control-name"><i class="fa-solid fa-draw-polygon"
                                         style="color: #10b981;"></i> Ranh giới Dự án Quy hoạch</span>
                                 <label class="switch-premium">
-                                    <input type="checkbox" id="side-project-toggle" checked
+                                    <input type="checkbox" id="side-project-toggle"
                                         onchange="syncProjectToggle(this.checked)">
                                     <span class="slider-switch-premium"></span>
                                 </label>
