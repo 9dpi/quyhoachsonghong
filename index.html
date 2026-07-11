@@ -2136,7 +2136,8 @@
                     style="line-height: 1.7; font-size: 0.85rem; color: #334155; font-family: 'Inter', sans-serif; text-align: left;">
                     <h3
                         style="font-size: 1.05rem; font-weight: 800; color: #1e3a8a; margin-bottom: 12px; border-bottom: 2px solid #3b82f6; padding-bottom: 6px;">
-                        <i class="fa-solid fa-newspaper" style="color: #2563eb;"></i> TIN MỚI QUY HOẠCH HÀ NỘI 2026</h3>
+                        <i class="fa-solid fa-newspaper" style="color: #2563eb;"></i> TIN MỚI QUY HOẠCH HÀ NỘI 2026
+                    </h3>
                     <p style="margin-bottom: 15px;">Chào mừng bạn đến với chuyên mục cập nhật <strong>tin mới quy hoạch
                             Sông Hồng</strong>, trục cao tốc <strong>Vành đai 4 Hà Nội</strong>, các khu tái định cư và
                         bảng giá đất bồi thường giải phóng mặt bằng mới nhất năm 2026.</p>
@@ -2144,7 +2145,8 @@
                     <h4
                         style="font-size: 0.9rem; font-weight: 700; color: #1e293b; margin-top: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                         <i class="fa-solid fa-water" style="color: #3b82f6;"></i> 1. Đồ án Quy hoạch Phân khu Sông Hồng
-                        R1-R2</h4>
+                        R1-R2
+                    </h4>
                     <p style="margin-bottom: 12px;">Quy hoạch phân khu đô thị Sông Hồng có tổng diện tích nghiên cứu
                         khoảng <strong>12,000 ha</strong>, trải dài <strong>55 km</strong> dọc sông từ cầu Hồng Hà đến
                         cầu Mễ Sở. Đồ án định hướng xây dựng hành lang xanh sinh thái, bảo tồn dòng chảy, phát triển các
@@ -2161,12 +2163,14 @@
                         qua Hà Nội dài khoảng 58.2 km, đóng vai trò giải tỏa ùn tắc giao thông nội đô, liên kết vùng cực
                         kỳ mạnh mẽ. Tiến độ thi công tại các khu vực Hoài Đức, Đan Phượng, Mê Linh, Lĩnh Nam đang được
                         đẩy nhanh. Toàn bộ diện tích đất thuộc hành lang an toàn Vành đai 4 đang được đối soát đền bù
-                        giải phóng mặt bằng khẩn trương.</p>
+                        giải phóng mặt bằng khẩn trương.
+                    </p>
 
                     <h4
                         style="font-size: 0.9rem; font-weight: 700; color: #1e293b; margin-top: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                         <i class="fa-solid fa-circle-dollar-to-slot" style="color: #10b981;"></i> 3. Công thức tính Giá
-                        đền bù & Bảng giá đất 2026</h4>
+                        đền bù & Bảng giá đất 2026
+                    </h4>
                     <p style="margin-bottom: 12px;">Giá đất bồi thường giải phóng mặt bằng khi thu hồi đất được áp dụng
                         dựa trên công thức:</p>
                     <div
@@ -2206,80 +2210,7 @@
         <main id="main-content">
             <div id="map"></div>
             <!-- Thanh công cụ điều khiển bản đồ thống nhất (Unified Map Control Toolbar) -->
-            <div class="map-control-toolbar" id="map-control-toolbar">
-                <button class="toolbar-collapse-btn" id="toolbar-collapse-btn" onclick="toggleToolbar()"
-                    title="Thu gọn thanh công cụ">
-                    <i class="fa-solid fa-chevron-left" id="collapse-icon"></i>
-                </button>
-                <div class="toolbar-content">
-                    <!-- Nhóm Ranh giới Quận Huyện -->
-                    <div class="toolbar-group">
-                        <label class="switch" title="Bật/tắt lớp ranh giới quận huyện">
-                            <input type="checkbox" id="district-layer-toggle"
-                                onchange="toggleDistrictLayer(this.checked)">
-                            <span class="slider-switch"></span>
-                        </label>
-                        <span class="group-label"><i class="fa-solid fa-map-location-dot"></i> Quận Huyện</span>
-                        <span class="layer-badge" id="district-layer-badge" style="background:rgba(148,163,184,0.15);color:#94a3b8">TẮT</span>
-                        <div class="layer-divider"></div>
-                        <select id="district-select">
-                            <option value="">-- Chọn Quận/Huyện --</option>
-                        </select>
-                        <button id="clear-boundary-btn" style="display: none;"><i class="fa-solid fa-xmark"></i>
-                            Xóa</button>
-                    </div>
 
-                    <div class="toolbar-divider"></div>
-
-                    <!-- Nhóm Ranh giới Dự án -->
-                    <div class="toolbar-group">
-                        <label class="switch" title="Bật/tắt lớp ranh giới dự án quy hoạch">
-                            <input type="checkbox" id="project-layer-toggle"
-                                onchange="toggleProjectLayer(this.checked)">
-                            <span class="slider-switch"></span>
-                        </label>
-                        <span class="group-label"><i class="fa-solid fa-draw-polygon"></i> Dự án</span>
-                        <span class="layer-badge" id="project-layer-badge" style="background:rgba(148,163,184,0.15);color:#94a3b8">TẮT</span>
-                        <div class="layer-divider"></div>
-                        <a href="edit-ranh-gioi-du-an.html" target="_blank" title="Mở công cụ biên tập GIS"
-                            class="toolbar-action-btn"><i class="fa-solid fa-pen-to-square"></i> Biên tập GIS</a>
-                    </div>
-
-                    <div class="toolbar-divider"></div>
-
-                    <!-- Nhóm Bản đồ gốc Scan -->
-                    <div class="toolbar-group">
-                        <span class="group-label"><i class="fa-solid fa-layer-group"></i> Bản đồ gốc (Scan):</span>
-                        <label class="switch">
-                            <input type="checkbox" id="raster-toggle" onchange="toggleRasterOverlay(this.checked)">
-                            <span class="slider-switch"></span>
-                        </label>
-                        <div class="opacity-slider-wrapper" id="opacity-slider-container" style="display: none;">
-                            <span style="font-size: 0.65rem; font-weight: 700; color: var(--text-sub);">Độ mờ:</span>
-                            <input type="range" class="opacity-slider" id="raster-opacity" min="0" max="100" value="60"
-                                oninput="updateRasterOpacity(this.value)">
-                            <span id="opacity-val" class="opacity-badge">60%</span>
-                        </div>
-                    </div>
-
-                    <div class="toolbar-divider"></div>
-
-                    <!-- Nhóm Công cụ Đo Đạc -->
-                    <div class="toolbar-group">
-                        <button id="measure-btn" class="toolbar-action-btn" onclick="toggleMeasureMode()"
-                            title="Đo đạc khoảng cách và diện tích trên bản đồ"
-                            style="background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; font-size: 0.72rem; color: var(--text-main); display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; transition: all 0.2s;">
-                            <i class="fa-solid fa-ruler-combined" style="color: var(--primary);"></i> <span
-                                id="measure-btn-text">Đo đạc: TẮT</span>
-                        </button>
-                        <button id="measure-clear-btn" class="toolbar-action-btn" onclick="clearMeasurement()"
-                            style="display: none; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; font-weight: 700; font-size: 0.72rem; color: #ef4444; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; transition: all 0.2s;"
-                            title="Xóa nét vẽ đo đạc">
-                            <i class="fa-solid fa-trash-can"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-            </div>
             <div id="detail-panel">
                 <span id="detail-title" style="display:none;"></span>
                 <!-- Drag Handle -->
