@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-13 10:27:38 GMT+7",
-  "date": "2026-07-13",
+  "generated_at": "2026-07-14 09:50:13 GMT+7",
+  "date": "2026-07-14",
   "overall_status": "critical",
   "total_checks": 8,
   "checks": [
@@ -123,7 +123,7 @@
           "name": "Vien Quy hoach Ha Noi (VQH)",
           "url": "https://vqh.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 2371,
+          "latency_ms": 2463,
           "ok": true,
           "status": "ok"
         },
@@ -139,7 +139,7 @@
           "name": "QD71/2024 Bang gia dat HN (PDF)",
           "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
           "status_code": 200,
-          "latency_ms": 1818,
+          "latency_ms": 1116,
           "ok": true,
           "status": "ok"
         }
@@ -186,7 +186,7 @@
       "status": "warning",
       "total": 7,
       "old_count": 2,
-      "last_check": "12/07/2026 16:54:54",
+      "last_check": "13/07/2026 17:51:33",
       "summary": "7 van ban, 2 can ra soat (<=2022)"
     },
     {
