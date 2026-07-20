@@ -21,23 +21,23 @@
     "max_boundary_shift_m": 0.0,
     "level": "INFO"
   },
-  "taidinhcu_ln": {
-    "id": "taidinhcu_ln",
-    "status": "UNCHANGED",
-    "tenKhu": "Khu tái định cư Lĩnh Nam (Hoàng Mai)",
-    "area_old_ha": 13.84,
-    "area_new_ha": 13.84,
-    "area_change_pct": 0.0,
-    "similarity_pct": 100.0,
-    "max_boundary_shift_m": 0.0,
-    "level": "INFO"
-  },
   "taidinhcu_ml": {
     "id": "taidinhcu_ml",
     "status": "UNCHANGED",
     "tenKhu": "Khu tái định cư Mê Linh",
     "area_old_ha": 18.45,
     "area_new_ha": 18.45,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "taidinhcu_ln": {
+    "id": "taidinhcu_ln",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu tái định cư Lĩnh Nam (Hoàng Mai)",
+    "area_old_ha": 13.84,
+    "area_new_ha": 13.84,
     "area_change_pct": 0.0,
     "similarity_pct": 100.0,
     "max_boundary_shift_m": 0.0,
