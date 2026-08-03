@@ -1,6 +1,6 @@
 # 🔴 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-08-02 10:23:39 GMT+7`  
+**Thời gian:** `2026-08-03 10:25:51 GMT+7`  
 **Trạng thái tổng thể:** `CRITICAL`
 
 ---
@@ -30,9 +30,9 @@
 |-----|-----|------|--------|------------|
 | Trang chu DuLieuQuyHoach | `https://dulieuquyhoach.com...` | `200` | 1ms | ✅ |
 | Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `None` | Nonems | ❌ |
-| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 1799ms | ✅ |
+| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 2163ms | ✅ |
 | UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `None` | Nonems | ❌ |
-| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 1445ms | ✅ |
+| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 1221ms | ✅ |
 
 ## 🟢 Data Quality
 > 10 ban ghi, khong co loi nao
@@ -61,4 +61,4 @@
 | `giapranh_vd4` | Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4 | giapranh | 11 | ✅ — |
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-08-02 10:23:39 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-08-03 10:25:51 GMT+7*
