@@ -2647,6 +2647,7 @@ function loadPlanningGIS() {
                     }
                 });
             }
+        });
         const projectToggle = document.getElementById('project-layer-toggle');
         if (!projectToggle || projectToggle.checked) {
             planningGISLayer.addTo(map);
