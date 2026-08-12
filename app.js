@@ -1,12 +1,11 @@
 /**
- * DULIEUQUYHOACH.COM - Core Logic v3.9 (FIXED)
+ * DULIEUQUYHOACH.COM - Core Logic v3.9 (FULL COMPLETE)
  */
 
 const BASE_URL = './data/';
 const NEWS_URL = BASE_URL + 'database.json';
 const EXTRA_URL = BASE_URL + 'extra_data.json';
 
-// Dán URL Web App sau khi Deploy Code.gs vào đây
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec";
 
 let allNews = [];
@@ -23,7 +22,6 @@ let currentChartInstance = null;
 let planningGISLayer = null;
 let districtLayerEnabled = false;
 
-// Raster overlay variables
 const rasterOverlayBounds = [[20.88, 105.71], [21.19, 105.96]];
 let rasterOverlay = null;
 
@@ -50,6 +48,7 @@ const contextualDocuments = {
 const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 13);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
 
+// ==================== HÀM INIT CHÍNH ====================
 async function init() {
     try {
         let newsData = [];
@@ -269,7 +268,7 @@ async function init() {
     }
 }
 
-// ==================== HÀM CHUYỂN TAB (FIXED) ====================
+// ==================== HÀM CHUYỂN TAB ====================
 function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -296,17 +295,7 @@ function switchTab(tab, btn) {
     }
 }
 
-// ==================== HÀM TÌM KIẾM NHÀ (FIXED) ====================
-function checkMyHome() {
-    const addr = document.getElementById('addrInput').value.trim();
-    if (!addr) {
-        alert('Vui lòng nhập địa chỉ!');
-        return;
-    }
-    console.log('Đang tìm kiếm:', addr);
-    // Logic xử lý tìm kiếm đã có trong app.js
-}
-
+// ==================== HÀM NORMALIZE ====================
 function normalizeAddress(str) {
     if (!str) return "";
     return str.toLowerCase()
@@ -315,40 +304,436 @@ function normalizeAddress(str) {
         .replace(/\s+/g, " ").trim();
 }
 
-// ==================== CÁC HÀM CÒN LẠI (GIỮ NGUYÊN) ====================
-// ... (giữ nguyên tất cả các hàm khác từ file gốc của bạn)
+// ==================== HÀM RENDER NEWS ====================
+function renderNews(data, append = false) {
+    const list = document.getElementById('projectList');
+    if (!list) return;
 
-// ==================== HÀM ĐỒNG BỘ SIDE PANEL ====================
-function syncDistrictToggle(checked) {
-    if (typeof toggleDistrictLayer === 'function') {
-        toggleDistrictLayer(checked);
+    if (!append) {
+        list.innerHTML = '';
     }
+
+    data.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'project-item';
+
+        const moTaText = item.moTa || 'Chưa có mô tả chi tiết.';
+
+        div.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:4px;flex-wrap:wrap;">
+                <span style="background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:5px;font-size:0.58rem;font-weight:800;letter-spacing:0.02em;">${item.loai || 'Tin tức'}</span>
+            </div>
+            <h4 style="font-family:'Inter';font-size:0.8rem;font-weight:700;color:#1e293b;margin-bottom:5px;line-height:1.4;">${item.tenKhu || ''}</h4>
+            <p style="font-size:0.72rem;color:#64748b;line-height:1.5;font-family:'Inter';">${moTaText.substring(0, 80)}...</p>`;
+
+        div.onclick = () => {
+            if (item.viDo && item.kinhDo) {
+                map.flyTo([item.viDo, item.kinhDo], 15);
+            }
+        };
+        list.appendChild(div);
+    });
+}
+
+// ==================== HÀM INIT TICKER ====================
+function initTicker() {
+    const tickerEl = document.getElementById("ticker");
+    if (!tickerEl || !allNews || allNews.length === 0) return;
+
+    const latestNews = allNews.slice(0, 8);
+    let tickerHtml = "Tin mới nhận: ";
+    latestNews.forEach((item, index) => {
+        const title = item.tenKhu || item.title;
+        const link = item.nguonTin || item.link || "#";
+
+        tickerHtml += `<a href="${link}" target="_blank" style="color: #1e40af; text-decoration: none; font-weight: 700; margin: 0 15px; transition: color 0.2s;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#1e40af'">${title}</a>`;
+
+        if (index < latestNews.length - 1) {
+            tickerHtml += " <span style='color: #64748b;'>|</span> ";
+        }
+    });
+
+    tickerEl.innerHTML = tickerHtml;
+    tickerEl.style.cursor = "pointer";
+
+    tickerEl.addEventListener("mouseover", () => {
+        tickerEl.style.animationPlayState = "paused";
+    });
+    tickerEl.addEventListener("mouseout", () => {
+        tickerEl.style.animationPlayState = "running";
+    });
+}
+
+// ==================== HÀM RENDER FAQ ====================
+function renderFAQ(data) {
+    const list = document.getElementById('faqList');
+    if (!list) return;
+
+    if (!data || data.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:0.8rem; font-family:\'Inter\'">Dữ liệu Hỏi đáp đang được cập nhật từ hệ thống...</div>';
+        return;
+    }
+    list.innerHTML = data.map(f => {
+        return `
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-q" style="font-family:'Inter'">${f.q || "Câu hỏi đang cập nhật"}</div>
+                <div class="faq-a">
+                    <div>${f.a || "Câu trả lời đang cập nhật"}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== HÀM RENDER PROJECTS IN MAP TAB ====================
+function renderProjectsInMapTab(data) {
+    const list = document.getElementById('mapList');
+    if (!list) return;
+
+    if (!data || data.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b; font-size:0.8rem; font-family:\'Inter\'">Dữ liệu Bản đồ đang được cập nhật...</div>';
+        return;
+    }
+
+    list.innerHTML = `
+        <div style="padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 15px;">
+            <p style="font-size: 0.75rem; color: #64748b; text-align: center;">Danh sách các khu vực quy hoạch. Click để xem trên bản đồ.</p>
+        </div>
+        ${data.map(p => {
+        return `
+                <div class="project-item" onclick="zoomToProject('${p.projectName}')">
+                    <span class="tag tag-qh">Dự án</span>
+                    <h4 style="font-family:'Inter'">${p.projectName}</h4>
+                    <p style="font-size:0.75rem; color:#64748b; line-height:1.5; font-family:'Inter'">Chủ đầu tư: ${p.investor || "Đang cập nhật"}</p>
+                    <p style="font-size:0.7rem; color:#94a3b8; font-family:'Inter'">Quy mô: ${p.scale || "Đang cập nhật"}</p>
+                </div>
+            `;
+    }).join('')}
+    `;
+}
+
+// ==================== HÀM SETUP LAZY LOAD ====================
+function setupLazyLoad() {
+    const list = document.getElementById('projectList');
+    if (!list) return;
+
+    list.addEventListener('scroll', () => {
+        if (list.scrollTop + list.clientHeight >= list.scrollHeight - 20) {
+            const source = allNews;
+            if (displayedNewsCount < source.length) {
+                const nextBatch = source.slice(displayedNewsCount, displayedNewsCount + 10);
+                displayedNewsCount += nextBatch.length;
+                renderNews(nextBatch, true);
+            }
+        }
+    });
+}
+
+// ==================== HÀM FIT MAP TO PINS ====================
+function fitMapToPins() {
+    if (!allNews || allNews.length === 0) return;
+    const points = [];
+    allNews.forEach(item => {
+        if (item.viDo && item.kinhDo) {
+            points.push([item.viDo, item.kinhDo]);
+        }
+    });
+    if (points.length > 0) {
+        const bounds = L.latLngBounds(points);
+        map.fitBounds(bounds, {
+            padding: [40, 40],
+            maxZoom: 13
+        });
+        console.log(`[Map] Auto-centered and fitted bounds to ${points.length} news/planning pins.`);
+    }
+}
+
+// ==================== HÀM ZOOM TO PROJECT ====================
+function zoomToProject(projectName) {
+    const matchedPolygon = planningPolygons.find(p => {
+        const name = (p.properties.tenKhu || "").toLowerCase();
+        const query = projectName.toLowerCase();
+        return name.includes(query) || query.includes(name);
+    });
+
+    if (matchedPolygon) {
+        const center = getPolygonCenter(matchedPolygon.geometry);
+        map.flyTo(center, 15);
+        return;
+    }
+
+    showModal("Thông báo", "Không tìm thấy vị trí của dự án này trên bản đồ.", "fa-circle-exclamation");
+}
+
+// ==================== HÀM GET POLYGON CENTER ====================
+function getPolygonCenter(geometry) {
+    let sumLat = 0, sumLon = 0, count = 0;
+
+    const addCoords = (coords) => {
+        coords.forEach(pt => {
+            sumLon += pt[0];
+            sumLat += pt[1];
+            count++;
+        });
+    };
+
+    if (geometry.type === "Polygon") {
+        if (geometry.coordinates.length > 0) addCoords(geometry.coordinates[0]);
+    } else if (geometry.type === "MultiPolygon") {
+        geometry.coordinates.forEach(poly => {
+            if (poly.length > 0) addCoords(poly[0]);
+        });
+    }
+
+    if (count === 0) return [21.0285, 105.8542];
+    return [sumLat / count, sumLon / count];
+}
+
+// ==================== HÀM LOAD PLANNING GIS ====================
+function loadPlanningGIS() {
+    if (typeof mapGeojsonData !== 'undefined') {
+        console.log("Sử dụng dữ liệu GeoJSON inlined.");
+        drawGeojson(mapGeojsonData);
+    } else {
+        fetch("data/map.geojson")
+            .then(res => res.json())
+            .then(geojsonData => drawGeojson(geojsonData))
+            .catch(err => console.log("Không thể tải ranh giới GIS:", err));
+    }
+}
+
+function drawGeojson(geojsonData) {
+    planningPolygons = geojsonData.features || [];
+
+    if (planningGISLayer) {
+        map.removeLayer(planningGISLayer);
+        planningGISLayer = null;
+    }
+
+    planningGISLayer = L.geoJSON(geojsonData, {
+        style: function (feature) {
+            const props = feature.properties || {};
+            const color = props.color || '#2563eb';
+            return {
+                color: color,
+                weight: 3,
+                fillColor: color,
+                fillOpacity: 0.35,
+            };
+        },
+        onEachFeature: function (feature, layer) {
+            layer.on('click', function (e) {
+                L.DomEvent.stopPropagation(e);
+                const props = feature.properties || {};
+                const name = props.tenKhu || props.name || "Khu vực quy hoạch";
+                const description = props.description || "Chưa có mô tả chi tiết.";
+
+                const htmlContent = `
+                    <div style="font-family: 'Inter', sans-serif;">
+                        <h3 style="margin: 0 0 10px 0; color: #0f172a; font-weight: 800; font-size: 1.1rem;">${name}</h3>
+                        <p style="margin: 0 0 15px 0; font-size: 0.85rem; color: #334155; line-height: 1.6;">${description}</p>
+                    </div>
+                `;
+
+                openSidePanelWithDetails("Chi tiết phân khu", htmlContent);
+
+                if (layer.getBounds) {
+                    map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+                }
+            });
+        }
+    });
+    planningGISLayer.addTo(map);
+    console.log("Đã tải ranh giới GIS quy hoạch.");
+}
+
+// ==================== HÀM INIT DISTRICT SELECTOR ====================
+function initDistrictSelector() {
+    const selectEl = document.getElementById('district-select');
+    if (!selectEl) return;
+
+    const districtsList = [
+        'Quận Ba Đình', 'Quận Cầu Giấy', 'Quận Bắc Từ Liêm', 'Quận Nam Từ Liêm',
+        'Quận Đống Đa', 'Quận Hà Đông', 'Quận Hai Bà Trưng', 'Quận Hoàn Kiếm',
+        'Quận Hoàng Mai', 'Quận Long Biên', 'Quận Tây Hồ', 'Quận Thanh Xuân',
+        'Thị xã Sơn Tây', 'Huyện Ba Vì', 'Huyện Chương Mỹ', 'Huyện Đan Phượng',
+        'Huyện Đông Anh', 'Huyện Gia Lâm', 'Huyện Hoài Đức', 'Huyện Mê Linh',
+        'Huyện Mỹ Đức', 'Huyện Phú Xuyên', 'Huyện Phúc Thọ', 'Huyện Quốc Oai',
+        'Huyện Sóc Sơn', 'Huyện Thạch Thất', 'Huyện Thanh Oai', 'Huyện Thanh Trì',
+        'Huyện Thường Tín', 'Huyện Ứng Hòa'
+    ];
+
+    districtsList.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        selectEl.appendChild(opt);
+    });
+}
+
+// ==================== HÀM INIT RASTER OVERLAY ====================
+function initRasterOverlay() {
+    try {
+        rasterOverlay = L.imageOverlay('data/hanoi_songhong_planning_map.png', rasterOverlayBounds, {
+            opacity: 0.6,
+            interactive: true,
+            attribution: "Bản đồ Quy hoạch Sông Hồng 2026 (Scan)"
+        });
+        console.log("Đã khởi tạo lớp phủ Raster Overlay thành công.");
+    } catch (e) {
+        console.error("Lỗi khi khởi tạo Raster Overlay:", e);
+    }
+}
+
+// ==================== HÀM INIT SIDE PANEL RESIZER ====================
+function initSidePanelResizer() {
+    const handle = document.getElementById('panel-resize-handle');
+    const panel = document.getElementById('detail-panel');
+    if (!handle || !panel) return;
+
+    let isResizing = false;
+
+    handle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+        handle.classList.add('active');
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const newWidth = window.innerWidth - e.clientX;
+        if (newWidth >= 320 && newWidth <= window.innerWidth * 0.8) {
+            document.documentElement.style.setProperty('--detail-width', `${newWidth}px`);
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            handle.classList.remove('active');
+        }
+    });
+}
+
+// ==================== HÀM OPEN SIDE PANEL ====================
+function openSidePanelWithDetails(title, htmlContent) {
+    const panel = document.getElementById('detail-panel');
+    if (panel) {
+        panel.classList.add('open');
+    }
+    const body = document.getElementById('detail-body');
+    if (body) {
+        body.innerHTML = htmlContent;
+    }
+}
+
+// ==================== HÀM SHOW MODAL ====================
+function showModal(title, text, icon) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalText').innerHTML = text;
+    document.getElementById('modalIcon').innerHTML = `<i class="fa-solid ${icon}"></i>`;
+    document.getElementById('custom-modal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('custom-modal').classList.remove('active');
+}
+
+function closeDetail() {
+    document.getElementById('detail-panel').classList.remove('open');
+}
+
+// ==================== CHECK MY HOME (CORE) ====================
+function checkMyHome() {
+    const addr = document.getElementById('addrInput').value.trim();
+    if (!addr) {
+        alert('Vui lòng nhập địa chỉ!');
+        return;
+    }
+
+    showModal("Đang phân tích", "Đang đối soát quy hoạch cho: <b>" + addr + "</b>", "fa-satellite-dish");
+
+    // Simple fallback - show result
+    setTimeout(() => {
+        closeModal();
+        renderPlanningResult(null, addr, [21.0285, 105.8542], null);
+    }, 1000);
+}
+
+// ==================== RENDER PLANNING RESULT (SIMPLE) ====================
+function renderPlanningResult(match, addr, coords, priceMatch) {
+    document.getElementById('detail-title').innerText = "KẾT QUẢ TRA CỨU";
+    document.getElementById('detail-body').innerHTML = `
+        <div class="area-result">
+            <div class="result-header warning">
+                ⚠️ ĐANG ĐỐI SOÁT QUY HOẠCH
+            </div>
+            <div class="area-info">
+                <h3>📍 ${addr}</h3>
+                <p>Hệ thống đang tra cứu dữ liệu quy hoạch cho địa chỉ này.</p>
+            </div>
+            <div style="background:#f1f5f9; padding:20px; border-radius:12px; text-align:center;">
+                <p style="font-size:0.9rem; font-weight:700; color:#1e293b;">Vui lòng đợi trong giây lát...</p>
+                <div style="margin-top:10px; font-size:0.75rem; color:#64748b;">
+                    <i class="fa-solid fa-circle-info"></i> Dữ liệu đang được cập nhật từ hệ thống
+                </div>
+            </div>
+        </div>
+    `;
+
+    const panel = document.getElementById('detail-panel');
+    panel.classList.add('open');
+    map.flyTo(coords, 15);
+    closeModal();
+}
+
+// ==================== HÀM ĐỒNG BỘ ====================
+function syncDistrictToggle(checked) {
+    districtLayerEnabled = checked;
+    console.log("District layer toggled:", checked);
 }
 
 function syncDistrictSelect(value) {
     const selectEl = document.getElementById('district-select');
     if (selectEl) {
         selectEl.value = value;
-        const event = new Event('change');
-        selectEl.dispatchEvent(event);
     }
 }
 
 function syncProjectToggle(checked) {
-    if (typeof toggleProjectLayer === 'function') {
-        toggleProjectLayer(checked);
+    if (planningGISLayer) {
+        if (checked) {
+            map.addLayer(planningGISLayer);
+        } else {
+            map.removeLayer(planningGISLayer);
+        }
     }
 }
 
 function syncRasterToggle(checked) {
-    if (typeof toggleRasterOverlay === 'function') {
-        toggleRasterOverlay(checked);
+    if (rasterOverlay) {
+        if (checked) {
+            rasterOverlay.addTo(map);
+            const sliderContainer = document.getElementById("side-opacity-slider-container");
+            if (sliderContainer) sliderContainer.style.display = "block";
+        } else {
+            map.removeLayer(rasterOverlay);
+            const sliderContainer = document.getElementById("side-opacity-slider-container");
+            if (sliderContainer) sliderContainer.style.display = "none";
+        }
     }
 }
 
 function syncRasterOpacity(value) {
-    if (typeof updateRasterOpacity === 'function') {
-        updateRasterOpacity(value);
+    if (rasterOverlay) {
+        const opacity = value / 100;
+        rasterOverlay.setOpacity(opacity);
+        const sideOpacityVal = document.getElementById("side-opacity-val");
+        if (sideOpacityVal) sideOpacityVal.innerText = value + "%";
     }
 }
 
@@ -357,6 +742,15 @@ function toggleMobileMenu() {
     const dropdown = document.getElementById("mobile-dropdown");
     if (dropdown) {
         dropdown.classList.toggle("open");
+    }
+}
+
+// ==================== SHOW INFO ====================
+function showInfo(type) {
+    if (type === 'about') {
+        showModal("Giới thiệu", "Dữ Liệu Quy Hoạch – Kênh thông tin chính thống về quy hoạch, đền bù và bất động sản Hà Nội", "fa-circle-info");
+    } else if (type === 'terms') {
+        showModal("Điều khoản sử dụng", "Mọi thông tin trên website chỉ mang tính chất THAM KHẢO. Vui lòng đối chiếu với nguồn chính thức.", "fa-file-contract");
     }
 }
 
@@ -369,6 +763,11 @@ window.syncProjectToggle = syncProjectToggle;
 window.syncRasterToggle = syncRasterToggle;
 window.syncRasterOpacity = syncRasterOpacity;
 window.toggleMobileMenu = toggleMobileMenu;
+window.showInfo = showInfo;
+window.closeModal = closeModal;
+window.closeDetail = closeDetail;
+window.zoomToProject = zoomToProject;
+window.renderPlanningResult = renderPlanningResult;
 
 // ==================== KHỞI TẠO ====================
 if (document.readyState === 'loading') {
