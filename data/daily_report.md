@@ -1,6 +1,6 @@
 # 🟡 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-08-19 20:24:54 GMT+7`  
+**Thời gian:** `2026-08-19 20:39:55 GMT+7`  
 **Trạng thái tổng thể:** `WARNING`
 
 ---
@@ -30,10 +30,10 @@
 | Tên | URL | HTTP | Độ trễ | Trạng thái |
 |-----|-----|------|--------|------------|
 | Trang chu DuLieuQuyHoach | `https://dulieuquyhoach.com...` | `200` | 1ms | ✅ |
-| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 91ms | ✅ |
-| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 424ms | ✅ |
-| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 67ms | ✅ |
-| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 83ms | ✅ |
+| Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `200` | 105ms | ✅ |
+| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 484ms | ✅ |
+| UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `200` | 117ms | ✅ |
+| QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `200` | 133ms | ✅ |
 
 ## 🟢 Data Quality
 > 15 ban ghi, khong co loi nao
@@ -75,4 +75,4 @@
 - ⚠️  **53 tuyen chua phan loai khu vuc (nhieu)** () — 
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-08-19 20:24:54 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-08-19 20:39:55 GMT+7*
