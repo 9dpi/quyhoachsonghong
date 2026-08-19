@@ -893,6 +893,8 @@ function openSidePanelWithDetails(title, htmlContent) {
     if (body) {
         body.innerHTML = htmlContent;
     }
+    // Luôn hiển thị tab "Tra Cứu" khi mở panel kết quả
+    switchSideTab('details');
 }
 
 // ==================== HÀM SHOW MODAL ====================
@@ -1126,6 +1128,13 @@ function findNearbyMarketPrices(lat, lng, radiusM = 500, limit = 10) {
 }
 
 // ==================== CHECK MY HOME (CORE) ====================
+function quickSearch(addr) {
+    const input = document.getElementById('addrInput');
+    if (!input) return;
+    input.value = addr;
+    checkMyHome();
+}
+
 async function checkMyHome() {
     const addr = document.getElementById('addrInput').value.trim();
     if (!addr) {
@@ -1403,6 +1412,7 @@ function showInfo(type) {
 // ==================== EXPORT WINDOW OBJECTS ====================
 window.switchTab = switchTab;
 window.checkMyHome = checkMyHome;
+window.quickSearch = quickSearch;
 window.syncDistrictToggle = syncDistrictToggle;
 window.syncDistrictSelect = syncDistrictSelect;
 window.syncProjectToggle = syncProjectToggle;

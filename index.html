@@ -295,6 +295,49 @@
             cursor: pointer;
         }
 
+        .search-hint {
+            display: block;
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin: 10px 0 6px;
+            line-height: 1.45;
+            letter-spacing: 0.2px;
+        }
+
+        .suggest-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .suggest-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: var(--font-main);
+            padding: 5px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .suggest-chip:hover,
+        .suggest-chip:focus-visible {
+            background: #fff;
+            color: #1e40af;
+            border-color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+            outline: none;
+        }
+
         /* TAB STYLE - FIX FONT TIẾNG VIỆT */
         .sidebar-tabs {
             flex-shrink: 0;
@@ -1949,8 +1992,8 @@
 
             #main-content {
                 position: absolute;
-                top: 145px;
-                /* Chiều cao của search card + tabs */
+                top: 300px;
+                /* Chiều cao của search card (gồm cả chips gợi ý) + tabs */
                 bottom: 0;
                 left: 0;
                 right: 0;
@@ -2136,9 +2179,16 @@
                 <h2 style="font-size:0.82rem; margin-bottom:12px; font-weight:800"><i
                         class="fa-solid fa-house-circle-exclamation"></i> NHÀ TÔI CÓ BỊ QUY HOẠCH?</h2>
                 <div class="search-input-group">
-                    <input type="text" id="addrInput" placeholder="Nhập địa chỉ nhà bạn..."
+                    <input type="text" id="addrInput" placeholder="Nhập địa chỉ nhà bạn..." autocomplete="off"
                         onkeypress="if(event.key==='Enter') checkMyHome()">
-                    <button onclick="checkMyHome()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button onclick="checkMyHome()" title="Tra cứu ngay"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <span class="search-hint">💡 Thử tra cứu ngay — chỉ cần nhập số nhà, tên đường hoặc phường:</span>
+                <div class="suggest-chips">
+                    <button type="button" class="suggest-chip" onclick="quickSearch('Phường Phú Thượng, Tây Hồ, Hà Nội')">🏠 Tôi ở phường Phú Thượng</button>
+                    <button type="button" class="suggest-chip" onclick="quickSearch('Gần cầu Long Biên, Hà Nội')">🌉 Nhà tôi gần cầu Long Biên</button>
+                    <button type="button" class="suggest-chip" onclick="quickSearch('Ngọc Thụy, Long Biên, Hà Nội')">🏘️ Khu Ngọc Thụy</button>
+                    <button type="button" class="suggest-chip" onclick="quickSearch('Gần Vành đai 4, Hà Nội')">🚗 Gần Vành đai 4</button>
                 </div>
             </div>
             <div class="sidebar-tabs">
@@ -2289,7 +2339,7 @@
                             🗺️</div>
                         <h2
                             style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                            Bản đồ GIS</h2>
+                            Kết quả tra cứu</h2>
                     </div>
                     <button class="panel-close-btn" onclick="closeDetail()" title="Đóng bảng chi tiết"><i
                             class="fa-solid fa-xmark"></i></button>
@@ -2297,10 +2347,10 @@
 
                 <!-- Tab Controls -->
                 <div class="panel-tabs">
-                    <button id="side-tab-layers" class="panel-tab active" onclick="switchSideTab('layers')">
+                    <button id="side-tab-layers" class="panel-tab" style="display:none;" onclick="switchSideTab('layers')">
                         <i class="fa-solid fa-layer-group"></i> Lớp Bản Đồ
                     </button>
-                    <button id="side-tab-details" class="panel-tab" onclick="switchSideTab('details')">
+                    <button id="side-tab-details" class="panel-tab active" onclick="switchSideTab('details')">
                         <i class="fa-solid fa-circle-info"></i> Tra Cứu
                     </button>
                     <button id="side-tab-legend" class="panel-tab" onclick="switchSideTab('legend')">
@@ -2310,8 +2360,8 @@
 
                 <!-- Tab Contents -->
                 <div class="panel-content-container">
-                    <!-- Tab 1: Layers -->
-                    <div id="side-content-layers" class="tab-pane active">
+                    <!-- Tab 1: Layers (ẩn - quản lý lớp dữ liệu đã chuyển sang công cụ bản đồ) -->
+                    <div id="side-content-layers" class="tab-pane" style="display:none;">
                         <h3 class="pane-title"><i class="fa-solid fa-sliders"></i> Quản lý lớp dữ liệu</h3>
 
                         <div class="layer-control-card">
@@ -2375,7 +2425,7 @@
                     </div>
 
                     <!-- Tab 2: Tra cứu / Chi tiết -->
-                    <div id="side-content-details" class="tab-pane">
+                    <div id="side-content-details" class="tab-pane active">
                         <div id="detail-body" style="line-height: 1.7; font-size: 0.92rem; color: #334155;">
                             <!-- Sẽ được điền động từ JS -->
                             <div style="text-align: center; padding: 40px 20px; color: var(--text-sub);">
