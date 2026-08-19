@@ -1337,12 +1337,26 @@ function quickSearch(addr) {
     checkMyHome();
 }
 
+// Trên mobile: tự chuyển sang tab bản đồ khi tra cứu (để hiện marker + panel kết quả)
+function showMapForLookup() {
+    if (window.innerWidth > 768) return; // Desktop: sidebar + map hiển thị song song
+    if (document.body.classList.contains('show-map')) return;
+    const realmapBtn = document.getElementById('tab-realmap');
+    switchTab('realmap', realmapBtn);
+    setTimeout(() => {
+        if (typeof map !== 'undefined') map.invalidateSize();
+    }, 300);
+}
+
 async function checkMyHome() {
     const addr = document.getElementById('addrInput').value.trim();
     if (!addr) {
         alert('Vui lòng nhập địa chỉ!');
         return;
     }
+
+    // Trên mobile: chuyển sang tab BẢN ĐỒ để hiển thị kết quả + marker
+    showMapForLookup();
 
     // Hiển thị skeleton loading trong panel
     openSidePanelWithDetails("ĐANG TRA CỨU", `
@@ -1595,12 +1609,54 @@ function syncRasterOpacity(value) {
 }
 
 // ==================== TOGGLE MOBILE MENU ====================
-function toggleMobileMenu() {
+function toggleMobileMenu(forceClose = false) {
     const dropdown = document.getElementById("mobile-dropdown");
-    if (dropdown) {
-        dropdown.classList.toggle("open");
+    const backdrop = document.getElementById("mobile-menu-backdrop");
+    const btn = document.getElementById("menu-toggle");
+    if (!dropdown) return;
+
+    const isOpen = forceClose ? false : !dropdown.classList.contains("open");
+    dropdown.classList.toggle("open", isOpen);
+    if (backdrop) backdrop.classList.toggle("show", isOpen);
+    if (btn) btn.classList.toggle("active", isOpen);
+    // Đổi icon hamburger ⇄ X
+    const icon = btn ? btn.querySelector('i') : null;
+    if (icon) {
+        icon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
     }
+    // Khóa cuộn nền khi menu mở
+    document.body.style.overflow = isOpen ? 'hidden' : '';
 }
+
+// Đóng menu mobile khi bấm vào bất kỳ link nào trong dropdown
+document.addEventListener('click', function (e) {
+    const dd = document.getElementById('mobile-dropdown');
+    if (dd && dd.classList.contains('open')) {
+        if (e.target.closest('.mobile-menu-item') || e.target.closest('.mobile-menu-backdrop')) {
+            toggleMobileMenu(true);
+        }
+    }
+});
+
+// Đóng menu mobile bằng phím ESC
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const dd = document.getElementById('mobile-dropdown');
+        if (dd && dd.classList.contains('open')) {
+            toggleMobileMenu(true);
+        }
+    }
+});
+
+// Tự đóng menu khi xoay màn hình / chuyển sang desktop
+window.addEventListener('resize', function () {
+    if (window.innerWidth > 768) {
+        const dd = document.getElementById('mobile-dropdown');
+        if (dd && dd.classList.contains('open')) {
+            toggleMobileMenu(true);
+        }
+    }
+});
 
 // ==================== SHOW INFO ====================
 function showInfo(type) {
@@ -1615,6 +1671,7 @@ function showInfo(type) {
 window.switchTab = switchTab;
 window.checkMyHome = checkMyHome;
 window.quickSearch = quickSearch;
+window.showMapForLookup = showMapForLookup;
 window.toggleNewsComments = toggleNewsComments;
 window.postNewsComment = postNewsComment;
 window.postPopupComment = postPopupComment;

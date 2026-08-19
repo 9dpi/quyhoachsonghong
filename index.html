@@ -1843,11 +1843,44 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .menu-toggle:hover {
             background: #e2e8f0;
             color: var(--primary);
+        }
+
+        .menu-toggle.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .menu-toggle.active i {
+            transform: rotate(180deg);
+            transition: transform 0.25s ease;
+        }
+
+        /* Mobile menu backdrop */
+        .mobile-menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 4999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .mobile-menu-backdrop.show {
+            display: block;
+            opacity: 1;
         }
 
         /* Mobile Dropdown Menu (Glassmorphism) */
@@ -1856,6 +1889,9 @@
             top: 65px;
             right: 20px;
             width: 250px;
+            max-width: calc(100vw - 32px);
+            max-height: calc(100vh - 85px);
+            overflow-y: auto;
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -1931,16 +1967,19 @@
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
+                gap: 10px;
             }
 
             .header-left {
                 justify-content: flex-start;
                 width: auto;
                 margin-bottom: 0;
+                min-width: 0;
             }
 
             .logo-text {
                 font-size: 1.15rem !important;
+                white-space: nowrap;
             }
 
             .header-center {
@@ -1949,25 +1988,12 @@
 
             .header-right {
                 width: auto;
+                flex-shrink: 0;
             }
 
+            /* Trên mobile: ẩn nav ngang, đưa toàn bộ link vào menu hamburger */
             .header-right ul {
-                justify-content: flex-end;
-                flex-wrap: nowrap;
-                gap: 10px;
-            }
-
-            .header-right ul li a {
-                font-size: 0.8rem !important;
-                padding: 8px 12px;
-            }
-
-            .header-right ul li:nth-child(1) {
-                display: none;
-            }
-
-            .header-right ul li:nth-child(2) a {
-                padding: 8px 12px !important;
+                display: none !important;
             }
 
             .social-link {
@@ -2099,6 +2125,50 @@
                 padding: 15px;
             }
         }
+
+        /* Màn hình rất nhỏ (<480px): chỉ giữ logo + hamburger, ẩn link trực tiếp */
+        @media (max-width: 480px) {
+            header {
+                padding: 0 12px;
+                height: 60px;
+                gap: 6px;
+            }
+
+            .header-left img {
+                width: 34px !important;
+                height: 34px !important;
+            }
+
+            .header-left {
+                gap: 8px;
+            }
+
+            .logo-text {
+                font-size: 1rem !important;
+            }
+
+            .header-right ul {
+                display: none !important;
+            }
+
+            .header-right {
+                gap: 0 !important;
+            }
+
+            .menu-toggle {
+                width: 38px;
+                height: 38px;
+                font-size: 1.05rem;
+            }
+
+            .mobile-dropdown {
+                top: 60px;
+                right: 12px;
+                left: 12px;
+                width: auto;
+                max-height: calc(100vh - 75px);
+            }
+        }
     </style>
 </head>
 
@@ -2156,6 +2226,8 @@
         </div>
     </header>
 
+    <div class="mobile-menu-backdrop" id="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
+
     <div class="mobile-dropdown" id="mobile-dropdown">
         <a href="index.html" class="mobile-menu-item"><i class="fa-solid fa-house" style="color: var(--primary);"></i>
             Trang chủ</a>
@@ -2163,6 +2235,10 @@
                 style="color: var(--primary);"></i> Tin tức Quy hoạch</a>
         <a href="tai-ban-do-quy-hoach.html" class="mobile-menu-item"><i class="fa-solid fa-download"
                 style="color: var(--primary);"></i> Tải bản đồ quy hoạch</a>
+        <a href="submit-noi-dung.html" class="mobile-menu-item"><i class="fa-solid fa-pen-to-square"
+                style="color: var(--primary);"></i> Đăng nội dung</a>
+        <div style="height:1px;background:#e2e8f0;margin:4px 0;"></div>
+        <div style="font-size:0.7rem;font-weight:800;color:#94a3b8;padding:2px 14px;letter-spacing:0.04em;">KẾT NỐI CỘNG ĐỒNG</div>
         <a href="https://www.facebook.com/groups/1694801338541423" target="_blank" class="mobile-menu-item"><i
                 class="fa-brands fa-facebook-f m-fb"></i> Facebook Cộng đồng</a>
         <a href="https://www.tiktok.com/@dulieuquyhoach" target="_blank" class="mobile-menu-item"><i
