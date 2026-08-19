@@ -453,6 +453,188 @@ function normalizeAddress(str) {
         .replace(/\s+/g, " ").trim();
 }
 
+// ==================== BÌNH LUẬN MOCKUP (TĂNG TƯƠNG TÁC) ====================
+const MOCK_COMMENT_NAMES = [
+    'Tuấn Anh', 'Mai Hương', 'Quang Huy', 'Thu Trang', 'Đức Minh', 'Hồng Nhung',
+    'Văn Long', 'Phương Thảo', 'Minh Quân', 'Lan Anh', 'Trọng Đức', 'Bích Ngọc',
+    'Khánh Linh', 'Thành Công', 'Thanh Tâm', 'Việt Hùng', 'Ngọc Ánh', 'Hữu Phước'
+];
+
+const MOCK_COMMENT_TEXTS = [
+    'Nhà tôi ngay trong khu vực này, đang hồi hộp chờ thông tin đền bù. Mong sớm có bảng giá chính thức!',
+    'Cảm ơn trang đã cập nhật kịp thời. Thông tin rất hữu ích cho người dân vùng quy hoạch.',
+    'Không biết hệ số K năm nay có tăng không nhỉ? Ai biết chỉ giúp với ạ.',
+    'Gia đình em có mảnh đất 80m2 ở đây, nhờ trang tra cứu được kết quả luôn. Tuyệt vời!',
+    'Mong các cơ quan sớm công bố bản vẽ chi tiết để bà con nắm rõ ranh giới.',
+    'Cầu này mà xong thì khu vực này phát triển lắm. Đất ven sông chắc lên giá mạnh.',
+    'Em thấy giá đền bù theo NQ 52/2025 có vẻ hợp lý hơn trước. Các bác thấy sao?',
+    'Đã chia sẻ bài viết này cho cả xóm. Bà con cần biết thông tin này lắm.',
+    'Nhờ ơn các anh chị, trước giờ toàn nghe tin đồn, giờ có trang này yên tâm hơn hẳn.',
+    'Khu vực này nằm trong hành lang thoát lũ thì có được đền bù không ạ?',
+    'Tôi ở Mê Linh, nhà gần Vành đai 4, đang chờ thông báo thu hồi. Theo dõi trang hàng ngày.',
+    'Thông tin rõ ràng, dễ hiểu. Chúc trang ngày càng phát triển!',
+    'Có bác nào biết tiến độ thi công đoạn qua huyện mình tới đâu rồi không?',
+    'Bài viết chất lượng, đáng đọc. Đã lưu lại để theo dõi thêm.',
+    'Metro mà xong thì đi làm đỡ vất vả quá. Kỳ vọng nhiều!',
+    'Giá thị trường lân cận tra được khá sát thực tế, trang làm rất tốt.'
+];
+
+const MOCK_AVATARS = ['👩', '👨', '🧑', '👴', '👵', '👧', '👦', '🧔', '👩‍🦰', '👨‍🦱'];
+
+// Hàm băm chuỗi đơn giản → cùng 1 tin luôn cho cùng bộ bình luận (ổn định)
+function hashString(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+    return h;
+}
+
+// PRNG deterministic (mulberry32)
+function mulberry32(seed) {
+    return function () {
+        seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function timeAgoLabel(minutes) {
+    if (minutes < 60) return minutes + ' phút trước';
+    const h = Math.floor(minutes / 60);
+    if (h < 24) return h + ' giờ trước';
+    return Math.floor(h / 24) + ' ngày trước';
+}
+
+// Sinh bộ bình luận mockup ổn định theo nội dung tin
+function getMockComments(item, showCount = 2) {
+    const title = (item.tenKhu || item.title || '') + ' ' + (item.moTa || '');
+    const seed = hashString(title || 'bài viết');
+    const rand = mulberry32(seed);
+    const total = 4 + Math.floor(rand() * 28); // 4-31 bình luận
+    const likes = 8 + Math.floor(rand() * 90);
+    const shares = 1 + Math.floor(rand() * 20);
+
+    const idxPool = [...MOCK_COMMENT_TEXTS.keys()];
+    const namePool = [...MOCK_COMMENT_NAMES];
+    const chosen = [];
+    while (chosen.length < showCount && idxPool.length) {
+        const ci = Math.floor(rand() * idxPool.length);
+        const textIdx = idxPool.splice(ci, 1)[0];
+        const ni = Math.floor(rand() * namePool.length);
+        const name = namePool.splice(ni, 1)[0];
+        const minsAgo = 5 + Math.floor(rand() * 60 * 24);
+        chosen.push({
+            name,
+            text: MOCK_COMMENT_TEXTS[textIdx],
+            time: timeAgoLabel(minsAgo),
+            avatar: MOCK_AVATARS[hashString(name) % MOCK_AVATARS.length]
+        });
+    }
+    return { comments: chosen, total, likes, shares };
+}
+
+// HTML 1 comment
+function commentItemHtml(c) {
+    return `
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed #e2e8f0;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">${c.avatar}</div>
+            <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;gap:6px;">
+                    <span style="font-size:0.78rem;font-weight:700;color:#1e293b;">${escHtml(c.name)}</span>
+                    <span style="font-size:0.68rem;color:#94a3b8;white-space:nowrap;">${c.time}</span>
+                </div>
+                <div style="font-size:0.78rem;color:#475569;line-height:1.45;margin-top:2px;">${escHtml(c.text)}</div>
+                <div style="display:flex;gap:14px;margin-top:4px;">
+                    <span style="font-size:0.68rem;color:#64748b;cursor:pointer;" onclick="this.innerText=this.innerText==='👍 Thích'?'👍 Đã thích':this.innerText;">👍 Thích</span>
+                    <span style="font-size:0.68rem;color:#64748b;cursor:pointer;">💬 Trả lời</span>
+                </div>
+            </div>
+        </div>`;
+}
+
+// Toggle danh sách bình luận ở card tin sidebar
+function toggleNewsComments(uid) {
+    const el = document.getElementById('ncmt-' + uid);
+    if (!el) return;
+    const show = el.style.display !== 'block';
+    el.style.display = show ? 'block' : 'none';
+    const btn = document.getElementById('ncmt-btn-' + uid);
+    if (btn) btn.innerText = show ? 'Bình luận ▴' : 'Bình luận ▾';
+}
+
+// Gửi bình luận ở sidebar (chèn comment của user vào đầu danh sách)
+function postNewsComment(uid) {
+    const input = document.getElementById('ncmt-in-' + uid);
+    const list = document.getElementById('ncmt-' + uid);
+    if (!input || !list) return;
+    const text = input.value.trim();
+    if (!text) return;
+    const box = document.createElement('div');
+    box.style.cssText = 'display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed #e2e8f0;';
+    box.innerHTML = `
+        <div style="width:28px;height:28px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">👤</div>
+        <div style="flex:1;min-width:0;">
+            <div style="font-size:0.78rem;font-weight:700;color:#1e293b;">Bạn <span style="color:#10b981;font-weight:600;">(vừa gửi ✓)</span></div>
+            <div style="font-size:0.78rem;color:#475569;line-height:1.45;margin-top:2px;">${escHtml(text)}</div>
+        </div>`;
+    const inputRow = list.querySelector('.ncmt-input-row');
+    if (inputRow) list.insertBefore(box, inputRow);
+    else list.appendChild(box);
+    input.value = '';
+    const countEl = document.getElementById('ncmt-count-' + uid);
+    if (countEl) {
+        const m = countEl.innerText.match(/(\d+)/);
+        if (m) countEl.innerText = countEl.innerText.replace(m[1], parseInt(m[1]) + 1);
+    }
+    input.focus();
+}
+
+// Gửi bình luận trong popup bản đồ
+let popupCmtSeq = 0;
+function postPopupComment(seq) {
+    const input = document.getElementById('pcmt-in-' + seq);
+    const list = document.getElementById('pcmt-list-' + seq);
+    if (!input || !list) return;
+    const text = input.value.trim();
+    if (!text) return;
+    const box = document.createElement('div');
+    box.style.cssText = 'display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed #e2e8f0;';
+    box.innerHTML = `
+        <div style="width:28px;height:28px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">👤</div>
+        <div style="flex:1;min-width:0;">
+            <div style="font-size:0.78rem;font-weight:700;color:#1e293b;">Bạn <span style="color:#10b981;font-weight:600;">(vừa gửi ✓)</span></div>
+            <div style="font-size:0.78rem;color:#475569;line-height:1.45;margin-top:2px;">${escHtml(text)}</div>
+        </div>`;
+    list.appendChild(box);
+    input.value = '';
+    const countEl = document.getElementById('pcmt-count-' + seq);
+    if (countEl) {
+        const m = countEl.innerText.match(/(\d+)/);
+        if (m) countEl.innerText = countEl.innerText.replace(m[1], parseInt(m[1]) + 1);
+    }
+    input.focus();
+}
+
+// HTML khối bình luận dùng trong popup marker (nhỏ gọn)
+function popupCommentsHtml(item) {
+    const cmt = getMockComments(item, 2);
+    const seq = ++popupCmtSeq;
+    return `
+        <div style="margin-top:10px;border-top:1px solid #e2e8f0;padding-top:8px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;color:#64748b;margin-bottom:4px;">
+                <span id="pcmt-count-${seq}" style="color:#2563eb;font-weight:700;">💬 ${cmt.total} bình luận</span>
+                <span>👍 ${cmt.likes}</span>
+                <span>🔁 ${cmt.shares}</span>
+            </div>
+            <div id="pcmt-list-${seq}">${cmt.comments.map(commentItemHtml).join('')}</div>
+            <div style="display:flex;gap:6px;padding-top:8px;">
+                <input id="pcmt-in-${seq}" placeholder="Viết bình luận..." style="flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:6px 9px;font-size:0.75rem;font-family:'Inter';outline:none;color:#0f172a;"
+                    onkeypress="if(event.key==='Enter') postPopupComment(${seq})"/>
+                <button onclick="postPopupComment(${seq})" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:0 10px;font-size:0.72rem;font-weight:700;cursor:pointer;">Gửi</button>
+            </div>
+        </div>`;
+}
+
 // ==================== HÀM RENDER NEWS ====================
 function renderNews(data, append = false) {
     const list = document.getElementById('projectList');
@@ -468,6 +650,8 @@ function renderNews(data, append = false) {
 
         const moTaText = item.moTa || 'Chưa có mô tả chi tiết.';
         const hot = detectHotProject((item.tenKhu || '') + ' ' + moTaText);
+        const cmt = getMockComments(item, 2);
+        const uid = (item.ID || index) + '-' + index;
 
         div.innerHTML = `
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:4px;flex-wrap:wrap;">
@@ -475,7 +659,24 @@ function renderNews(data, append = false) {
                 ${hot ? `<span style="background:${hot.color};color:#fff;padding:3px 10px;border-radius:5px;font-size:0.72rem;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,0.15);">${hot.icon} ${hot.label}</span>` : ''}
             </div>
             <h4 style="font-family:'Inter';font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:6px;line-height:1.45;">${item.tenKhu || ''}</h4>
-            <p style="font-size:0.88rem;color:#64748b;line-height:1.55;font-family:'Inter';">${moTaText.substring(0, 90)}...</p>`;
+            <p style="font-size:0.88rem;color:#64748b;line-height:1.55;font-family:'Inter';">${moTaText.substring(0, 90)}...</p>
+            <!-- Section bình luận tương tác -->
+            <div style="margin-top:9px;border-top:1px solid #eef2f7;padding-top:7px;">
+                <div style="display:flex;align-items:center;gap:12px;font-size:0.75rem;color:#64748b;user-select:none;">
+                    <span id="ncmt-count-${uid}" style="color:#2563eb;font-weight:700;cursor:pointer;" onclick="event.stopPropagation();toggleNewsComments('${uid}')">💬 ${cmt.total} bình luận</span>
+                    <span style="cursor:pointer;" onclick="event.stopPropagation();this.innerText=this.innerText==='👍 ${cmt.likes}'?'👍 ${cmt.likes + 1}':this.innerText;">👍 ${cmt.likes}</span>
+                    <span style="cursor:pointer;" onclick="event.stopPropagation();this.innerText=this.innerText==='🔁 ${cmt.shares}'?'🔁 ${cmt.shares + 1}':this.innerText;">🔁 ${cmt.shares}</span>
+                    <span id="ncmt-btn-${uid}" style="margin-left:auto;font-size:0.7rem;color:#2563eb;font-weight:600;cursor:pointer;" onclick="event.stopPropagation();toggleNewsComments('${uid}')">Bình luận ▾</span>
+                </div>
+                <div id="ncmt-${uid}" style="display:none;margin-top:6px;background:#f8fafc;border-radius:8px;padding:6px 10px;">
+                    ${cmt.comments.map(commentItemHtml).join('')}
+                    <div class="ncmt-input-row" style="display:flex;gap:6px;padding-top:8px;">
+                        <input id="ncmt-in-${uid}" placeholder="Viết bình luận..." style="flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:6px 9px;font-size:0.75rem;font-family:'Inter';outline:none;color:#0f172a;"
+                            onkeypress="if(event.key==='Enter') postNewsComment('${uid}')"/>
+                        <button onclick="postNewsComment('${uid}')" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:0 12px;font-size:0.72rem;font-weight:700;cursor:pointer;">Gửi</button>
+                    </div>
+                </div>
+            </div>`;
 
         div.onclick = () => {
             if (item.viDo && item.kinhDo) {
@@ -563,6 +764,7 @@ function renderNewsMarkers(data, append = false) {
                 <div style="font-size:1.05rem;font-weight:700;color:#0f172a;line-height:1.45;">${escHtml(title)}</div>
                 ${desc ? `<div style="font-size:0.9rem;color:#475569;line-height:1.55;margin-top:6px;">${escHtml(desc)}...</div>` : ''}
                 ${link ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:0.9rem;font-weight:700;color:#2563eb;">Xem nguồn →</a>` : ''}
+                ${popupCommentsHtml(item)}
             </div>
         `;
 
@@ -1413,6 +1615,9 @@ function showInfo(type) {
 window.switchTab = switchTab;
 window.checkMyHome = checkMyHome;
 window.quickSearch = quickSearch;
+window.toggleNewsComments = toggleNewsComments;
+window.postNewsComment = postNewsComment;
+window.postPopupComment = postPopupComment;
 window.syncDistrictToggle = syncDistrictToggle;
 window.syncDistrictSelect = syncDistrictSelect;
 window.syncProjectToggle = syncProjectToggle;
