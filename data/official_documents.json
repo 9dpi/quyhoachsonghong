@@ -1,24 +1,50 @@
 {
   "documents": [
     {
-      "category": "Văn bản về Bảng giá đất & Đền bù",
+      "category": "Văn bản về Bảng giá đất & Đền bù (Hiện hành 2026)",
       "icon": "fa-scale-balanced",
       "items": [
         {
-          "title": "Quyết định 71/2024/QĐ-UBND Hà Nội",
-          "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
-          "description": "Áp dụng từ 20/12/2024. Điều chỉnh, sửa đổi, bổ sung bảng giá đất theo Quyết định 30/2019/QĐ-UBND.",
+          "title": "Nghị quyết 52/2025/NQ-HĐND - Bảng giá đất Hà Nội 2026",
+          "url": "https://thuvienphapluat.vn/van-ban/Bat-dong-san/Nghi-quyet-52-2025-NQ-HDND-bang-gia-dat-lan-dau-Ha-Noi",
+          "description": "Bảng giá đất lần đầu theo Luật Đất đai 2024, chia thành 17 khu vực, áp dụng từ 01/01/2026. Thay thế hoàn toàn QĐ 71/2024.",
           "format": "PDF",
-          "size": "1.8 MB",
-          "date": "12/2024"
+          "size": "5.2 MB",
+          "date": "11/2025",
+          "status": "current",
+          "effective_from": "01/01/2026"
         },
         {
-          "title": "Quyết định 30/2019/QĐ-UBND Hà Nội",
+          "title": "Quyết định 19/2026/QĐ-UBND - Hệ số điều chỉnh giá đất (K) 2026",
+          "url": "https://thuvienphapluat.vn/van-ban/Bat-dong-san/Quyet-dinh-19-2026-QD-UBND-he-so-dieu-chinh-gia-dat-Ha-Noi",
+          "description": "Quy định hệ số K điều chỉnh giá đất 2026 phục vụ tính tiền sử dụng đất, tiền thuê đất, bồi thường khi Nhà nước thu hồi đất. Hiệu lực từ 02/02/2026.",
+          "format": "PDF",
+          "size": "2.1 MB",
+          "date": "01/2026",
+          "status": "current",
+          "effective_from": "02/02/2026"
+        },
+        {
+          "title": "Quyết định 71/2024/QĐ-UBND Hà Nội (Hết hiệu lực)",
+          "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
+          "description": "⚠️ Đã hết hiệu lực từ 31/12/2025. Thay thế bởi Nghị quyết 52/2025/NQ-HĐND. Lưu trữ để tham khảo lịch sử.",
+          "format": "PDF",
+          "size": "1.8 MB",
+          "date": "12/2024",
+          "status": "expired",
+          "expired_date": "31/12/2025",
+          "replaced_by": "Nghị quyết 52/2025/NQ-HĐND"
+        },
+        {
+          "title": "Quyết định 30/2019/QĐ-UBND Hà Nội (Hết hiệu lực)",
           "url": "https://storage-vnportal.vnpt.vn/gov-hni/CrawlDownloads/vanban.hanoi.gov.vn/documents/10182/2518750/QDPQ_30_2019.pdf",
-          "description": "Văn bản gốc ban hành quy định và bảng giá các loại đất trên địa bàn Hà Nội giai đoạn 2020-2024.",
+          "description": "⚠️ Đã hết hiệu lực. Văn bản gốc ban hành bảng giá đất giai đoạn 2020-2024. Thay thế bởi NQ 52/2025.",
           "format": "PDF",
           "size": "4.5 MB",
-          "date": "12/2019"
+          "date": "12/2019",
+          "status": "expired",
+          "expired_date": "31/12/2024",
+          "replaced_by": "Quyết định 71/2024/QĐ-UBND → Nghị quyết 52/2025/NQ-HĐND"
         },
         {
           "title": "Văn bản hướng dẫn bồi thường, hỗ trợ tái định cư",
@@ -26,21 +52,41 @@
           "description": "Tra cứu các quy định chi tiết về bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất tại Cổng thông tin Hà Nội.",
           "format": "Link",
           "size": "Website",
-          "date": "Mới nhất"
+          "date": "Mới nhất",
+          "status": "current"
         }
       ]
     },
     {
-      "category": "Các Quy hoạch sử dụng đất",
+      "category": "Quy hoạch Tổng thể & Phân khu",
       "icon": "fa-map-location-dot",
       "items": [
         {
-          "title": "Quyết định 5162/QĐ-UBND huyện Gia Lâm",
-          "url": "https://www.theonenetwork.vn/post/ph%C3%AA-duy%E1%BB%87t-quy-ho%E1%BA%A1ch-s%E1%BB%AD-d%E1%BB%A5ng-%C4%91%E1%BA%A5t-%C4%91%E1%BA%BFn-n%C4%83m-2030-huy%E1%BB%87n-gia-l%C3%A2m-s%E1%BB%91-5162-q%C4%91-ubnd-ng%C3%A0y-7-12-2021",
-          "description": "Phê duyệt Quy hoạch sử dụng đất đến năm 2030 của huyện Gia Lâm (Bản sao văn bản).",
+          "title": "Quy hoạch Tổng thể Thủ đô Hà Nội - Tầm nhìn 100 năm",
+          "url": "https://vanban.hanoi.gov.vn",
+          "description": "Phê duyệt ngày 13/05/2026. Xác định sông Hồng là trục cảnh quan, sinh thái và động lực phát triển chiến lược trong thế kỷ XXI. Dự kiến 22 cầu vượt sông Hồng.",
           "format": "Web",
           "size": "Link",
-          "date": "12/2021"
+          "date": "05/2026",
+          "status": "current"
+        },
+        {
+          "title": "Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND)",
+          "url": "https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0",
+          "description": "Phê duyệt Quy hoạch phân khu đô thị sông Hồng, tỷ lệ 1/5000 (đoạn từ cầu Hồng Hà đến cầu Mễ Sở). Diện tích 12,000 ha, chiều dài 55 km.",
+          "format": "PDF",
+          "size": "2.4 MB",
+          "date": "05/2026",
+          "status": "current"
+        },
+        {
+          "title": "Quyết định 5162/QĐ-UBND huyện Gia Lâm",
+          "url": "https://www.theonenetwork.vn/post/ph%C3%AA-duy%E1%BB%87t-quy-ho%E1%BA%A1ch-s%E1%BB%AD-d%E1%BB%A5ng-%C4%91%E1%BA%A5t-%C4%91%E1%BA%BFn-n%C4%83m-2030-huy%E1%BB%87n-gia-l%C3%A2m-s%E1%BB%91-5162-q%C4%91-ubnd-ng%C3%A0y-7-12-2021",
+          "description": "Phê duyệt Quy hoạch sử dụng đất đến năm 2030 của huyện Gia Lâm.",
+          "format": "Web",
+          "size": "Link",
+          "date": "12/2021",
+          "status": "current"
         },
         {
           "title": "Quy hoạch phân khu (Ký hiệu S, N, H...)",
@@ -48,32 +94,53 @@
           "description": "Tra cứu các bản đồ quy hoạch chi tiết phân khu đô thị Hà Nội tại Viện Quy hoạch Xây dựng.",
           "format": "Web",
           "size": "Website",
-          "date": "Cập nhật liên tục"
+          "date": "Cập nhật liên tục",
+          "status": "current"
         }
       ]
     },
     {
-      "category": "Các dự án hạ tầng lớn",
+      "category": "Các dự án hạ tầng trọng điểm",
       "icon": "fa-city",
       "items": [
         {
-          "title": "Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND)",
-          "url": "https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0",
-          "description": "Phê duyệt Quy hoạch phân khu đô thị sông Hồng, tỷ lệ 1/5000 (đoạn từ cầu Hồng Hà đến cầu Mễ Sở).",
-          "format": "PDF",
-          "size": "2.4 MB",
-          "date": "05/2026"
-        },
-        {
           "title": "Dự án Vành đai 4 - Vùng Thủ đô",
           "url": "https://vanban.hanoi.gov.vn",
-          "description": "Thông tin quy hoạch và giải phóng mặt bằng dự án đường Vành đai 4 tại Cổng thông tin Hà Nội.",
+          "description": "GPMB đạt >99%. Đường song hành thảm nhựa 35/50,76 km. Phấn đấu thông xe 3 cầu (Hồng Hà, Mễ Sở, Hoài Thượng) trước APEC 2027.",
           "format": "Link",
           "size": "Website",
-          "date": "Tiến độ thực"
+          "date": "Tiến độ thực 2026",
+          "status": "current"
+        },
+        {
+          "title": "Dự án Cầu Tứ Liên & Đường dẫn 2 đầu cầu",
+          "url": "https://vanban.hanoi.gov.vn",
+          "description": "Khởi công 19/05/2025. Tổng vốn ~20.000 tỷ đồng. Trụ tháp chính cao 185m. Kết nối trung tâm Hà Nội – Đông Anh. Dự kiến hoàn thành 2027.",
+          "format": "Link",
+          "size": "Website",
+          "date": "Tiến độ thực 2026",
+          "status": "current"
+        },
+        {
+          "title": "Metro Tuyến số 2: Nam Thăng Long – Trần Hưng Đạo",
+          "url": "https://vanban.hanoi.gov.vn",
+          "description": "Khởi công năm 2025. Là tuyến Metro huyết mạch xuyên trung tâm, kết nối Bắc – Nam Hà Nội.",
+          "format": "Link",
+          "size": "Website",
+          "date": "Tiến độ thực 2026",
+          "status": "current"
+        },
+        {
+          "title": "Metro Tuyến số 5: Văn Cao – Hòa Lạc",
+          "url": "https://vanban.hanoi.gov.vn",
+          "description": "Khởi công năm 2025. Kết nối trung tâm Hà Nội với khu công nghệ cao Hòa Lạc, đại học Quốc gia.",
+          "format": "Link",
+          "size": "Website",
+          "date": "Tiến độ thực 2026",
+          "status": "current"
         }
       ]
     }
   ],
-  "lastCheck": "11/07/2026 10:11:36"
+  "lastCheck": "19/08/2026 20:24:54"
 }

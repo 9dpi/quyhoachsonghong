@@ -37,7 +37,8 @@
       "polygon_id": "sh_r1",
       "status": "PASS",
       "matched_polygons": [
-        "sh_r1"
+        "sh_r1",
+        "dai_lo_song_hong"
       ],
       "details": "Khớp chính xác: Nằm trong quy hoạch sh_r1."
     },
@@ -71,7 +72,8 @@
       "polygon_id": "taidinhcu_ln",
       "status": "PASS",
       "matched_polygons": [
-        "taidinhcu_ln"
+        "taidinhcu_ln",
+        "kdt_linh_nam"
       ],
       "details": "Khớp chính xác: Nằm trong quy hoạch taidinhcu_ln."
     }

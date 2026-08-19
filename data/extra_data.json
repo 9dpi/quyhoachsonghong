@@ -9,6 +9,26 @@
       "date": "14/05/2026",
       "region": "Long Biên",
       "content": "Bắt đầu niêm yết phương án bồi thường hỗ trợ tái định cư cho các hộ dân ven sông Hồng thuộc phường Ngọc Thụy."
+    },
+    {
+      "date": "13/05/2026",
+      "region": "Hà Nội",
+      "content": "Phê duyệt Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100 năm. Sông Hồng trở thành trục cảnh quan, sinh thái và động lực phát triển chiến lược."
+    },
+    {
+      "date": "10/06/2026",
+      "region": "Đông Anh / Tây Hồ",
+      "content": "Cầu Tứ Liên triển khai thi công trụ tháp chính cao 185m; GPMB đạt hơn 80% phía Đông Anh."
+    },
+    {
+      "date": "18/08/2026",
+      "region": "Hà Nội",
+      "content": "Hệ thống Metro 8 tuyến đang triển khai đồng loạt; tuyến số 2 (Nam Thăng Long – Trần Hưng Đạo) và tuyến số 5 (Văn Cao – Hòa Lạc) khởi công giai đoạn 2025-2026."
+    },
+    {
+      "date": "15/08/2026",
+      "region": "Hoàng Mai",
+      "content": "Khu đô thị mới phường Lĩnh Nam chuẩn bị khởi công hạ tầng khung (08/2026) phục vụ di dời hành lang đê sông Hồng."
     }
   ],
   "faq": [
@@ -26,11 +46,23 @@
     },
     {
       "q": "Giá đền bù đất khi Nhà nước thu hồi được tính như thế nào?",
-      "a": "Giá bồi thường được xác định theo giá đất cụ thể do UBND Thành phố quyết định tại thời điểm thu hồi đất. (Nguồn: Điều 5 Quyết định 23/2014/QĐ-UBND Hà Nội)"
+      "a": "Giá bồi thường được xác định theo bảng giá đất (Nghị quyết 52/2025/NQ-HĐND từ 01/01/2026) nhân hệ số điều chỉnh K (Quyết định 19/2026/QĐ-UBND) tại thời điểm Nhà nước thu hồi đất, theo quy định của Luật Đất đai 2024. (Nguồn: Luật Đất đai 2024, NQ 52/2025/NQ-HĐND, QĐ 19/2026/QĐ-UBND)"
     },
     {
       "q": "Hà Nội áp giá đền bù theo bảng giá đất hay giá thị trường?",
-      "a": "Hà Nội sẽ khảo sát giá thị trường để xác định hệ số điều chỉnh và quyết định giá đất cụ thể phục vụ bồi thường. (Nguồn: Điều 6 Quyết định 23/2014/QĐ-UBND Hà Nội)"
+      "a": "Hà Nội áp dụng bảng giá đất mới theo Nghị quyết 52/2025/NQ-HĐND chia 17 khu vực, kết hợp khảo sát giá thị trường để xác định hệ số điều chỉnh K theo Quyết định 19/2026/QĐ-UBND trước khi quyết định giá đất cụ thể phục vụ bồi thường. (Nguồn: NQ 52/2025/NQ-HĐND, QĐ 19/2026/QĐ-UBND)"
+    },
+    {
+      "q": "Bảng giá đất mới của Hà Nội chia 17 khu vực là gì?",
+      "a": "Nghị quyết 52/2025/NQ-HĐND (hiệu lực 01/01/2026) thay thế cách phân theo quận/huyện bằng 17 khu vực định giá đất, mỗi khu vực gồm các tuyến đường, ngõ, hẻm có mức giá tương đồng. Việc tra cứu cần xác định khu vực của tuyến đường trước, sau đó tra giá theo vị trí VT1-VT4. (Nguồn: NQ 52/2025/NQ-HĐND)"
+    },
+    {
+      "q": "Hệ số K điều chỉnh giá đất 2026 là gì?",
+      "a": "Quyết định 19/2026/QĐ-UBND (hiệu lực 02/02/2026) quy định hệ số điều chỉnh giá đất năm 2026 dùng để tính tiền sử dụng đất, tiền thuê đất và bồi thường khi Nhà nước thu hồi đất. Giá đền bù = Giá đất trong bảng giá × Hệ số K. (Nguồn: QĐ 19/2026/QĐ-UBND)"
+    },
+    {
+      "q": "Đất dính quy hoạch có được xây dựng theo Luật Đất đai 2024 không?",
+      "a": "Theo Luật Đất đai 2024, đất trong quy hoạch nhưng chưa có kế hoạch sử dụng đất hàng năm hoặc chưa có quyết định thu hồi thì người dân vẫn có quyền sử dụng và được xem xét cấp phép xây dựng theo quy định. (Nguồn: Luật Đất đai 2024)"
     },
     {
       "q": "Nhà không có sổ đỏ có được đền bù không?",
@@ -46,7 +78,7 @@
     },
     {
       "q": "Khi nào người dân được bố trí tái định cư?",
-      "a": "Người dân được bố trí tái định cư khi bị thu hồi đất ở và không còn chỗ ở nào khác phù hợp. (Nguồn: Điều 7 Quyết định 23/2014/QĐ-UBND Hà Nội)"
+      "a": "Người dân được bố trí tái định cư khi bị thu hồi đất ở và không còn chỗ ở nào khác phù hợp, theo quy định bồi thường hỗ trợ tái định cư hiện hành của Luật Đất đai 2024 và văn bản hướng dẫn của UBND TP Hà Nội. (Nguồn: Luật Đất đai 2024)"
     },
     {
       "q": "Nhà mặt đường bị thu hồi có được đền bù theo giá kinh doanh không?",
@@ -98,7 +130,7 @@
     },
     {
       "q": "Đền bù bằng tiền hay bằng đất có lợi hơn?",
-      "a": "Tùy vị trí dự án, giá đất và nhu cầu của người dân. Một số trường hợp bồi thường bằng nhà hoặc đất tái định cư có giá trị dài hạn hơn. (Nguồn: Điều 7 Quyết định 23/2014/QĐ-UBND)"
+      "a": "Tùy vị trí dự án, giá đất và nhu cầu của người dân. Một số trường hợp bồi thường bằng nhà hoặc đất tái định cư có giá trị dài hạn hơn. Cần đối chiếu suất tái định cư và giá bồi thường theo bảng giá 2026 để lựa chọn. (Nguồn: Luật Đất đai 2024, NQ 52/2025/NQ-HĐND)"
     },
     {
       "q": "Có thể tra cứu quy hoạch online tại Hà Nội không?",
@@ -126,11 +158,15 @@
     },
     {
       "q": "Phương án giải phóng mặt bằng ai phê duyệt?",
-      "a": "UBND cấp huyện hoặc cơ quan được ủy quyền sẽ phê duyệt phương án bồi thường, hỗ trợ và tái định cư. (Nguồn: Điều 3 Quyết định 23/2014/QĐ-UBND Hà Nội)"
+      "a": "UBND cấp huyện hoặc cơ quan được ủy quyền sẽ phê duyệt phương án bồi thường, hỗ trợ và tái định cư theo quy định của Luật Đất đai 2024 và văn bản hướng dẫn của TP Hà Nội. (Nguồn: Luật Đất đai 2024)"
     },
     {
       "q": "Vì sao giá đền bù và giá thị trường chênh lệch lớn?",
-      "a": "Giá đền bù được xác định theo khung pháp lý và phương pháp định giá của Nhà nước, không hoàn toàn theo giá giao dịch tự do trên thị trường. (Nguồn: Quyết định 23/2014/QĐ-UBND Hà Nội)"
+      "a": "Giá đền bù được xác định theo bảng giá đất NQ 52/2025 nhân hệ số K (QĐ 19/2026) theo phương pháp định giá của Nhà nước, không hoàn toàn theo giá giao dịch tự do trên thị trường. (Nguồn: NQ 52/2025/NQ-HĐND, QĐ 19/2026/QĐ-UBND)"
+    },
+    {
+      "q": "Đất ven sông Hồng có nằm trong quy hoạch phân khu không?",
+      "a": "Phần lớn diện tích ven sông Hồng thuộc Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND, 12.000 ha, 55 km từ cầu Hồng Hà đến cầu Mễ Sở) với quỹ đất hành lang xanh, thoát lũ và các khu đô thị mới. Nên tra cứu trước khi giao dịch. (Nguồn: QĐ 1045/QĐ-UBND, Quy hoạch tổng thể Thủ đô 2026)"
     }
   ]
 }

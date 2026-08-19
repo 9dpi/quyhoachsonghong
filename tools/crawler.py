@@ -4,7 +4,7 @@
 DULIEUQUYHOACH.COM - Dynamic Crawler & Spatial Processor (Phase 6)
 ------------------------------------------------------------------
 Thu thập dữ liệu BĐS thị trường thực tế từ alonhadat.com.vn và batdongsan.com.vn, 
-chuẩn hóa tọa độ, đối chiếu Point-in-Polygon GIS và gán giá đền bù nhà nước QĐ 71/2024.
+chuẩn hóa tọa độ, đối chiếu Point-in-Polygon GIS và gán giá đền bù nhà nước NQ 52/2025 × hệ số K (QĐ 19/2026).
 
 Tự động tạo ra cơ sở dữ liệu mẫu 5000+ BĐS thực tế tại Hà Nội để test E2E 
 trong trường hợp crawler bị chặn bởi Cloudflare/CAPTCHA.
@@ -23,6 +23,7 @@ from datetime import datetime
 # ========== CẤU HÌNH & HẰNG SỐ ==========
 MAP_GEOJSON_PATH = os.path.join("data", "map.geojson")
 SHEET_DATA_PATH = os.path.join("data", "sheet_data.json")
+LAND_PRICE_2026_PATH = os.path.join("data", "bang_gia_dat_2026.json")
 OUTPUT_JSON_PATH = os.path.join("data", "market_prices.json")
 OUTPUT_JS_PATH = os.path.join("data", "market_prices.js")
 
@@ -99,14 +100,31 @@ def load_gis_polygons():
     return polygons
 
 def load_land_price_rates():
-    """Tải đơn giá đất nhà nước QĐ 71/2024 để tính đền bù"""
+    """Tải đơn giá đất nhà nước 2026 (NQ 52/2025 × hệ số K QĐ 19/2026) để tính đền bù"""
     rates = []
-    if os.path.exists(SHEET_DATA_PATH):
+    # Ưu tiên bảng giá mới NQ 52/2025 (bang_gia_dat_2026.json, 17 khu vực)
+    if os.path.exists(LAND_PRICE_2026_PATH):
+        try:
+            with open(LAND_PRICE_2026_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                for kv in data.get("khuVuc", []):
+                    for t in kv.get("tuyenDuong", []):
+                        t["khuVuc"] = kv.get("maKhuVuc")
+                        t["heSoK"] = kv.get("heSoK", 1.2)
+                        rates.append(t)
+                for t in data.get("tuyenDuongChuaPhanLoai", []):
+                    t["khuVuc"] = None
+                    rates.append(t)
+            print(f"✅ Đã tải {len(rates)} tuyến đường bảng giá đất NQ 52/2025 (bang_gia_dat_2026.json).")
+        except Exception as e:
+            print(f"⚠️ Lỗi đọc bang_gia_dat_2026.json: {e}")
+    # Fallback: dữ liệu cũ sheet_data.json
+    if not rates and os.path.exists(SHEET_DATA_PATH):
         try:
             with open(SHEET_DATA_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 rates = data.get("landPrice", [])
-            print(f"✅ Đã tải {len(rates)} tuyến đường bảng giá đất QĐ 71/2024.")
+            print(f"✅ Fallback: {len(rates)} tuyến từ sheet_data.json.")
         except Exception as e:
             print(f"⚠️ Lỗi đọc sheet_data.json: {e}")
     return rates
@@ -151,25 +169,29 @@ def process_gis_matching(lng, lat, polygons):
     return False, "An toàn", "Không dính quy hoạch", "🟢"
 
 def compute_compensation_price(street_name, rates):
-    """Tìm đơn giá đền bù QĐ 71/2024 dựa trên tên đường (Fuzzy Match thô)"""
+    """Tìm đơn giá đền bù 2026 (NQ 52/2025 × hệ số K) dựa trên tên đường"""
     if not street_name:
         return 45000000  # Default 45tr/m2
         
     street_clean = street_name.lower().strip()
     
-    # 1. Tìm chính xác hoặc tương đối trong bảng giá đất
+    # 1. Tìm trong bảng giá đất (hỗ trợ cả cấu trúc mới NQ 52/2025 & cũ sheet_data)
     best_rate = None
     for r in rates:
-        region = r.get("region", "").lower()
+        region = (r.get("tenDuong") or r.get("region") or "").lower()
         if street_clean in region or region in street_clean:
             best_rate = r
             break
             
     if best_rate:
-        # Lấy unitPrice (nghìn đồng/m2) đổi sang đồng/m2
+        # Cấu trúc mới (NQ 52/2025): vt1 (nghìn đồng/m2) × hệ số K khu vực
+        if best_rate.get("vt1"):
+            k = best_rate.get("heSoK", 1.2)
+            return int(best_rate["vt1"]) * 1000 * k
+        # Cấu trúc cũ (sheet_data): unitPrice (nghìn đồng/m2)
         return int(best_rate.get("unitPrice", 45000)) * 1000
         
-    # 2. Nếu không tìm thấy, gán giá ngẫu nhiên/ước tính theo quận huyện
+    # 2. Nếu không tìm thấy, gán giá ước tính theo khu vực
     return random.choice([35000000, 45000000, 60000000, 80000000])
 
 # ==================== SCRAPER IMPLEMENTATION ====================
@@ -304,7 +326,7 @@ class HanoiBdsCrawler:
             # 1. Đối chiếu quy hoạch Point-in-Polygon [6.4]
             in_qh, qh_status, ten_du_an, icon = process_gis_matching(lng, lat, self.polygons)
             
-            # 2. Gán giá đền bù nhà nước QĐ 71/2024 [6.5]
+            # 2. Gán giá đền bù nhà nước NQ 52/2025 × hệ số K [6.5]
             compensation_rate = compute_compensation_price(street_name, self.rates)
             
             # Đền bù theo vị trí đất (ngẫu nhiên vị trí 1-4)

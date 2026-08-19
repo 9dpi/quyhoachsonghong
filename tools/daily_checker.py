@@ -44,6 +44,7 @@ EXTRA_DATA_JSON  = os.path.join(DATA_DIR, 'extra_data.json')
 OFFICIAL_DOCS    = os.path.join(DATA_DIR, 'official_documents.json')
 PLANNING_UPD     = os.path.join(DATA_DIR, 'planning_updates.json')
 MARKET_PRICES    = os.path.join(DATA_DIR, 'market_prices.json')
+LAND_PRICE_2026  = os.path.join(DATA_DIR, 'bang_gia_dat_2026.json')
 QA_FILE          = os.path.join(DATA_DIR, 'QA.json')
 TEST_CASES_FILE  = os.path.join(DATA_DIR, 'gis_test_cases.json')
 REPORT_JSON      = os.path.join(DATA_DIR, 'daily_report.json')
@@ -209,6 +210,7 @@ def check_data_freshness():
         (OFFICIAL_DOCS,   'official_documents.json',  CRITICAL_DAYS, 'info'),
         (PLANNING_UPD,    'planning_updates.json',    STALE_DAYS,    'warning'),
         (MARKET_PRICES,   'market_prices.json',       STALE_DAYS,    'critical'),
+        (LAND_PRICE_2026, 'bang_gia_dat_2026.json',   CRITICAL_DAYS, 'warning'),
     ]
 
     worst = 'ok'
@@ -457,7 +459,7 @@ def check_qa_coverage():
 # CHECK 8 — Map Polygon Audit
 # ═══════════════════════════════════════════════════════════════════════════════
 def check_map_polygons():
-    print("\n[8/8] Kiem tra Map Polygons...")
+    print("\n[8/9] Kiem tra Map Polygons...")
     result = {'name': 'Map Polygons', 'icon': 'draw-polygon', 'polygons': [], 'status': 'ok'}
 
     geojson = load_json(MAP_GEOJSON)
@@ -492,11 +494,89 @@ def check_map_polygons():
             'status': 'ok' if ok else 'warning'
         })
 
+    # Kiem tra cac polygon bat buoc cua he thong (5 cu + 7 moi)
+    REQUIRED_POLYGON_IDS = [
+        'sh_r1', 'vd4_sec1', 'taidinhcu_ml', 'taidinhcu_ln', 'giapranh_vd4',
+        'cau_tu_lien', 'metro_line2', 'metro_line5', 'kdt_linh_nam',
+        'dai_lo_song_hong', 'vd4_cau_hong_ha', 'vd4_cau_me_so'
+    ]
+    existing_ids = [p.get('id') for p in result['polygons']]
+    missing_ids = [pid for pid in REQUIRED_POLYGON_IDS if pid not in existing_ids]
+    result['missing_polygons'] = missing_ids
+    if missing_ids:
+        issues += len(missing_ids)
+
     total = len(features)
     result['total']   = total
     result['issues']  = issues
     result['summary'] = f'{total} polygon, {issues} thieu thong tin'
+    if missing_ids:
+        result['summary'] += f" | THIEU polygon: {', '.join(missing_ids)}"
     result['status']  = 'ok' if issues == 0 else 'warning'
+
+    print(f"   -> {result['summary']}")
+    return result
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CHECK 9 — Bang gia dat 2026 (NQ 52/2025)
+# ═══════════════════════════════════════════════════════════════════════════════
+def check_land_price_2026():
+    print("\n[9/9] Kiem tra Bang gia dat 2026 (NQ 52/2025)...")
+    result = {'name': 'Land Price 2026', 'icon': 'scale-balanced', 'items': [], 'status': 'ok'}
+
+    if not os.path.exists(LAND_PRICE_2026):
+        result['status'] = 'critical'
+        result['summary'] = 'File bang_gia_dat_2026.json KHONG TON TAI — can tao bang tools/land_price_2026_extractor.py'
+        return result
+
+    age = round(file_age_days(LAND_PRICE_2026), 1)
+    size_kb = file_size_kb(LAND_PRICE_2026)
+    data = load_json(LAND_PRICE_2026)
+
+    result['age_days'] = age
+    result['size_kb']  = size_kb
+
+    if not data:
+        result['status'] = 'critical'
+        result['summary'] = 'bang_gia_dat_2026.json khong parse duoc'
+        return result
+
+    meta = data.get('meta', {})
+    khu_vuc_count   = len(data.get('khuVuc', []))
+    tuyen_total     = data.get('thongKe', {}).get('tongTuyenDuong', 0)
+    chua_phan_loai  = data.get('thongKe', {}).get('chuaPhanLoai', 0)
+    he_so_k         = data.get('heSoK', {}).get('default')
+
+    doc_ok     = '52/2025' in meta.get('document', '')
+    k_ok       = '19/2026' in meta.get('k_document', '')
+    needs_verify = 'can doi chieu' in meta.get('note', '').lower() or 'cần đối chiếu' in meta.get('note', '').lower()
+
+    items = []
+    if khu_vuc_count != 17:
+        items.append(f'So khu vuc = {khu_vuc_count} (mong doi 17)')
+    if not doc_ok:
+        items.append('Thieu tham chieu NQ 52/2025 trong meta')
+    if not k_ok:
+        items.append('Thieu tham chieu QD 19/2026 trong meta')
+    if needs_verify:
+        items.append('Du lieu dang o trang thai "can doi chieu van ban chinh thuc"')
+    if age > STALE_DAYS:
+        items.append(f'Da {age} ngay chua cap nhat (nguong {STALE_DAYS} ngay)')
+    if chua_phan_loai and chua_phan_loai > 30:
+        items.append(f'{chua_phan_loai} tuyen chua phan loai khu vuc (nhieu)')
+
+    result['khu_vuc_count']    = khu_vuc_count
+    result['tuyen_total']      = tuyen_total
+    result['unclassified']     = chua_phan_loai
+    result['he_so_k_default']  = he_so_k
+    result['items']            = [{'title': i, 'date': '', 'note': '', 'status': 'warning'} for i in items]
+
+    if items:
+        result['summary'] = f'{khu_vuc_count} khu vuc, {tuyen_total} tuyen ({chua_phan_loai} chua phan loai) | ' + '; '.join(items[:3])
+        result['status']  = 'warning'
+    else:
+        result['summary'] = f'{khu_vuc_count} khu vuc, {tuyen_total} tuyen, K={he_so_k} — OK'
+        result['status']  = 'ok'
 
     print(f"   -> {result['summary']}")
     return result
@@ -630,6 +710,7 @@ def main():
         check_official_documents(),
         check_qa_coverage(),
         check_map_polygons(),
+        check_land_price_2026(),
     ]
 
     update_official_documents_timestamp()

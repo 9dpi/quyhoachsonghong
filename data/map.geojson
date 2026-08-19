@@ -176,6 +176,259 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cau_tu_lien",
+        "tenKhu": "Cầu Tứ Liên & Đường dẫn 2 đầu cầu",
+        "dienTich": "Dài 4.8 km, tổng vốn ~20.000 tỷ đồng",
+        "loai": "Hạ tầng giao thông",
+        "category": "giaothong",
+        "description": "Cầu dây văng kết nối trung tâm Hà Nội (Tây Hồ) với huyện Đông Anh. Trụ tháp chính cao 185m, khởi công 19/05/2025, dự kiến hoàn thành 2027. (Vị trí minh họa - cần đối chiếu bản vẽ chính thức)",
+        "nguon": "UBND TP Hà Nội",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "DGT",
+        "loaiDatTiengViet": "Đất hạ tầng giao thông (Cầu & đường dẫn)",
+        "color": "#8b5cf6",
+        "qdPheDuyet": "Quyết định chủ trương đầu tư dự án Cầu Tứ Liên"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.8360, 21.0550],
+            [105.8500, 21.0630],
+            [105.8560, 21.0740],
+            [105.8580, 21.0860],
+            [105.8620, 21.0880],
+            [105.8640, 21.0860],
+            [105.8600, 21.0730],
+            [105.8540, 21.0620],
+            [105.8400, 21.0530],
+            [105.8360, 21.0550]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "metro_line2",
+        "tenKhu": "Tuyến Metro số 2 (Nam Thăng Long - Trần Hưng Đạo)",
+        "dienTich": "Chiều dài tuyến ~11.5 km (đoạn trên cao + ngầm)",
+        "loai": "Metro / Đường sắt đô thị",
+        "category": "metro",
+        "description": "Tuyến đường sắt đô thị số 2 kết nối Nam Thăng Long (Bắc Từ Liêm) qua trung tâm tới Trần Hưng Đạo (Hoàn Kiếm). Dự kiến khởi công giai đoạn 2025-2026. (Vị trí minh họa - cần đối chiếu hồ sơ chính thức)",
+        "nguon": "Ban QLDA Đường sắt đô thị Hà Nội",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "DGT-Metro",
+        "loaiDatTiengViet": "Đất hạ tầng đường sắt đô thị",
+        "color": "#06b6d4",
+        "qdPheDuyet": "Quyết định chủ trương đầu tư tuyến Metro số 2"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.7820, 21.0590],
+            [105.7900, 21.0470],
+            [105.8000, 21.0370],
+            [105.8120, 21.0240],
+            [105.8240, 21.0140],
+            [105.8340, 21.0070],
+            [105.8410, 21.0200],
+            [105.8470, 21.0240],
+            [105.8510, 21.0210],
+            [105.8430, 21.0250],
+            [105.8370, 21.0210],
+            [105.8300, 21.0080],
+            [105.8200, 21.0150],
+            [105.8080, 21.0250],
+            [105.7960, 21.0380],
+            [105.7860, 21.0480],
+            [105.7780, 21.0600],
+            [105.7820, 21.0590]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "metro_line5",
+        "tenKhu": "Tuyến Metro số 5 (Văn Cao - Hòa Lạc)",
+        "dienTich": "Chiều dài tuyến ~38 km (Văn Cao đến Hòa Lạc)",
+        "loai": "Metro / Đường sắt đô thị",
+        "category": "metro",
+        "description": "Tuyến đường sắt đô thị số 5 kết nối Văn Cao (Ba Đình) qua Hà Đông tới Hòa Lạc (Thạch Thất). Dự kiến khởi công giai đoạn 2025-2026. (Vị trí minh họa - cần đối chiếu hồ sơ chính thức)",
+        "nguon": "Ban QLDA Đường sắt đô thị Hà Nội",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "DGT-Metro",
+        "loaiDatTiengViet": "Đất hạ tầng đường sắt đô thị",
+        "color": "#14b8a6",
+        "qdPheDuyet": "Quyết định chủ trương đầu tư tuyến Metro số 5"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.8120, 21.0350],
+            [105.8000, 21.0280],
+            [105.7850, 21.0200],
+            [105.7700, 21.0100],
+            [105.7500, 20.9950],
+            [105.7200, 20.9850],
+            [105.6900, 20.9750],
+            [105.6500, 20.9700],
+            [105.6000, 20.9680],
+            [105.5600, 20.9700],
+            [105.5100, 20.9720],
+            [105.5050, 20.9680],
+            [105.5500, 20.9650],
+            [105.6000, 20.9630],
+            [105.6500, 20.9650],
+            [105.6900, 20.9700],
+            [105.7200, 20.9800],
+            [105.7500, 20.9900],
+            [105.7700, 21.0050],
+            [105.7850, 21.0150],
+            [105.8000, 21.0240],
+            [105.8120, 21.0350]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kdt_linh_nam",
+        "tenKhu": "Khu đô thị mới phường Lĩnh Nam (Hoàng Mai)",
+        "dienTich": "~90 ha",
+        "loai": "Khu đô thị",
+        "category": "khudothi",
+        "description": "Khu đô thị mới tại phường Lĩnh Nam, quận Hoàng Mai phục vụ di dời dân hành lang đê sông Hồng. Dự kiến khởi công hạ tầng khung 08/2026. (Vị trí minh họa - cần đối chiếu quy hoạch 1/500)",
+        "nguon": "UBND Quận Hoàng Mai",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "ODT",
+        "loaiDatTiengViet": "Đất ở khu đô thị mới",
+        "color": "#6366f1",
+        "qdPheDuyet": "Quy hoạch chi tiết phường Lĩnh Nam"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.8780, 20.9660],
+            [105.8900, 20.9660],
+            [105.8920, 20.9780],
+            [105.8840, 20.9820],
+            [105.8760, 20.9780],
+            [105.8780, 20.9660]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dai_lo_song_hong",
+        "tenKhu": "Trục Đại lộ cảnh quan sông Hồng",
+        "dienTich": "Hành lang dọc sông Hồng ~55 km",
+        "loai": "Hạ tầng cảnh quan",
+        "category": "canhquan",
+        "description": "Trục đại lộ cảnh quan dọc hai bờ sông Hồng theo Quy hoạch tổng thể Thủ đô tầm nhìn 100 năm. Kết hợp công viên sinh thái, thoát lũ và phát triển đô thị ven sông. (Vị trí minh họa)",
+        "nguon": "UBND TP Hà Nội",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "DCS",
+        "loaiDatTiengViet": "Đất cảnh quan sinh thái ven sông",
+        "color": "#0891b2",
+        "qdPheDuyet": "Quy hoạch tổng thể Thủ đô Hà Nội (phê duyệt 13/05/2026)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.7150, 21.1800],
+            [105.7550, 21.1500],
+            [105.8000, 21.1150],
+            [105.8500, 21.0600],
+            [105.8800, 21.0050],
+            [105.9200, 20.9400],
+            [105.9350, 20.9000],
+            [105.9250, 20.8980],
+            [105.9100, 20.9400],
+            [105.8750, 21.0000],
+            [105.8450, 21.0550],
+            [105.7950, 21.1100],
+            [105.7500, 21.1450],
+            [105.7100, 21.1750],
+            [105.7150, 21.1800]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vd4_cau_hong_ha",
+        "tenKhu": "Cầu Hồng Hà (Vành đai 4)",
+        "dienTich": "Cầu dây văng vượt sông Hồng",
+        "loai": "Hạ tầng giao thông",
+        "category": "vandai4",
+        "description": "Cầu Hồng Hà thuộc dự án Vành đai 4 - Vùng Thủ đô, kết nối huyện Đông Anh và huyện Mê Linh qua sông Hồng. Phấn đấu thông xe trước APEC 2027. (Vị trí minh họa)",
+        "nguon": "Ban QLDA Thăng Long",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "DGT",
+        "loaiDatTiengViet": "Đất hạ tầng giao thông (Cầu VĐ4)",
+        "color": "#ef4444",
+        "qdPheDuyet": "Dự án Vành đai 4 - Vùng Thủ đô (QĐ 4133/QĐ-UBND)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.8660, 21.1400],
+            [105.8780, 21.1450],
+            [105.8840, 21.1540],
+            [105.8820, 21.1600],
+            [105.8700, 21.1520],
+            [105.8620, 21.1430],
+            [105.8660, 21.1400]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vd4_cau_me_so",
+        "tenKhu": "Cầu Mễ Sở (Vành đai 4)",
+        "dienTich": "Cầu vượt sông Hồng kết nối Gia Lâm - Văn Giang",
+        "loai": "Hạ tầng giao thông",
+        "category": "vandai4",
+        "description": "Cầu Mễ Sở thuộc dự án Vành đai 4 - Vùng Thủ đô, kết nối huyện Gia Lâm (Hà Nội) với huyện Văn Giang (Hưng Yên). Phấn đấu thông xe trước APEC 2027. (Vị trí minh họa)",
+        "nguon": "Ban QLDA Thăng Long",
+        "ngayCapNhat": "2026-08-19",
+        "loaiDat": "DGT",
+        "loaiDatTiengViet": "Đất hạ tầng giao thông (Cầu VĐ4)",
+        "color": "#ef4444",
+        "qdPheDuyet": "Dự án Vành đai 4 - Vùng Thủ đô (QĐ 4133/QĐ-UBND)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.9320, 20.9350],
+            [105.9420, 20.9380],
+            [105.9480, 20.9450],
+            [105.9440, 20.9500],
+            [105.9340, 20.9440],
+            [105.9280, 20.9380],
+            [105.9320, 20.9350]
+          ]
+        ]
+      }
     }
   ]
 }
