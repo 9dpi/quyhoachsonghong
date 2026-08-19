@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nội Dung | DULIEUQUYHOACH.COM</title>
+    <meta name="description"
+        content="Trang đăng nội dung quy hoạch dành cho ban quản trị DULIEUQUYHOACH.COM. Thêm tin tức, dự án, cập nhật quy hoạch kèm ảnh, video và liên kết mạng xã hội.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDK7GC6X9J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-FDK7GC6X9J');
+    </script>
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+
+        .topbar .brand span {
+            color: #059669;
+        }
+
+        .topbar .nav a {
+            font-size: 0.85rem;
+            color: #64748b;
+            text-decoration: none;
+            margin-left: 16px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px 60px;
+        }
+
+        .page-head {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .page-head h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .page-head p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 5px;
+        }
+
+        .form-group label .req {
+            color: #dc2626;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="url"],
+        .form-group input[type="date"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .form-group textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .row2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .row2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hint {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-ghost {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        /* Preview */
+        .preview-media {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            text-align: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .preview-media img {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        .preview-media iframe {
+            width: 100%;
+            max-width: 480px;
+            height: 240px;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .social-preview {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .social-preview a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .s-fb {
+            background: #1877f2;
+        }
+        .s-tt {
+            background: #111;
+        }
+        .s-zalo {
+            background: #0068ff;
+        }
+        .s-yt {
+            background: #ff0000;
+        }
+
+        /* Output */
+        .output-section {
+            margin-top: 24px;
+        }
+
+        .json-box {
+            background: #0f172a;
+            color: #a5f3fc;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .status-msg {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .status-msg.ok {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            display: block;
+        }
+
+        .status-msg.err {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .status-msg.info {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            display: block;
+        }
+
+        .step-note {
+            margin-top: 14px;
+            background: #fefce8;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.8rem;
+            color: #854d0e;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <a class="brand" href="index.html">🗺️ DỮ LIỆU QUY HOẠCH <span>2026</span></a>
+        <div class="nav">
+            <a href="index.html">← Về trang chủ</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-head">
+            <h1>📝 Đăng Nội Dung</h1>
+            <p>Thêm tin tức, dự án, cập nhật quy hoạch cho website — kèm ảnh, video và mạng xã hội</p>
+        </div>
+
+        <div class="layout">
+            <!-- ========== FORM ========== -->
+            <div class="card">
+                <h2>✍️ Thông tin nội dung</h2>
+
+                <div class="form-group">
+                    <label>Tiêu đề <span class="req">*</span></label>
+                    <input type="text" id="f-title" placeholder="VD: Cập nhật tiến độ Cầu Tứ Liên tháng 8/2026">
+                </div>
+
+                <div class="row2">
+                    <div class="form-group">
+                        <label>Loại nội dung</label>
+                        <select id="f-type">
+                            <option value="Tin tức">📰 Tin tức</option>
+                            <option value="Dự án">🏗️ Dự án</option>
+                            <option value="Quy hoạch">🗺️ Cập nhật quy hoạch</option>
+                            <option value="Bảng giá">💰 Bảng giá đất</option>
+                            <option value="Tái định cư">🏠 Tái định cư</option>
+                            <option value="Sự kiện">🎉 Sự kiện</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Dự án liên quan</label>
+                        <select id="f-project">
+                            <option value="">— Chọn (nếu có) —</option>
+                            <option value="Cầu Tứ Liên">🌉 Cầu Tứ Liên</option>
+                            <option value="Vành đai 4">🛣️ Vành đai 4</option>
+                            <option value="Metro tuyến 2">🚇 Metro tuyến 2</option>
+                            <option value="Metro tuyến 5">🚇 Metro tuyến 5</option>
+                            <option value="Quy hoạch sông Hồng">🌊 Quy hoạch sông Hồng</option>
+                            <option value="KĐT Lĩnh Nam">🏙️ KĐT Lĩnh Nam</option>
+                            <option value="Khác">📌 Khác</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả / nội dung <span class="req">*</span></label>
+                    <textarea id="f-desc" placeholder="Nhập nội dung chính của bài viết, tin tức..."></textarea>
+                </div>
+
+                <div class="row2">
+                    <div class="form-group">
+                        <label>Địa chỉ / khu vực</label>
+                        <input type="text" id="f-address" placeholder="VD: Phường Ngọc Thụy, Long Biên, Hà Nội">
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày</label>
+                        <input type="date" id="f-date">
+                    </div>
+                </div>
+
+                <div class="row2">
+                    <div class="form-group">
+                        <label>Vĩ độ (lat) — tùy chọn</label>
+                        <input type="text" id="f-lat" placeholder="VD: 21.0433">
+                    </div>
+                    <div class="form-group">
+                        <label>Kinh độ (lng) — tùy chọn</label>
+                        <input type="text" id="f-lng" placeholder="VD: 105.8656">
+                    </div>
+                </div>
+
+                <h2 style="margin-top:18px;">🖼️ Media & Xã hội</h2>
+
+                <div class="form-group">
+                    <label>Link ảnh đại diện (URL)</label>
+                    <input type="url" id="f-image" placeholder="https://.../anh.jpg" oninput="updatePreview()">
+                    <div class="hint">Dán link ảnh bất kỳ — hiển thị trực tiếp bên khung xem trước</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Link video (YouTube)</label>
+                    <input type="url" id="f-video" placeholder="https://www.youtube.com/watch?v=..." oninput="updatePreview()">
+                    <div class="hint">Hỗ trợ: youtube.com/watch, youtu.be, shorts, live</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Link bài viết / nguồn gốc</label>
+                    <input type="url" id="f-source" placeholder="https://... (link báo, bài viết gốc)">
+                </div>
+
+                <div class="row2">
+                    <div class="form-group">
+                        <label>Facebook post</label>
+                        <input type="url" id="f-fb" placeholder="https://facebook.com/..." oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>TikTok</label>
+                        <input type="url" id="f-tt" placeholder="https://tiktok.com/..." oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="row2">
+                    <div class="form-group">
+                        <label>Zalo</label>
+                        <input type="url" id="f-zalo" placeholder="https://zalo.me/..." oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>YouTube</label>
+                        <input type="url" id="f-yt" placeholder="https://youtube.com/..." oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="generateJson()">⚡ Tạo JSON nội dung</button>
+                    <button class="btn btn-ghost" onclick="clearForm()">🗑️ Xóa form</button>
+                </div>
+            </div>
+
+            <!-- ========== XEM TRƯỚC ========== -->
+            <div class="card">
+                <h2>👁️ Xem trước</h2>
+
+                <div id="preview-media" class="preview-media">
+                    <span>Chưa có ảnh / video — dán link vào form để xem trước</span>
+                </div>
+
+                <div id="social-preview" class="social-preview"></div>
+
+                <div style="margin-top:14px; padding:12px; background:#f8fafc; border-radius:10px; font-size:0.82rem;">
+                    <div id="pv-title" style="font-weight:800; color:#0f172a; margin-bottom:4px;">Tiêu đề sẽ hiển thị ở đây</div>
+                    <div id="pv-type" style="color:#2563eb; font-weight:700; font-size:0.72rem; margin-bottom:6px;">Loại nội dung</div>
+                    <div id="pv-desc" style="color:#64748b; line-height:1.5;">Mô tả sẽ hiển thị ở đây...</div>
+                    <div id="pv-meta" style="color:#94a3b8; font-size:0.72rem; margin-top:8px;"></div>
+                </div>
+
+                <div class="step-note">
+                    <b>📌 Cách dùng:</b><br>
+                    1️⃣ Điền thông tin → bấm <b>"Tạo JSON nội dung"</b><br>
+                    2️⃣ <b>Chế độ GAS:</b> bấm "Gửi lên Google Sheet" để lưu vào hệ thống (cần cấu hình GAS_API_URL).<br>
+                    3️⃣ <b>Chế độ thủ công:</b> copy JSON bên dưới → dán vào file dữ liệu → chạy <code>deploy.bat</code>.
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== OUTPUT ========== -->
+        <div class="output-section card">
+            <h2>📦 Kết quả</h2>
+            <div id="status-msg" class="status-msg"></div>
+            <div id="json-box" class="json-box" style="display:none;">{}</div>
+            <div class="actions">
+                <button class="btn btn-success" id="btn-copy" style="display:none;" onclick="copyJson()">📋 Copy JSON</button>
+                <button class="btn btn-primary" id="btn-gas" style="display:none;" onclick="submitToGAS()">🚀 Gửi lên Google Sheet</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>© 2026 DULIEUQUYHOACH.COM — Trang quản trị nội dung</footer>
+
+    <script>
+        // ===== CẤU HÌNH GAS (Web App của Google Apps Script đã deploy) =====
+        var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxx6eSTIaCJwrtwQYh7rBruih2QWUiA34LDsi1hfjqeIVvIcPRFl-dtHMdAwwwwrCLe9A/exec";
+        // =====================================================================
+
+        function el(id) { return document.getElementById(id); }
+
+        // Khôi phục ngày mặc định = hôm nay
+        if (!el('f-date').value) el('f-date').value = new Date().toISOString().slice(0, 10);
+
+        // ===== LIVE PREVIEW =====
+        function updatePreview() {
+            // Tiêu đề + loại + mô tả
+            el('pv-title').innerText = el('f-title').value || 'Tiêu đề sẽ hiển thị ở đây';
+            el('pv-type').innerText = el('f-type').value;
+            el('pv-desc').innerText = el('f-desc').value || 'Mô tả sẽ hiển thị ở đây...';
+            var meta = [el('f-address').value, el('f-date').value].filter(Boolean).join(' • ');
+            el('pv-meta').innerText = meta;
+
+            // Ảnh
+            var mediaBox = el('preview-media');
+            mediaBox.innerHTML = '';
+            var imgUrl = el('f-image').value.trim();
+            if (imgUrl) {
+                var img = document.createElement('img');
+                img.src = imgUrl;
+                img.onerror = function () { mediaBox.innerHTML = '<span style="color:#dc2626;">⚠️ Không tải được ảnh. Kiểm tra lại link.</span>'; };
+                mediaBox.appendChild(img);
+            }
+            // Video YouTube -> iframe
+            var vidUrl = el('f-video').value.trim();
+            var embed = getYoutubeEmbed(vidUrl);
+            if (embed) {
+                var iframe = document.createElement('iframe');
+                iframe.src = embed;
+                iframe.allowFullscreen = true;
+                mediaBox.appendChild(iframe);
+            } else if (vidUrl) {
+                mediaBox.innerHTML += '<span style="color:#94a3b8;">🔗 <a href="' + vidUrl + '" target="_blank" rel="noopener" style="color:#2563eb;">Xem video bên ngoài</a></span>';
+            }
+            if (!imgUrl && !vidUrl) {
+                mediaBox.innerHTML = '<span>Chưa có ảnh / video — dán link vào form để xem trước</span>';
+            }
+
+            // Social
+            var socialBox = el('social-preview');
+            socialBox.innerHTML = '';
+            var socials = [
+                { id: 'f-fb', cls: 's-fb', label: 'Facebook' },
+                { id: 'f-tt', cls: 's-tt', label: 'TikTok' },
+                { id: 'f-zalo', cls: 's-zalo', label: 'Zalo' },
+                { id: 'f-yt', cls: 's-yt', label: 'YouTube' }
+            ];
+            socials.forEach(function (s) {
+                var v = el(s.id).value.trim();
+                if (v) {
+                    var a = document.createElement('a');
+                    a.href = v;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.className = s.cls;
+                    a.innerText = s.label;
+                    socialBox.appendChild(a);
+                }
+            });
+        }
+
+        function getYoutubeEmbed(url) {
+            if (!url) return null;
+            var id = null;
+            var m;
+            if ((m = url.match(/youtube\.com\/watch\?v=([\w-]{6,})/))) id = m[1];
+            else if ((m = url.match(/youtu\.be\/([\w-]{6,})/))) id = m[1];
+            else if ((m = url.match(/youtube\.com\/shorts\/([\w-]{6,})/))) id = m[1];
+            else if ((m = url.match(/youtube\.com\/live\/([\w-]{6,})/))) id = m[1];
+            else if ((m = url.match(/youtube\.com\/embed\/([\w-]{6,})/))) id = m[1];
+            return id ? 'https://www.youtube.com/embed/' + id : null;
+        }
+
+        // ===== TẠO JSON =====
+        function generateJson() {
+            var title = el('f-title').value.trim();
+            var desc = el('f-desc').value.trim();
+            if (!title || !desc) {
+                showStatus('Vui lòng nhập Tiêu đề và Mô tả!', 'err');
+                return;
+            }
+            var now = new Date().toISOString();
+            var obj = {
+                "id": Date.now(),
+                "tenKhu": title,
+                "loai": el('f-type').value,
+                "moTa": desc,
+                "nguonTin": el('f-source').value.trim(),
+                "ngayCapNhat": now,
+                "isHeadline": "NO",
+                "ngayDangGoc": el('f-date').value,
+                "location_keyword": el('f-address').value.trim(),
+                "project": el('f-project').value,
+                "hinhAnh": el('f-image').value.trim(),
+                "videoUrl": el('f-video').value.trim(),
+                "social": {}
+            };
+            // Tọa độ nếu hợp lệ
+            var lat = parseFloat(el('f-lat').value), lng = parseFloat(el('f-lng').value);
+            if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                obj.viDo = lat;
+                obj.kinhDo = lng;
+            }
+            // Social
+            [['facebook', 'f-fb'], ['tiktok', 'f-tt'], ['zalo', 'f-zalo'], ['youtube', 'f-yt']].forEach(function (p) {
+                var v = el(p[1]).value.trim();
+                if (v) obj.social[p[0]] = v;
+            });
+            if (Object.keys(obj.social).length === 0) delete obj.social;
+
+            window._currentJson = JSON.stringify(obj, null, 2);
+            el('json-box').style.display = 'block';
+            el('json-box').innerText = window._currentJson;
+            el('btn-copy').style.display = 'inline-flex';
+            el('btn-gas').style.display = 'inline-flex';
+            showStatus('✅ Đã tạo JSON thành công!', 'ok');
+            return obj;
+        }
+
+        function copyJson() {
+            if (!window._currentJson) return;
+            var done = function () { showStatus('📋 Đã copy JSON vào clipboard!', 'ok'); };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(window._currentJson).then(done, function () { fallbackCopy(); });
+            } else {
+                fallbackCopy();
+            }
+        }
+
+        function fallbackCopy() {
+            var ta = document.createElement('textarea');
+            ta.value = window._currentJson;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); showStatus('📋 Đã copy JSON vào clipboard!', 'ok'); } catch (e) { showStatus('Copy thủ công: bôi đen JSON bên trên.', 'info'); }
+            document.body.removeChild(ta);
+        }
+
+        // ===== GỬI LÊN GOOGLE SHEET QUA GAS =====
+        function submitToGAS() {
+            var obj = generateJson();
+            if (!obj) return;
+            if (!GAS_API_URL) {
+                showStatus('⚠️ Chưa cấu hình GAS_API_URL trong file. Copy JSON và tự lưu, hoặc dán URL Web App vào đầu script.', 'err');
+                return;
+            }
+            var btn = el('btn-gas');
+            btn.disabled = true;
+            btn.innerText = '⏳ Đang gửi...';
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ type: 'content', ...obj })
+            }).then(function () {
+                showStatus('🚀 Đã gửi lên Google Sheet (chế độ no-cors — kiểm tra tab NoiDungTuGui).', 'info');
+            }).catch(function (e) {
+                showStatus('❌ Gửi thất bại: ' + e.message, 'err');
+            }).finally(function () {
+                btn.disabled = false;
+                btn.innerText = '🚀 Gửi lên Google Sheet';
+            });
+        }
+
+        function showStatus(msg, type) {
+            var box = el('status-msg');
+            box.className = 'status-msg ' + type;
+            box.innerText = msg;
+        }
+
+        function clearForm() {
+            ['f-title', 'f-desc', 'f-address', 'f-lat', 'f-lng', 'f-image', 'f-video', 'f-source', 'f-fb', 'f-tt', 'f-zalo', 'f-yt'].forEach(function (id) { el(id).value = ''; });
+            el('f-type').selectedIndex = 0;
+            el('f-project').selectedIndex = 0;
+            el('f-date').value = new Date().toISOString().slice(0, 10);
+            el('json-box').style.display = 'none';
+            el('btn-copy').style.display = 'none';
+            el('btn-gas').style.display = 'none';
+            el('status-msg').className = 'status-msg';
+            updatePreview();
+        }
+
+        // Tự cập nhật preview khi gõ
+        ['f-title', 'f-desc', 'f-address', 'f-type'].forEach(function (id) {
+            el(id).addEventListener('input', updatePreview);
+        });
+        updatePreview();
+    </script>
+</body>
+
+</html>

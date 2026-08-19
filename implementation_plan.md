@@ -274,3 +274,37 @@ v10.0 tập trung 4 nhóm:
 2. **Nhóm B** — Mobile & accessibility (bottom sheet, pull-to-refresh, phông chữ lớn cho người cao tuổi)
 3. **Nhóm C** — Tính năng giá trị cao (xuất PDF, lịch sử tra cứu, so sánh 2 địa chỉ, đo đạc, theo dõi khu vực)
 4. **Nhóm D + E** — Vận hành tự động (Telegram cảnh báo, structured data, IndexedDB) chuẩn bị nền tảng toàn quốc
+
+
+--
+🚀 Chiến lược cải thiện để thu hút và tối ưu tìm kiếm
+1. Tối ưu cho Người Dùng (User-Centric) - Đặt câu hỏi "Nhà tôi..." lên đầu tiên
+Mục tiêu: Biến trang web/ứng dụng của bạn trở thành công cụ giải đáp ngay lập tức cho nỗi lo lớn nhất của người dân.
+
+Hành động:
+
+Tạo Landing Page riêng: Thay vì để người dùng vào thẳng index.html (có thể là bản đồ), hãy tạo một trang giới thiệu đơn giản với một ô tìm kiếm to, nổi bật. Mẫu câu: "Tra cứu ngay: Địa chỉ nhà bạn có nằm trong quy hoạch Sông Hồng?" .
+
+Ưu tiên tính năng địa chỉ: Đảm bảo chức năng tìm kiếm theo địa chỉ là thao tác chính và dễ dàng nhất. Kết quả trả về cần hiển thị trực quan (màu sắc trên bản đồ) và kèm theo giải thích ngắn gọn .
+
+Gợi ý các câu hỏi phổ biến: Bên dưới ô tìm kiếm, đặt một số câu hỏi mẫu như: "Tôi ở phường Phú Thượng", "Nhà tôi gần cầu Long Biên" .
+
+2. Tối ưu cho Công cụ Tìm kiếm (SEO) - Trở thành nguồn thông tin đáng tin cậy
+Mục tiêu: Đứng đầu các kết quả tìm kiếm cho các từ khóa như "quy hoạch sông Hồng", "bản đồ quy hoạch Hà Nội", "tra cứu quy hoạch Sông Hồng".
+
+Hành động:
+
+Nội dung tĩnh, giàu thông tin: Bạn đã có các trang như tin-tuc-quy-hoach.html, gioi-thieu.html [URL]. Hãy tận dụng triệt để chúng. Viết các bài viết giải thích chi tiết về các khu vực, các loại đất (ODT, DGT, DCS...), và cập nhật tiến độ dự án .
+
+Tối ưu thẻ meta: Đảm bảo mỗi trang đều có thẻ <title> và <meta description> hấp dẫn, chứa từ khóa chính. Ví dụ: <title>Tra cứu Quy hoạch Sông Hồng 2026 | Nhà tôi có bị ảnh hưởng?</title>.
+
+Cập nhật thường xuyên: Việc bạn có các file checkpoint (checkpoint_v*.md) là một điểm cộng. Hãy viết các bài blog hoặc cập nhật trạng thái dự án trên trang tin tức của bạn để Google thấy website được "chăm sóc" thường xuyên.
+
+Tận dụng Sitemap và Robots: Bạn đã có sitemap.xml và robots.txt [URL]. Hãy kiểm tra và đảm bảo chúng được cấu hình chính xác để Google dễ dàng thu thập dữ liệu.
+
+3. Xây dựng Thương hiệu và Cộng đồng
+Mục tiêu: Tạo dựng niềm tin và sự lan tỏa.
+
+Hành động:
+
+Làm nổi bật "Tổ công tác truyền thông": Tin tức về việc Hà Nội thành lập Tổ công tác truyền thông là một cơ hội vàng để khẳng định vị thế của bạn . Bạn có thể viết bài: "Dự án quy hoạch Sông Hồng: Nắm bắt thông tin từ nguồn nào cho đúng?", trong đó giới thiệu về Tổ công tác và nhấn mạnh vai trò của trang web bạn là một công cụ trực quan hóa dữ liệu công khai.
