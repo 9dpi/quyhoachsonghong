@@ -32,6 +32,116 @@ const CACHE_KEY_LANDPRICE = 'dqh_landprice2026_v1'; // Bảng giá 2026: 24 gi�
 const CACHE_TTL_LANDPRICE = 24 * 60 * 60 * 1000;
 const CACHE_KEY_GEO = 'dqh_geocode_v1';              // Geocode cache
 
+// ==================== INDEXEDDB STORAGE ENGINE (v10.0 - dữ liệu lớn) ====================
+// Thay thế localStorage cho dữ liệu > 5MB (market_prices, cache tin tức, bảng giá).
+// Tự động fallback về localStorage khi trình duyệt không hỗ trợ IndexedDB.
+const DB_NAME = 'dqh_db';
+const DB_STORE = 'kv';
+let dbInstance = null;
+
+function openDB() {
+    if (dbInstance) return Promise.resolve(dbInstance);
+    return new Promise((resolve) => {
+        try {
+            if (!('indexedDB' in window)) return resolve(null);
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(DB_STORE)) {
+                    db.createObjectStore(DB_STORE);
+                }
+            };
+            req.onsuccess = (e) => {
+                dbInstance = e.target.result;
+                resolve(dbInstance);
+            };
+            req.onerror = () => resolve(null);
+            req.onblocked = () => resolve(null);
+        } catch (e) {
+            resolve(null);
+        }
+    });
+}
+
+async function dbGet(key) {
+    try {
+        const db = await openDB();
+        if (!db) {
+            try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
+        }
+        return new Promise((resolve) => {
+            try {
+                const tx = db.transaction(DB_STORE, 'readonly');
+                const req = tx.objectStore(DB_STORE).get(key);
+                req.onsuccess = () => resolve(req.result !== undefined ? req.result : null);
+                req.onerror = () => resolve(null);
+            } catch (e) { resolve(null); }
+        });
+    } catch (e) { return null; }
+}
+
+async function dbSet(key, value) {
+    try {
+        const db = await openDB();
+        if (!db) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { }
+            return;
+        }
+        return new Promise((resolve) => {
+            try {
+                const tx = db.transaction(DB_STORE, 'readwrite');
+                tx.objectStore(DB_STORE).put(value, key);
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => resolve(false);
+                tx.onabort = () => resolve(false);
+            } catch (e) { resolve(false); }
+        });
+    } catch (e) { /* ignore */ }
+}
+
+async function dbDel(key) {
+    try {
+        const db = await openDB();
+        if (!db) {
+            try { localStorage.removeItem(key); } catch (e) { }
+            return;
+        }
+        return new Promise((resolve) => {
+            try {
+                const tx = db.transaction(DB_STORE, 'readwrite');
+                tx.objectStore(DB_STORE).delete(key);
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => resolve(false);
+                tx.onabort = () => resolve(false);
+            } catch (e) { resolve(false); }
+        });
+    } catch (e) { /* ignore */ }
+}
+
+// Đảm bảo dữ liệu giá thị trường sẵn sàng: inline JS -> IndexedDB -> fetch JSON
+async function ensureMarketPrices() {
+    if (window.marketPricesInlined && window.marketPricesInlined.length) {
+        try { await dbSet('market_prices', window.marketPricesInlined); } catch (e) { }
+        return window.marketPricesInlined;
+    }
+    const stored = await dbGet('market_prices');
+    if (stored && stored.length) {
+        window.marketPricesInlined = stored;
+        return stored;
+    }
+    try {
+        const resp = await fetch('data/market_prices.json?t=' + Date.now());
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.length) {
+                window.marketPricesInlined = data;
+                await dbSet('market_prices', data);
+            }
+        }
+    } catch (e) { /* ignore */ }
+    return window.marketPricesInlined || [];
+}
+
 const contextualDocuments = {
     "sh_r1": [
         { name: "Quy hoạch phân khu sông Hồng (QĐ 1045/QĐ-UBND)", url: "https://vqh.hanoi.gov.vn/index.php?language=vi&nv=laws&op=detail/Phe-duyet-QHPK-do-thi-Song-Hong-ty-le-1-5000-doan-tu-cau-Hong-Ha-den-cau-Me-So-211&download=1&id=0", type: "PDF" },
@@ -89,13 +199,13 @@ async function init() {
 
         const isValidNews = (arr) => Array.isArray(arr) && arr.length > 0 && arr[0].tenKhu;
 
-        const cached = localStorage.getItem(CACHE_KEY);
+        const cached = await dbGet(CACHE_KEY);
         let usedCache = false;
         if (cached) {
             try {
-                const cacheData = JSON.parse(cached);
+                const cacheData = cached;
                 if (Date.now() - cacheData.time < CACHE_TTL_NEWS && isValidNews(cacheData.data.news)) {
-                    console.log("[Cache] Loaded valid data from localStorage.");
+                    console.log("[Cache] Loaded valid data from IndexedDB.");
                     newsData = cacheData.data.news || [];
                     progressData = cacheData.data.progress || [];
                     faqData = cacheData.data.faq || [];
@@ -105,11 +215,11 @@ async function init() {
                     usedCache = true;
                 } else {
                     console.log("[Cache] Cache expired or invalid, clearing.");
-                    localStorage.removeItem(CACHE_KEY);
+                    await dbDel(CACHE_KEY);
                 }
             } catch (e) {
                 console.log("[Cache] Parse error, clearing cache.");
-                localStorage.removeItem(CACHE_KEY);
+                await dbDel(CACHE_KEY);
             }
         }
 
@@ -192,7 +302,7 @@ async function init() {
             initTicker();
             renderFAQ(faqData);
             renderProjectsInMapTab(projectsData);
-            loadFreshData().then(freshData => {
+            loadFreshData().then(async (freshData) => {
                 if (freshData && isValidNews(freshData.news)) {
                     newsData = freshData.news || [];
                     progressData = freshData.progress || [];
@@ -205,7 +315,7 @@ async function init() {
                     initTicker();
                     renderFAQ(faqData);
                     renderProjectsInMapTab(projectsData);
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data: freshData }));
+                    await dbSet(CACHE_KEY, { time: Date.now(), data: freshData });
                     console.log("[Cache] Background refresh complete.");
                 }
             });
@@ -255,10 +365,12 @@ async function init() {
             renderFAQ(faqData);
             renderProjectsInMapTab(projectsData);
             const dataToCache = { news: newsData, progress: progressData, faq: faqData, planning: planningData, projects: projectsData, landPrice: landPriceData };
-            localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data: dataToCache }));
-            console.log("[Cache] Fresh data cached.");
+            await dbSet(CACHE_KEY, { time: Date.now(), data: dataToCache });
+            console.log("[Cache] Fresh data cached (IndexedDB).");
         }
 
+        // V10: đồng bộ giá thị trường vào IndexedDB (dữ liệu lớn, tránh tràn localStorage)
+        ensureMarketPrices();
         setupLazyLoad();
         loadPlanningGIS();
         setTimeout(fitMapToPins, 400);
@@ -854,11 +966,10 @@ let landPrice2026Data = null;
 async function loadLandPrice2026() {
     if (landPrice2026Data) return landPrice2026Data;
     try {
-        const cached = localStorage.getItem(CACHE_KEY_LANDPRICE);
-        if (cached) {
-            const c = JSON.parse(cached);
-            if (Date.now() - c.t < CACHE_TTL_LANDPRICE) {
-                landPrice2026Data = c.data;
+        const cached = await dbGet(CACHE_KEY_LANDPRICE);
+        if (cached && cached.data) {
+            if (Date.now() - cached.t < CACHE_TTL_LANDPRICE) {
+                landPrice2026Data = cached.data;
                 return landPrice2026Data;
             }
         }
@@ -867,7 +978,7 @@ async function loadLandPrice2026() {
         const resp = await fetch('data/bang_gia_dat_2026.json?t=' + Date.now());
         if (resp.ok) {
             landPrice2026Data = await resp.json();
-            try { localStorage.setItem(CACHE_KEY_LANDPRICE, JSON.stringify({ t: Date.now(), data: landPrice2026Data })); } catch (e) { }
+            try { await dbSet(CACHE_KEY_LANDPRICE, { t: Date.now(), data: landPrice2026Data }); } catch (e) { }
             return landPrice2026Data;
         }
     } catch (e) { /* ignore */ }
@@ -997,7 +1108,8 @@ async function checkMyHome() {
     await loadLandPrice2026();
     const streetMatch = lookupLandPrice2026(addr);
 
-    // Bước 4: Giá thị trường lân cận (10 BĐS trong 500m)
+    // Bước 4: Giá thị trường lân cận (10 BĐS trong 500m) — đảm bảo dữ liệu từ IndexedDB nếu inline chưa sẵn
+    await ensureMarketPrices();
     const market = findNearbyMarketPrices(coords[0], coords[1], 500, 10);
 
     // Bước 5: Hiển thị kết quả "4 câu trả lời"

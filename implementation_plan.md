@@ -262,3 +262,15 @@ python -c "import json; [json.load(open(f'data/{f}')) for f in ['map.geojson','b
 4. **Open Questions từ kế hoạch vẫn cần trả lời:** nguồn PDF bảng giá 2026, phạm vi GeoJSON chính thức cho Cầu Tứ Liên/Metro.
 5. **Polygon mới là vị trí minh họa:** tọa độ Cầu Tứ Liên, Metro, Đại lộ sông Hồng là ước tính — cần thay bằng bản vẽ chính thức khi có.
 6. **Cấu hình Telegram:** `daily_checker.py` đã hỗ trợ biến môi trường `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` nhưng chưa được cấu hình trong GitHub Actions — cần thêm secrets để nhận cảnh báo CRITICAL qua Telegram.
+
+---
+
+## 🔜 Kế hoạch phiên bản tiếp theo
+
+> Chi tiết đầy đủ: **[implementation_plan_v10.md](implementation_plan_v10.md)**
+
+v10.0 tập trung 4 nhóm:
+1. **Nhóm A** — Đưa dữ liệu pháp lý về trạng thái chính thức (bảng giá đầy đủ 17 khu vực, hệ số K chính thức, tọa độ thật cho Cầu Tứ Liên/Metro)
+2. **Nhóm B** — Mobile & accessibility (bottom sheet, pull-to-refresh, phông chữ lớn cho người cao tuổi)
+3. **Nhóm C** — Tính năng giá trị cao (xuất PDF, lịch sử tra cứu, so sánh 2 địa chỉ, đo đạc, theo dõi khu vực)
+4. **Nhóm D + E** — Vận hành tự động (Telegram cảnh báo, structured data, IndexedDB) chuẩn bị nền tảng toàn quốc
