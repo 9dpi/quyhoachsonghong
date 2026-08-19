@@ -862,6 +862,21 @@
             50% { opacity: 0.35; }
         }
 
+        /* Hot project pin animation */
+        .dqh-hot-pin-wrap {
+            background: transparent;
+            border: none;
+        }
+
+        .dqh-hot-pin {
+            animation: qhHotPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes qhHotPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
         footer {
             background: #ffffff;
             border-top: 1px solid #e2e8f0;

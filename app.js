@@ -467,10 +467,12 @@ function renderNews(data, append = false) {
         div.className = 'project-item';
 
         const moTaText = item.moTa || 'Chưa có mô tả chi tiết.';
+        const hot = detectHotProject((item.tenKhu || '') + ' ' + moTaText);
 
         div.innerHTML = `
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:4px;flex-wrap:wrap;">
                 <span style="background:#eff6ff;color:#2563eb;padding:3px 10px;border-radius:5px;font-size:0.72rem;font-weight:800;letter-spacing:0.02em;">${item.loai || 'Tin tức'}</span>
+                ${hot ? `<span style="background:${hot.color};color:#fff;padding:3px 10px;border-radius:5px;font-size:0.72rem;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,0.15);">${hot.icon} ${hot.label}</span>` : ''}
             </div>
             <h4 style="font-family:'Inter';font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:6px;line-height:1.45;">${item.tenKhu || ''}</h4>
             <p style="font-size:0.88rem;color:#64748b;line-height:1.55;font-family:'Inter';">${moTaText.substring(0, 90)}...</p>`;
@@ -485,6 +487,38 @@ function renderNews(data, append = false) {
 
     // In các tin vừa render lên bản đồ dưới dạng marker (cùng dữ liệu hiển thị ở BẢN TIN)
     renderNewsMarkers(data, append);
+}
+
+// ==================== NHẬN DIỆN DỰ ÁN HOT (thu hút người xem) ====================
+const HOT_PROJECTS = [
+    { keyword: "cầu tứ liên", icon: "🌉", label: "Cầu Tứ Liên", color: "#8b5cf6" },
+    { keyword: "vành đai 4", icon: "🛣️", label: "Vành đai 4", color: "#ef4444" },
+    { keyword: "đường sắt đô thị", icon: "🚇", label: "Đường sắt đô thị", color: "#06b6d4" },
+    { keyword: "metro", icon: "🚇", label: "Metro", color: "#06b6d4" },
+    { keyword: "đại lộ sông hồng", icon: "🌇", label: "Đại lộ Sông Hồng", color: "#0891b2" },
+    { keyword: "sông hồng", icon: "🌊", label: "Sông Hồng", color: "#0ea5e9" },
+    { keyword: "lĩnh nam", icon: "🏙️", label: "KĐT Lĩnh Nam", color: "#6366f1" },
+    { keyword: "cầu hồng hà", icon: "🌉", label: "Cầu Hồng Hà", color: "#ef4444" },
+    { keyword: "cầu mễ sở", icon: "🌉", label: "Cầu Mễ Sở", color: "#ef4444" },
+    { keyword: "quy hoạch tổng thể", icon: "🏛️", label: "QH Tổng thể Thủ đô", color: "#2563eb" },
+    { keyword: "tầm nhìn 100 năm", icon: "🏛️", label: "Tầm nhìn 100 năm", color: "#2563eb" },
+    { keyword: "apec 2027", icon: "🌏", label: "APEC 2027", color: "#f59e0b" },
+    { keyword: "bảng giá đất", icon: "💵", label: "Bảng giá đất", color: "#10b981" },
+    { keyword: "giải phóng mặt bằng", icon: "🚧", label: "GPMB", color: "#f97316" },
+    { keyword: "tái định cư", icon: "🏠", label: "Tái định cư", color: "#a855f7" }
+];
+
+// Chuẩn hóa bỏ dấu để khớp keyword (viết hoa/không dấu đều khớp)
+const normKeyword = (s) => String(s || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+function detectHotProject(text) {
+    const t = normKeyword(text);
+    // Sắp xếp keyword dài trước để khớp chính xác hơn (vd "đại lộ sông hồng" trước "sông hồng")
+    const sorted = [...HOT_PROJECTS].sort((a, b) => normKeyword(b.keyword).length - normKeyword(a.keyword).length);
+    for (const p of sorted) {
+        if (t.includes(normKeyword(p.keyword))) return p;
+    }
+    return null;
 }
 
 // ==================== HÀM RENDER MARKER TIN TỨC TRÊN BẢN ĐỒ ====================
@@ -516,21 +550,43 @@ function renderNewsMarkers(data, append = false) {
         const title = item.tenKhu || item.title || 'Tin tức';
         const desc = (item.moTa || '').substring(0, 160);
         const link = item.nguonTin || item.link || '';
+        const hot = detectHotProject(title + ' ' + desc);
 
-        const marker = L.circleMarker([item.viDo, item.kinhDo], {
-            radius: 11,
-            color: '#ffffff',
-            weight: 2.5,
-            fillColor: color,
-            fillOpacity: 0.9
-        }).bindPopup(`
+        // Badge nổi bật cho dự án hot trong popup
+        const hotBadge = hot
+            ? `<div style="display:inline-block;background:${hot.color};color:#fff;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:800;margin-bottom:7px;box-shadow:0 1px 4px rgba(0,0,0,0.2);">${hot.icon} ${escHtml(hot.label)}</div>`
+            : `<div style="font-size:0.78rem;font-weight:800;color:${color};letter-spacing:0.04em;margin-bottom:6px;">${escHtml(item.loai || 'Tin tức')}</div>`;
+
+        const popupHtml = `
             <div style="font-family:'Inter',sans-serif;max-width:320px;">
-                <div style="font-size:0.78rem;font-weight:800;color:${color};letter-spacing:0.04em;margin-bottom:6px;">${escHtml(item.loai || 'Tin tức')}</div>
+                ${hotBadge}
                 <div style="font-size:1.05rem;font-weight:700;color:#0f172a;line-height:1.45;">${escHtml(title)}</div>
                 ${desc ? `<div style="font-size:0.9rem;color:#475569;line-height:1.55;margin-top:6px;">${escHtml(desc)}...</div>` : ''}
                 ${link ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:0.9rem;font-weight:700;color:#2563eb;">Xem nguồn →</a>` : ''}
             </div>
-        `);
+        `;
+
+        let marker;
+        if (hot) {
+            // Pin dự án hot: hình tròn màu + icon emoji + hiệu ứng pulse
+            marker = L.marker([item.viDo, item.kinhDo], {
+                icon: L.divIcon({
+                    className: 'dqh-hot-pin-wrap',
+                    html: `<div class="dqh-hot-pin" style="width:38px;height:38px;border-radius:50%;background:${hot.color};border:3px solid #ffffff;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 3px 10px rgba(0,0,0,0.35);">${hot.icon}</div>`,
+                    iconSize: [38, 38],
+                    iconAnchor: [19, 19],
+                    popupAnchor: [0, -26]
+                })
+            }).bindPopup(popupHtml);
+        } else {
+            marker = L.circleMarker([item.viDo, item.kinhDo], {
+                radius: 11,
+                color: '#ffffff',
+                weight: 2.5,
+                fillColor: color,
+                fillOpacity: 0.9
+            }).bindPopup(popupHtml);
+        }
 
         newsMarkerLayer.addLayer(marker);
     });
