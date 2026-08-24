@@ -1,0 +1,134 @@
+{
+  "metro_line5": {
+    "id": "metro_line5",
+    "status": "UNCHANGED",
+    "tenKhu": "Tuyến Metro số 5 (Văn Cao - Hòa Lạc)",
+    "area_old_ha": 1711.34,
+    "area_new_ha": 1711.34,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "taidinhcu_ml": {
+    "id": "taidinhcu_ml",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu tái định cư Mê Linh",
+    "area_old_ha": 18.45,
+    "area_new_ha": 18.45,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "vd4_sec1": {
+    "id": "vd4_sec1",
+    "status": "UNCHANGED",
+    "tenKhu": "Dự án Đường Vành đai 4 - Phân đoạn Hoài Đức - Đan Phượng",
+    "area_old_ha": 853.36,
+    "area_new_ha": 853.36,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "vd4_cau_hong_ha": {
+    "id": "vd4_cau_hong_ha",
+    "status": "UNCHANGED",
+    "tenKhu": "Cầu Hồng Hà (Vành đai 4)",
+    "area_old_ha": 222.57,
+    "area_new_ha": 222.57,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "vd4_cau_me_so": {
+    "id": "vd4_cau_me_so",
+    "status": "UNCHANGED",
+    "tenKhu": "Cầu Mễ Sở (Vành đai 4)",
+    "area_old_ha": 168.37,
+    "area_new_ha": 168.37,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "dai_lo_song_hong": {
+    "id": "dai_lo_song_hong",
+    "status": "UNCHANGED",
+    "tenKhu": "Trục Đại lộ cảnh quan sông Hồng",
+    "area_old_ha": 3099.21,
+    "area_new_ha": 3099.21,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "cau_tu_lien": {
+    "id": "cau_tu_lien",
+    "status": "UNCHANGED",
+    "tenKhu": "Cầu Tứ Liên & Đường dẫn 2 đầu cầu",
+    "area_old_ha": 201.81,
+    "area_new_ha": 201.81,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "kdt_linh_nam": {
+    "id": "kdt_linh_nam",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu đô thị mới phường Lĩnh Nam (Hoàng Mai)",
+    "area_old_ha": 230.64,
+    "area_new_ha": 230.64,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "taidinhcu_ln": {
+    "id": "taidinhcu_ln",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu tái định cư Lĩnh Nam (Hoàng Mai)",
+    "area_old_ha": 13.84,
+    "area_new_ha": 13.84,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "metro_line2": {
+    "id": "metro_line2",
+    "status": "UNCHANGED",
+    "tenKhu": "Tuyến Metro số 2 (Nam Thăng Long - Trần Hưng Đạo)",
+    "area_old_ha": 91.1,
+    "area_new_ha": 91.1,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "sh_r1": {
+    "id": "sh_r1",
+    "status": "UNCHANGED",
+    "tenKhu": "Phân khu Quy hoạch Sông Hồng R1-R2",
+    "area_old_ha": 10369.47,
+    "area_new_ha": 10369.47,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  },
+  "giapranh_vd4": {
+    "id": "giapranh_vd4",
+    "status": "UNCHANGED",
+    "tenKhu": "Khu vực giáp ranh ảnh hưởng - Hành lang an toàn Vành đai 4",
+    "area_old_ha": 2424.59,
+    "area_new_ha": 2424.59,
+    "area_change_pct": 0.0,
+    "similarity_pct": 100.0,
+    "max_boundary_shift_m": 0.0,
+    "level": "INFO"
+  }
+}
