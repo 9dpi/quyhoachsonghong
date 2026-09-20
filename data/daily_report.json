@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-19 10:58:06 GMT+7",
-  "date": "2026-09-19",
+  "generated_at": "2026-09-20 11:16:31 GMT+7",
+  "date": "2026-09-20",
   "overall_status": "critical",
   "total_checks": 9,
   "checks": [
@@ -129,10 +129,10 @@
         {
           "name": "Vien Quy hoach Ha Noi (VQH)",
           "url": "https://vqh.hanoi.gov.vn",
-          "status_code": 200,
-          "latency_ms": 1986,
-          "ok": true,
-          "status": "ok"
+          "status_code": null,
+          "latency_ms": null,
+          "ok": false,
+          "status": "critical"
         },
         {
           "name": "UBND Ha Noi - Van ban phap luat",
@@ -146,13 +146,13 @@
           "name": "QD71/2024 Bang gia dat HN (PDF)",
           "url": "https://storage-vnportal.vnpt.vn/gov-hni/6249/VanBan/2024/12/20/QDPQ-71-2024.pdf",
           "status_code": 200,
-          "latency_ms": 1143,
+          "latency_ms": 1221,
           "ok": true,
           "status": "ok"
         }
       ],
       "status": "critical",
-      "fail_count": 2
+      "fail_count": 3
     },
     {
       "name": "Data Quality",
@@ -193,7 +193,7 @@
       "status": "warning",
       "total": 13,
       "old_count": 2,
-      "last_check": "18/09/2026 18:49:41",
+      "last_check": "19/09/2026 18:21:33",
       "summary": "13 van ban, 2 can ra soat (<=2022)"
     },
     {
