@@ -238,6 +238,8 @@
         /* ─── MAP ─── */
         #map { flex: 1; }
         .leaflet-container { background: #0a0f1e !important; }
+        /* Dark-mode filter cho tile OSM gốc (không cần API Key) */
+        .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
 
         /* ─── POLYGON COUNT BADGE ─── */
         .polygon-count {
@@ -416,8 +418,9 @@ const map = L.map('map', {
     zoomControl: true
 });
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap © CARTO',
+// Bản đồ nền mã nguồn mở OpenStreetMap (không cần API Key)
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
     maxZoom: 19
 }).addTo(map);
 

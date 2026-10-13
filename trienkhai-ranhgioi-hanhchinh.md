@@ -64,8 +64,9 @@ javascript
 // Khởi tạo bản đồ
 const map = L.map('map').setView([21.0285, 105.8542], 12);
 
-// Thêm layer nền OpenStreetMap
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+// Thêm layer nền OpenStreetMap (mã nguồn mở, không cần API Key)
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
 }).addTo(map);
 

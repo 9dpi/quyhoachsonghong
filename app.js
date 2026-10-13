@@ -189,7 +189,11 @@ const contextualDocuments = {
 };
 
 const map = L.map('map', { zoomControl: false }).setView([21.0285, 105.8542], 13);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+// Bản đồ nền mã nguồn mở OpenStreetMap (không cần API Key)
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+}).addTo(map);
 
 // ==================== HÀM INIT CHÍNH ====================
 async function init() {

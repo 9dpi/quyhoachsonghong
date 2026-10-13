@@ -238,6 +238,8 @@
             height: 100%;
             width: 100%;
         }
+        /* Dark-mode filter cho tile OSM gốc (không cần API Key) */
+        .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
         .map-badge {
             position: absolute;
             top: 16px;
@@ -433,13 +435,18 @@
             mapL = L.map('map-left', { zoomControl: false }).setView([21.025, 105.80], 11);
             mapR = L.map('map-right', { zoomControl: true }).setView([21.025, 105.80], 11);
 
-            // Add tile layers
-            const tilesL = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            // Add tile layers (OpenStreetMap mã nguồn mở — không cần API Key)
+            const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+            const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+
+            const tilesL = L.tileLayer(TILE_URL, {
+                attribution: TILE_ATTR,
+                maxZoom: 19
             }).addTo(mapL);
 
-            const tilesR = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            const tilesR = L.tileLayer(TILE_URL, {
+                attribution: TILE_ATTR,
+                maxZoom: 19
             }).addTo(mapR);
 
             // Đồng bộ kéo / zoom giữa hai bản đồ (Synchronize maps)

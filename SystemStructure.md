@@ -92,7 +92,7 @@ Dữ liệu không cập nhật: Kiểm tra Google Sheet đã có hàng mới ch
 6. Tài liệu tham khảo
 Thư viện bản đồ: Leaflet.js
 
-Nền bản đồ: CartoDB Voyager (dùng với Leaflet)
+Nền bản đồ: OpenStreetMap — tile tiêu chuẩn, mã nguồn mở (không cần API Key; các trang công cụ dùng CSS dark-mode filter)
 
 Geocoding: Nominatim (OpenStreetMap)
 
