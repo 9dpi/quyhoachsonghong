@@ -1,6 +1,6 @@
 # 🔴 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-11-13 12:54:11 GMT+7`  
+**Thời gian:** `2026-11-14 12:42:54 GMT+7`  
 **Trạng thái tổng thể:** `CRITICAL`
 
 ---
@@ -31,7 +31,7 @@
 |-----|-----|------|--------|------------|
 | Trang chu DuLieuQuyHoach | `https://dulieuquyhoach.com...` | `200` | 1ms | ✅ |
 | Cong thong tin Ha Noi | `https://hanoi.gov.vn...` | `None` | Nonems | ❌ |
-| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 3106ms | ✅ |
+| Vien Quy hoach Ha Noi (VQH) | `https://vqh.hanoi.gov.vn...` | `200` | 3133ms | ✅ |
 | UBND Ha Noi - Van ban phap luat | `https://vanban.hanoi.gov.vn...` | `None` | Nonems | ❌ |
 | QD71/2024 Bang gia dat HN (PDF) | `https://storage-vnportal.vnpt.vn/gov-hni/6249/VanB...` | `404` | Nonems | ❌ |
 
@@ -75,4 +75,4 @@
 - ⚠️  **53 tuyen chua phan loai khu vuc (nhieu)** () — 
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-11-13 12:54:11 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-11-14 12:42:54 GMT+7*
