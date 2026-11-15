@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-14 12:42:54 GMT+7",
-  "date": "2026-11-14",
+  "generated_at": "2026-11-15 12:42:19 GMT+7",
+  "date": "2026-11-15",
   "overall_status": "critical",
   "total_checks": 9,
   "checks": [
@@ -130,7 +130,7 @@
           "name": "Vien Quy hoach Ha Noi (VQH)",
           "url": "https://vqh.hanoi.gov.vn",
           "status_code": 200,
-          "latency_ms": 3133,
+          "latency_ms": 3407,
           "ok": true,
           "status": "ok"
         },
@@ -193,7 +193,7 @@
       "status": "warning",
       "total": 13,
       "old_count": 2,
-      "last_check": "13/11/2026 17:06:53",
+      "last_check": "14/11/2026 20:20:17",
       "summary": "13 van ban, 2 can ra soat (<=2022)"
     },
     {
