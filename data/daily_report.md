@@ -1,6 +1,6 @@
 # 🔴 Báo cáo Kiểm tra Nội dung Hàng ngày
 
-**Thời gian:** `2026-11-27 14:38:16 GMT+7`  
+**Thời gian:** `2026-11-28 14:04:59 GMT+7`  
 **Trạng thái tổng thể:** `CRITICAL`
 
 ---
@@ -75,4 +75,4 @@
 - ⚠️  **53 tuyen chua phan loai khu vuc (nhieu)** () — 
 
 ---
-*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-11-27 14:38:16 GMT+7*
+*Được tạo tự động bởi `tools/daily_checker.py` lúc 2026-11-28 14:04:59 GMT+7*

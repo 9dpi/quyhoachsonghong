@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-27 14:38:16 GMT+7",
-  "date": "2026-11-27",
+  "generated_at": "2026-11-28 14:04:59 GMT+7",
+  "date": "2026-11-28",
   "overall_status": "critical",
   "total_checks": 9,
   "checks": [
@@ -193,7 +193,7 @@
       "status": "warning",
       "total": 13,
       "old_count": 2,
-      "last_check": "27/11/2026 00:16:09",
+      "last_check": "27/11/2026 23:52:42",
       "summary": "13 van ban, 2 can ra soat (<=2022)"
     },
     {
